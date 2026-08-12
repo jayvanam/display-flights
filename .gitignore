@@ -6,7 +6,9 @@
 .env
 .env.*
 
-publish.log
+# Cron logs (publish.log, sync.log) — this repo is pulled/rebased every 20 min by
+# publish.sh, so stray untracked files here are noise at best.
+*.log
 __pycache__/
 *.pyc
 .pytest_cache/
