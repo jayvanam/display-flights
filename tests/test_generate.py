@@ -74,10 +74,21 @@ def test_regions_follow_the_scrapers_own_tiers():
     assert generate.region_of("SGN") == "asia"
 
 
-def test_colombia_files_under_caribbean_like_the_scraper_prices_it():
-    # Colombia sits in _CARIBBEAN_TIER upstream (the $350 ceiling + home origins),
-    # so it must not drift to South America here just because of geography.
-    assert generate.region_of("BOG") == "caribbean"
+def test_region_follows_the_tier_even_when_the_tier_moves():
+    """Colombia was in _CARIBBEAN_TIER and moved to _SOUTH_AMERICA_TIER (2026-08-12,
+    with a $400 ceiling). The page followed on the next sync with no edit here,
+    which is the whole point of deriving regions from the scraper's tiers rather
+    than from geography — and why test_catalog.py fails on drift."""
+    assert generate.region_of("BOG") == "southamerica"
+
+
+def test_canada_is_its_own_region():
+    # _CANADA_TIER is a SECOND short-haul tier upstream, deliberately separate from
+    # _CARIBBEAN_TIER so their ceilings can diverge. It gets its own tab for the
+    # same reason rather than being folded into Domestic.
+    for code in ("YYZ", "YTZ", "YUL", "YVR", "YYC"):
+        assert generate.region_of(code) == "canada"
+    assert generate.dest_name("YYC") == "Banff"  # named for the trip, not the field
 
 
 def test_unknown_destination_code_still_renders():
@@ -217,6 +228,32 @@ def test_fallback_url_is_escaped_for_a_one_way():
     url = generate.search_url("ORD", "RAK", "2026-11-10", None)
     assert "through" not in url
     assert " " not in url
+
+
+def test_theme_and_shell_are_separate_files_inlined_at_build(sample_db):
+    """Design lives in theme.css / template.html, not in the generator."""
+    assert generate.THEME_CSS.exists() and generate.TEMPLATE_HTML.exists()
+
+    rows = generate.load_alerts(sample_db, hours=24)
+    page = generate.render_page(generate.build_sales(rows), len(rows), 24, rows[0][0])
+
+    # Inlined, not linked — the published page must stay one self-contained file.
+    assert '<link rel="stylesheet"' not in page
+    token_line = "--accent:      #007AFF"
+    assert token_line in generate.THEME_CSS.read_text()
+    assert token_line in page
+
+    # Every placeholder resolved. A stray $name would ship as literal text.
+    assert "$css" not in page and "$cards" not in page and "$tabs" not in page
+
+
+def test_prices_survive_templating(sample_db):
+    """Card HTML arrives as a substitution VALUE, so '$650' is never read as a
+    placeholder — the failure mode would be a KeyError or a mangled price."""
+    rows = generate.load_alerts(sample_db, hours=24)
+    page = generate.render_page(generate.build_sales(rows), len(rows), 24, rows[0][0])
+    assert "$650" in page
+    assert "$74" in page
 
 
 def test_prices_are_escaped_and_tabular(sample_db):

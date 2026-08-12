@@ -109,6 +109,11 @@ def derive(flights_repo: Path):
             return "europe"
         if name in config._CARIBBEAN_TIER:
             return "caribbean"
+        # The scraper's SECOND short-haul tier (added 2026-08-12). Read via getattr
+        # so this tool still runs against a checkout that predates it — anything
+        # that falls through is reported as unmapped rather than mis-filed.
+        if name in getattr(config, "_CANADA_TIER", frozenset()):
+            return "canada"
         if name in _LONGHAUL_REGIONS:
             return _LONGHAUL_REGIONS[name]
         unmapped.append(name)
@@ -157,6 +162,7 @@ def render(destinations, airports, sha) -> str:
         "REGIONS = (",
         '    ("domestic", "Domestic"),',
         '    ("caribbean", "Caribbean & Mexico"),',
+        '    ("canada", "Canada"),',
         '    ("europe", "Europe"),',
         '    ("asia", "Asia"),',
         '    ("mideast", "Middle East"),',

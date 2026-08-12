@@ -1,0 +1,127 @@
+<title>Bucket List Fares</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="$alert_count fare alerts from the last $hours hours, grouped by sale.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fares">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+
+<!-- theme.css, inlined at build time so the page needs no external requests. -->
+<style>
+$css
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="titlebar">
+      <div>
+        <h1>Fares</h1>
+        <p class="sub">$sale_count sales from $alert_count alerts &middot; last $hours h</p>
+      </div>
+      <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9788;</button>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Region">
+$tabs
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="list" id="list">
+$cards
+  </div>
+  <p class="empty" hidden id="empty">Nothing here in the last $hours hours.</p>
+
+  <footer class="foot">
+    <p>Newest alert <b>$newest</b> &middot; built <b>$generated</b></p>
+    <p>One card per destination and date pair; each pill is one origin that
+      alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
+      round trip, as seen at scrape time.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var btn = document.getElementById("themer");
+
+  try {
+    var saved = localStorage.getItem("fares-theme");
+    if (saved) { root.setAttribute("data-theme", saved); }
+  } catch (e) {}
+
+  function currentTheme() {
+    // Read the stamp when present, otherwise ask the OS. Deliberately does NOT
+    // sniff a computed color: that would put a copy of a palette value in the JS,
+    // which then silently disagrees the first time a token changes.
+    var stamp = root.getAttribute("data-theme");
+    if (stamp === "dark" || stamp === "light") { return stamp; }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  btn.addEventListener("click", function () {
+    var next = currentTheme() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("fares-theme", next); } catch (e) {}
+  });
+
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  var empty = document.getElementById("empty");
+
+  // Collapse long origin lists now that we know script is running. The markup ships
+  // expanded so a no-JS reader sees every option instead of a button that does
+  // nothing.
+  Array.prototype.forEach.call(document.querySelectorAll(".more"), function (btn) {
+    var list = btn.previousElementSibling;
+    var total = list.children.length;
+    list.classList.add("collapsed");
+    btn.hidden = false;
+    btn.setAttribute("aria-expanded", "false");
+    btn.textContent = "Show all " + total;
+    btn.addEventListener("click", function () {
+      var collapsed = list.classList.toggle("collapsed");
+      btn.setAttribute("aria-expanded", String(!collapsed));
+      btn.textContent = collapsed ? "Show all " + total : "Show fewer";
+    });
+  });
+
+  function show(region) {
+    var shown = 0;
+    cards.forEach(function (card) {
+      var match = (region === "all") || (card.dataset.region === region);
+      card.hidden = !match;
+      if (match) { shown++; }
+    });
+    empty.hidden = shown > 0;
+    var active = null;
+    tabs.forEach(function (t) {
+      var on = t.dataset.region === region;
+      t.setAttribute("aria-selected", String(on));
+      if (on) { active = t; }
+    });
+    // The filter row scrolls horizontally, so a restored region further along it
+    // would otherwise leave the page filtered with no visible active pill.
+    if (active && active.scrollIntoView) {
+      active.scrollIntoView({ inline: "center", block: "nearest" });
+    }
+    try { localStorage.setItem("fares-region", region); } catch (e) {}
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () { show(tab.dataset.region); });
+  });
+
+  var start = "all";
+  try {
+    var savedRegion = localStorage.getItem("fares-region");
+    if (savedRegion && tabs.some(function (t) { return t.dataset.region === savedRegion; })) {
+      start = savedRegion;
+    }
+  } catch (e) {}
+  show(start);
+})();
+</script>

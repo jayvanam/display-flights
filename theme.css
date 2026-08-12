@@ -1,0 +1,319 @@
+/* ==========================================================================
+   theme.css — the single source of design truth for the page.
+   ==========================================================================
+
+   Inlined into a <style> block at build time by generate.py, so the published
+   page stays one self-contained file with zero external requests (the host CSP
+   blocks them, and a webfont that silently falls back looks worse than none).
+   Edit this file, run `dev/preview.py`, reload. No Python involved.
+
+   HOW THEMING WORKS — three states, not two.
+   The viewer's theme has an explicit choice (stamps data-theme="dark"/"light" on
+   the root) OR the default "system" setting, which stamps NOTHING. So:
+
+     :root                                     -> the complete LIGHT palette
+     @media (prefers-color-scheme: dark)
+       :root:not([data-theme="light"])          -> dark tokens, but an explicit
+                                                   light choice still wins
+     :root[data-theme="dark"]                   -> dark tokens, so the in-page
+                                                   toggle wins in both directions
+
+   RULE: never declare a component color inside a media or [data-theme] block.
+   Those blocks redefine TOKENS ONLY. A color whose only definition sits behind
+   [data-theme] never applies in the un-stamped state — which is most viewers —
+   and the page renders one theme's text on the other theme's background.
+   ========================================================================== */
+
+/* --------------------------------------------------------------- tokens ---
+   The iOS system palette.
+
+   Tier hues keep the scraper's own ordering, so a card agrees with the Discord
+   alert that produced it: Exceptional red, Excellent purple, Great indigo, Good
+   green. Great is systemIndigo rather than systemBlue on purpose — blue is
+   reserved for things you can tap, and a tier badge is not tappable. */
+:root {
+  --bg:          #F2F2F7;                  /* systemGroupedBackground */
+  --surface:     #FFFFFF;                  /* secondarySystemGroupedBackground */
+  --fill:        rgba(118,118,128,0.12);   /* tertiarySystemFill */
+  --fill-press:  rgba(118,118,128,0.20);
+  --label:       #1D1D1F;
+  --label-2:     rgba(60,60,67,0.60);      /* secondaryLabel */
+  --label-3:     rgba(60,60,67,0.35);      /* tertiaryLabel */
+  --separator:   rgba(60,60,67,0.14);
+  --accent:      #007AFF;                  /* systemBlue — interactive only */
+  --on-accent:   #FFFFFF;
+  --t1:          #FF3B30;
+  --t1-tint:     rgba(255,59,48,0.12);
+  --t2:          #AF52DE;
+  --t2-tint:     rgba(175,82,222,0.12);
+  --t3:          #5856D6;
+  --t3-tint:     rgba(88,86,214,0.12);
+  --t4:          #34C759;
+  --t4-tint:     rgba(52,199,89,0.16);
+  --hairline:    rgba(60,60,67,0.12);
+  --blur-bg:     rgba(242,242,247,0.82);
+
+  /* shape + rhythm */
+  --radius-card: 14px;
+  --radius-pill: 999px;
+  --gap-card:    12px;
+  --pad-card:    14px 16px 15px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:          #000000;
+    --surface:     #1C1C1E;
+    --fill:        rgba(118,118,128,0.24);
+    --fill-press:  rgba(118,118,128,0.36);
+    --label:       #FFFFFF;
+    --label-2:     rgba(235,235,245,0.60);
+    --label-3:     rgba(235,235,245,0.30);
+    --separator:   rgba(84,84,88,0.55);
+    --accent:      #0A84FF;
+    --on-accent:   #FFFFFF;
+    --t1:          #FF453A;
+    --t1-tint:     rgba(255,69,58,0.20);
+    --t2:          #BF5AF2;
+    --t2-tint:     rgba(191,90,242,0.20);
+    --t3:          #5E5CE6;
+    --t3-tint:     rgba(94,92,230,0.24);
+    --t4:          #30D158;
+    --t4-tint:     rgba(48,209,88,0.22);
+    --hairline:    rgba(84,84,88,0.45);
+    --blur-bg:     rgba(0,0,0,0.72);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:          #000000;
+  --surface:     #1C1C1E;
+  --fill:        rgba(118,118,128,0.24);
+  --fill-press:  rgba(118,118,128,0.36);
+  --label:       #FFFFFF;
+  --label-2:     rgba(235,235,245,0.60);
+  --label-3:     rgba(235,235,245,0.30);
+  --separator:   rgba(84,84,88,0.55);
+  --accent:      #0A84FF;
+  --on-accent:   #FFFFFF;
+  --t1:          #FF453A;
+  --t1-tint:     rgba(255,69,58,0.20);
+  --t2:          #BF5AF2;
+  --t2-tint:     rgba(191,90,242,0.20);
+  --t3:          #5E5CE6;
+  --t3-tint:     rgba(94,92,230,0.24);
+  --t4:          #30D158;
+  --t4-tint:     rgba(48,209,88,0.22);
+  --hairline:    rgba(84,84,88,0.45);
+  --blur-bg:     rgba(0,0,0,0.72);
+}
+
+/* One family throughout — SF on Apple devices via -apple-system. Figures are
+   tabular everywhere digits align, which is what SF is for; a monospace face
+   would be the wrong instrument for a column of prices. */
+:root {
+  --ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+        "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* ----------------------------------------------------------------- base --- */
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--label);
+  font-family: var(--ui);
+  font-size: 17px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 720px; margin: 0 auto;
+  padding: 0 max(16px, env(safe-area-inset-left)) 56px;
+}
+
+/* --------------------------------------------------------------- header ---
+   iOS large title, then a scrolling row of capsule filters. */
+.top {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--blur-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--hairline);
+  padding-top: env(safe-area-inset-top);
+}
+.top-inner {
+  max-width: 720px; margin: 0 auto;
+  padding: 10px max(16px, env(safe-area-inset-left)) 0;
+}
+.titlebar { display: flex; align-items: center; gap: 12px; }
+.titlebar h1 {
+  font-size: 30px; font-weight: 700; letter-spacing: -0.022em;
+  margin: 0; flex: 1; text-wrap: balance;
+}
+.sub {
+  margin: 1px 0 0; font-size: 13px; color: var(--label-2);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.004em;
+}
+
+.themer {
+  appearance: none; border: 0; background: var(--fill);
+  color: var(--accent); border-radius: 50%;
+  width: 34px; height: 34px; flex: none;
+  font-size: 15px; line-height: 1; cursor: pointer;
+  display: grid; place-items: center;
+}
+.themer:active { background: var(--fill-press); }
+.themer:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.tabs {
+  display: flex; gap: 8px; list-style: none;
+  overflow-x: auto; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  margin: 12px -16px 0; padding: 0 16px 12px;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  appearance: none; cursor: pointer; border: 0;
+  font-family: var(--ui); font-size: 14px; font-weight: 500;
+  letter-spacing: -0.01em; white-space: nowrap;
+  color: var(--label); background: var(--fill);
+  border-radius: var(--radius-pill); padding: 7px 14px; min-height: 34px;
+}
+.tab:active { background: var(--fill-press); }
+.tab:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.tab .n {
+  font-variant-numeric: tabular-nums; color: var(--label-2);
+  margin-inline-start: 6px;
+}
+.tab[aria-selected="true"] {
+  background: var(--accent); color: var(--on-accent); font-weight: 600;
+}
+.tab[aria-selected="true"] .n { color: var(--on-accent); opacity: .7; }
+
+/* ---------------------------------------------------------------- cards ---
+   Inset grouped-list panels: rounded, filled, hairline-free, no shadow. */
+.list { display: flex; flex-direction: column; gap: var(--gap-card); padding-top: 16px; }
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: var(--pad-card);
+}
+.tier-t1 { --tier: var(--t1); --tier-tint: var(--t1-tint); }
+.tier-t2 { --tier: var(--t2); --tier-tint: var(--t2-tint); }
+.tier-t3 { --tier: var(--t3); --tier-tint: var(--t3-tint); }
+.tier-t4 { --tier: var(--t4); --tier-tint: var(--t4-tint); }
+.card[hidden] { display: none; }
+
+.card-head { display: flex; align-items: flex-start; gap: 12px; }
+.card-id { min-width: 0; flex: 1; }
+.card-id h2 {
+  font-size: 19px; font-weight: 600; letter-spacing: -0.018em;
+  margin: 0; line-height: 1.2;
+}
+.cities {
+  margin: 2px 0 0; font-size: 14px; color: var(--label-2);
+  letter-spacing: -0.006em; overflow-wrap: anywhere;
+}
+.codes { color: var(--label-3); font-variant-numeric: tabular-nums; }
+
+.card-price { text-align: end; flex: none; }
+.price {
+  display: block; font-size: 24px; font-weight: 600;
+  letter-spacing: -0.022em; line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.spread {
+  font-size: 12px; color: var(--label-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.dates {
+  margin: 10px 0 0; font-size: 14px; color: var(--label-2);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.006em;
+}
+.dates .dot { color: var(--label-3); margin: 0 6px; }
+
+.card-foot { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.badge {
+  font-size: 12px; font-weight: 600; letter-spacing: -0.005em;
+  color: var(--tier); background: var(--tier-tint);
+  border-radius: var(--radius-pill); padding: 3px 9px;
+}
+.origin-note {
+  font-size: 13px; color: var(--label-2);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- chips ---
+   Links to that exact origin's itinerary on Google Flights. The blue price is
+   the affordance — in this language, blue means tappable. An even grid rather
+   than a ragged wrap, so prices line up in a column. */
+.chips {
+  list-style: none; margin: 12px 0 0; padding: 12px 0 0;
+  border-top: 0.5px solid var(--separator);
+  display: grid; gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+}
+.chips li { display: flex; }
+.chip {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; width: 100%;
+  min-height: 36px; padding: 6px 12px;
+  background: var(--fill); border-radius: var(--radius-pill);
+  font-size: 14px; letter-spacing: -0.008em;
+  font-variant-numeric: tabular-nums;
+  color: var(--label-2); text-decoration: none;
+  transition: background-color .15s ease;
+}
+.chip:active { background: var(--fill-press); }
+.chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.chip-route { color: var(--label); }
+.chip-price { color: var(--accent); font-weight: 600; }
+.chip.is-best { background: var(--tier-tint); }
+.chip.is-best .chip-route { color: var(--label); font-weight: 500; }
+
+/* Long origin lists collapse. Rendered expanded and collapsed by script on load,
+   so with no JS you still get every option rather than a dead "Show all". */
+.chips.collapsed li:nth-child(n+7) { display: none; }
+.more {
+  appearance: none; border: 0; background: none; cursor: pointer;
+  font-family: var(--ui); font-size: 14px; font-weight: 500;
+  letter-spacing: -0.008em; color: var(--accent);
+  padding: 9px 0 2px; min-height: 34px;
+}
+.more[hidden] { display: none; }
+.more:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ------------------------------------------------------- empty + footer --- */
+.empty {
+  font-size: 15px; color: var(--label-2);
+  padding: 48px 0; text-align: center;
+}
+.empty[hidden] { display: none; }
+
+.foot {
+  margin-top: 28px; font-size: 12px; color: var(--label-3);
+  line-height: 1.6; letter-spacing: -0.003em;
+}
+.foot p { margin: 0 0 6px; }
+.foot b { color: var(--label-2); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* ----------------------------------------------------------- responsive --- */
+@media (min-width: 600px) {
+  .titlebar h1 { font-size: 34px; }
+  .card { padding: 16px 18px 17px; }
+  .card-id h2 { font-size: 20px; }
+  .price { font-size: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip { transition: none; }
+  * { scroll-behavior: auto !important; }
+}

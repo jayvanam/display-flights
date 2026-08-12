@@ -1,17 +1,18 @@
 """Vendored destination / region / airport tables. GENERATED — do not edit.
 
-Regenerate with:  ./sync_catalog.py    (source: flights@b3e18e4)
+Regenerate with:  ./sync_catalog.py    (source: flights@7109026)
 
 Hand edits are overwritten and will fail tests/test_catalog.py. To change how
 a destination is filed, edit _LONGHAUL_REGIONS in sync_catalog.py and re-run.
 """
 
-GENERATED_FROM = "flights@b3e18e4"
+GENERATED_FROM = "flights@7109026"
 
 # Tab order on the page. Leading four are the high-volume regions.
 REGIONS = (
     ("domestic", "Domestic"),
     ("caribbean", "Caribbean & Mexico"),
+    ("canada", "Canada"),
     ("europe", "Europe"),
     ("asia", "Asia"),
     ("mideast", "Middle East"),
@@ -76,6 +77,10 @@ DESTINATIONS = (
     ("Puerto Vallarta", "caribbean", ("PVR",)),
     ("Los Cabos", "caribbean", ("SJD",)),
     ("Cozumel", "caribbean", ("CZM",)),
+    ("Toronto", "canada", ("YYZ", "YTZ")),
+    ("Montreal", "canada", ("YUL",)),
+    ("Vancouver", "canada", ("YVR",)),
+    ("Banff", "canada", ("YYC",)),
     ("Paris", "europe", ("CDG", "ORY")),
     ("Nice", "europe", ("NCE",)),
     ("London", "europe", ("LHR", "LGW", "STN")),
@@ -115,7 +120,9 @@ DESTINATIONS = (
     ("Peru", "southamerica", ("CUZ", "LIM")),
     ("Galapagos", "southamerica", ("GPS", "UIO")),
     ("Chile", "southamerica", ("SCL",)),
-    ("Colombia", "caribbean", ("BOG", "CTG", "MDE")),
+    ("Colombia", "southamerica", ("BOG", "CTG", "MDE")),
+    ("Bolivia", "southamerica", ("VVI", "LPB")),
+    ("Uruguay", "southamerica", ("MVD",)),
     ("Australia", "oceania", ("SYD", "MEL", "BNE")),
     ("Fiji", "oceania", ("NAN",)),
     ("Tahiti", "oceania", ("PPT",)),
@@ -225,6 +232,7 @@ AIRPORTS = {
     "LIN": "Milan, Italy",
     "LIR": "Liberia, Costa Rica",
     "LIS": "Lisbon, Portugal",
+    "LPB": "La Paz, Bolivia",
     "MAD": "Madrid, Spain",
     "MBJ": "Montego Bay, Jamaica",
     "MCO": "Orlando, FL",
@@ -238,6 +246,7 @@ AIRPORTS = {
     "MSP": "Minneapolis, MN",
     "MSY": "New Orleans, LA",
     "MUC": "Munich, Germany",
+    "MVD": "Montevideo, Uruguay",
     "MXP": "Milan, Italy",
     "NAN": "Nadi, Fiji",
     "NAS": "Nassau, Bahamas",
@@ -302,7 +311,13 @@ AIRPORTS = {
     "VCE": "Venice, Italy",
     "VIE": "Vienna, Austria",
     "VLC": "Valencia, Spain",
+    "VVI": "Santa Cruz, Bolivia",
     "WLG": "Wellington, New Zealand",
+    "YTZ": "Toronto, Canada",
+    "YUL": "Montreal, Canada",
+    "YVR": "Vancouver, Canada",
+    "YYC": "Calgary, Canada",
+    "YYZ": "Toronto, Canada",
     "ZAG": "Zagreb, Croatia",
     "ZNZ": "Zanzibar, Tanzania",
     "ZRH": "Zurich, Switzerland",
