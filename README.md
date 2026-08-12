@@ -118,16 +118,20 @@ pytest tests/ -q
 The database is only ever opened read-only (`mode=ro`). `.gitignore` blocks `*.db`
 and `.env` — this repo is public and the scraper's is not.
 
-## Supabase mirror
+## Supabase: the live deal feed
 
-`sync_supabase.py` copies new `deal_alerts` rows into the `fare_alerts` table, which
-is both the off-host backup of every alert and what the page's **Just in** section
-reads so a fare found mid-sweep shows up without waiting for a rebuild.
+`sync_supabase.py` pushes newly alerted deals into the `fare_alerts` table, which the
+page's **Just in** section reads so a fare found mid-sweep appears without waiting for
+the next static rebuild. Scope is exactly that: **deals that actually alerted**.
 
-`fare_history` is deliberately **not** mirrored: ~8.85M rows / ~2.4 GB does not fit
-Supabase's free tier (500 MB), would not fit Pro (8 GB) comfortably, and cannot move
-through a REST API in one write. Use the scraper's `.db.gz` snapshots and
-`BACKUP_RSYNC_DEST` for the bulk history; `deal_alerts` is the small irreplaceable part.
+This is *not* a backup. `fare_history` is never touched — it isn't a target here, and
+couldn't be anyway (~8.85M rows / ~2.4 GB against a 500 MB free tier).
+
+⚠️ **Alerts sent before 2026-08-11 are not comparable to later ones.** They were
+scored against the page-pooled baseline that the deal-logic overhaul fixed, which
+inflated every percentile — one day in June fired 1,965 alerts with fares up to
+$2,732. Backfill with `--since 2026-08-12` so every row in the feed reflects the
+current gate.
 
 Two keys, and the distinction matters:
 
@@ -149,8 +153,20 @@ SUPABASE_SECRET_KEY=sb_secret_...
 EOF
 chmod 600 .env
 
-./sync_supabase.py --dry-run                # reads only, prints the first row
-./sync_supabase.py --max-batches 4           # cap the first backfill
+./sync_supabase.py --dry-run                    # reads only, prints the first row
+./sync_supabase.py --since 2026-08-12           # backfill the comparable era
+./sync_supabase.py --max-batches 4              # cap a large first run
+```
+
+Cron — the two run on **separate clocks** on purpose. The sync is cheap (one GET, plus
+a POST only when there is something new, no git operation), so it runs often; the
+publish makes a git commit, so it runs less often. The "Just in" fetch goes straight
+to Supabase and bypasses the Pages CDN, so sync frequency — not publish frequency —
+is what sets how fresh the page feels.
+
+```
+*/5  * * * *  /home/jay/Documents/display-flights/sync_supabase.py
+*/20 * * * *  /home/jay/Documents/display-flights/publish.sh
 ```
 
 `SUPABASE_SERVICE_KEY` still works as an alias for a legacy `service_role` JWT.

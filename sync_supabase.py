@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
-"""Mirror new rows from the Pi's `deal_alerts` into Supabase `fare_alerts`.
+"""Push newly alerted deals from the Pi's `deal_alerts` into Supabase `fare_alerts`.
 
-This is the off-host backup of every alert the scraper has ever sent, and the query
-surface the web page uses for history beyond the baked-in 24h snapshot.
+This is the live feed behind the page's "Just in" section: alerts reach the phone
+within one sync interval instead of waiting for the next static rebuild.
 
-WHAT IT DOES NOT DO: mirror `fare_history`. That table is ~8.85M rows / ~2.4 GB and
-grows until retention binds, which does not fit Supabase's free tier (500 MB) and
-would not fit comfortably on Pro (8 GB) either, let alone move through a REST API in
-"one big write". `deal_alerts` is the small, irreplaceable part — the alerts you
-acted on — and that is what ships here. For the bulk observational history, use the
-scraper's own compact `.db.gz` snapshots plus `BACKUP_RSYNC_DEST` in maintenance.py.
+SCOPE: alerted deals only. `fare_history` is deliberately never touched — it is not a
+backup target here and this is not a disaster-recovery tool. (For the record, it also
+could not be: ~8.85M rows / ~2.4 GB against a 500 MB free tier, and no REST API moves
+that in one write.)
 
 REQUEST BUDGET, since that was the point: one GET for the high-water mark, one POST
 per 500 new rows, one POST to log the run. A quiet 15-minute cycle is 2 requests.
@@ -182,18 +180,31 @@ def high_water(url: str, key: str) -> int:
     return int(rows[0]["source_id"]) if rows else 0
 
 
-def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None):
-    """Local deal_alerts rows above `since_id`, enriched for the mirror."""
+def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None,
+                    since_date: str | None = None):
+    """Local deal_alerts rows above `since_id`, enriched for the feed.
+
+    `since_date` (YYYY-MM-DD) additionally skips older alerts. Worth using for the
+    initial backfill: alerts sent before the 2026-08-11 deal-logic overhaul were
+    scored against the page-pooled baseline that inflated every percentile, so a
+    June row labelled "Exceptional" does not mean what an August one does. Syncing
+    from the overhaul forward keeps every row in the feed comparable.
+    """
     con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     try:
         sql = ("SELECT id, origin, destination, outbound_date, return_date, price,"
                "       deal_score, booking_url, sent_at"
-               "  FROM deal_alerts WHERE id > ? ORDER BY id")
-        params: tuple = (since_id,)
+               "  FROM deal_alerts WHERE id > ?")
+        params: list = [since_id]
+        if since_date:
+            # sent_at is an ISO string, so a lexical compare is a date compare.
+            sql += " AND sent_at >= ?"
+            params.append(since_date)
+        sql += " ORDER BY id"
         if limit:
             sql += " LIMIT ?"
-            params = (since_id, limit)
-        rows = con.execute(sql, params).fetchall()
+            params.append(limit)
+        rows = con.execute(sql, tuple(params)).fetchall()
     finally:
         con.close()
 
@@ -242,6 +253,10 @@ def main() -> None:
     ap.add_argument("--max-batches", type=int, default=0,
                     help="cap batches per run (0 = no cap). Useful for the first "
                          "backfill, which may hold every alert ever sent.")
+    ap.add_argument("--since", metavar="YYYY-MM-DD", default=None,
+                    help="skip alerts sent before this date. Use for the initial "
+                         "backfill: pre-2026-08-11 alerts were scored on the old "
+                         "inflated baseline and are not comparable to current ones.")
     args = ap.parse_args()
 
     if not args.db.exists():
@@ -250,7 +265,7 @@ def main() -> None:
     url, key = load_env()
     water = high_water(url, key)
     limit = args.max_batches * BATCH if args.max_batches else None
-    rows = read_new_alerts(args.db, water, limit)
+    rows = read_new_alerts(args.db, water, limit, args.since)
 
     if not rows:
         print(f"nothing new (high-water source_id={water})")

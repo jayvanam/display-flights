@@ -35,6 +35,24 @@ def test_limit_caps_the_first_backfill(sample_db):
     assert len(capped) == 10
 
 
+def test_since_date_skips_the_pre_overhaul_era(sample_db):
+    """Alerts before 2026-08-11 were scored on the inflated baseline, so the initial
+    backfill needs to be able to start at the overhaul."""
+    all_rows = sync_supabase.read_new_alerts(sample_db, since_id=0)
+    # The whole fixture is 2026-08-12, so a cutoff before it keeps everything...
+    assert len(sync_supabase.read_new_alerts(
+        sample_db, since_id=0, since_date="2026-08-01")) == len(all_rows)
+    # ...and one after it keeps nothing.
+    assert sync_supabase.read_new_alerts(
+        sample_db, since_id=0, since_date="2026-08-13") == []
+
+
+def test_since_date_and_limit_compose(sample_db):
+    rows = sync_supabase.read_new_alerts(
+        sample_db, since_id=0, since_date="2026-08-01", limit=5)
+    assert len(rows) == 5
+
+
 def test_derived_fields_match_what_the_page_renders(sample_db):
     rows = sync_supabase.read_new_alerts(sample_db, since_id=0)
     by_code = {r["destination"]: r for r in rows}
