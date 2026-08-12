@@ -198,8 +198,17 @@ def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None,
     """
     con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     try:
+        # deal_alerts.airline arrived 2026-08-12, and the two repos deploy
+        # independently: this sync runs every 5 minutes, so a bare `SELECT airline`
+        # against a not-yet-migrated fares.db would break every run until the
+        # flights deploy lands. Degrade to NULL airlines instead of failing.
+        has_airline = any(
+            row[1] == "airline"
+            for row in con.execute("PRAGMA table_info(deal_alerts)")
+        )
+        airline_col = "airline" if has_airline else "NULL AS airline"
         sql = ("SELECT id, origin, destination, outbound_date, return_date, price,"
-               "       deal_score, booking_url, sent_at"
+               f"       deal_score, booking_url, sent_at, {airline_col}"
                "  FROM deal_alerts WHERE id > ?")
         params: list = [since_id]
         if since_date:
@@ -215,7 +224,8 @@ def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None,
         con.close()
 
     out = []
-    for (rid, origin, code, outbound, ret, price, score, booking, sent_at) in rows:
+    for (rid, origin, code, outbound, ret, price, score,
+         booking, sent_at, airline) in rows:
         # sent_at is a naive UTC ISO string (db._utcnow_iso). Postgres timestamptz
         # would read a naive value in the server's zone, so make the UTC explicit.
         stamp = sent_at if (sent_at.endswith("Z") or "+" in sent_at[10:]) else sent_at + "Z"
@@ -229,9 +239,16 @@ def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None,
             "deal_score": int(score),
             "booking_url": booking or None,
             "sent_at": stamp,
+            # Normalize "" to NULL so the page has one empty case to handle, not two.
+            "airline": airline or None,
             # Derived with the same helpers the page uses, so the mirror cannot
             # disagree with the rendered snapshot.
             "destination_name": generate.dest_name(code),
+            # city_name is per-AIRPORT-CODE and distinct from destination_name: all
+            # three Morocco codes are "Morocco", but the card subtitle must read
+            # "Marrakesh · Casablanca". Derived here so catalog.py stays the single
+            # source rather than shipping ~190 airport entries to the browser.
+            "city_name": generate.city(code),
             "region": generate.region_of(code),
             "tier": generate.tier_for_quality(int(score))[0],
         })

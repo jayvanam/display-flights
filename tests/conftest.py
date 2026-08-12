@@ -32,9 +32,28 @@ CREATE TABLE deal_alerts (
     price INTEGER NOT NULL,
     deal_score INTEGER NOT NULL,
     booking_url TEXT,
-    sent_at TEXT NOT NULL
+    sent_at TEXT NOT NULL,
+    airline TEXT
 );
 """
+
+# The schema as it stood BEFORE flights added deal_alerts.airline (2026-08-12). The two
+# repos deploy independently and this sync runs every 5 minutes, so it has to keep
+# working against a fares.db that has not been migrated yet.
+SCHEMA_PRE_AIRLINE = SCHEMA.replace(",\n    airline TEXT", "")
+
+
+# Exposed as fixtures rather than imported: `from tests.conftest import ...` resolves to
+# whichever `tests` package is first on sys.path, and the flights repo has one too — so
+# the absolute import silently picked up the wrong conftest.
+@pytest.fixture()
+def schema_sql():
+    return SCHEMA
+
+
+@pytest.fixture()
+def schema_pre_airline_sql():
+    return SCHEMA_PRE_AIRLINE
 
 
 def parse_sample():

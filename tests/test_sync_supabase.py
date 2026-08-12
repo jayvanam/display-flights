@@ -101,6 +101,69 @@ def test_already_offset_timestamps_are_not_double_suffixed(tmp_path):
     assert not any(s.endswith("ZZ") for s in stamps)
 
 
+def test_airline_is_carried_through_and_empty_becomes_null(tmp_path, schema_sql):
+    """Empty string and NULL must collapse to one empty case, so the page has a single
+    "no airline" branch rather than rendering a blank label for "" and a dash for None."""
+    path = tmp_path / "airlines.db"
+    con = sqlite3.connect(path)
+    con.executescript(schema_sql)
+    con.executemany(
+        "INSERT INTO deal_alerts (origin,destination,outbound_date,return_date,"
+        "price,deal_score,sent_at,airline) VALUES (?,?,?,?,?,?,?,?)",
+        [("ORD", "KEF", "2026-11-10", "2026-11-20", 400, 95, "2026-08-12T11:20:00", "Icelandair"),
+         ("BOS", "KEF", "2026-11-10", "2026-11-20", 420, 95, "2026-08-12T11:20:00", ""),
+         ("JFK", "KEF", "2026-11-10", "2026-11-20", 430, 95, "2026-08-12T11:20:00", None),
+         # Multi-carrier itineraries arrive comma-joined and must not be split or trimmed.
+         ("MIA", "KEF", "2026-11-10", "2026-11-20", 440, 95, "2026-08-12T11:20:00",
+          "JetBlue, Icelandair")],
+    )
+    con.commit()
+    con.close()
+
+    got = {r["origin"]: r["airline"] for r in sync_supabase.read_new_alerts(path, since_id=0)}
+    assert got == {"ORD": "Icelandair", "BOS": None, "JFK": None,
+                   "MIA": "JetBlue, Icelandair"}
+
+
+def test_missing_airline_column_degrades_instead_of_breaking_the_sync(
+        tmp_path, schema_pre_airline_sql):
+    """The ordering hazard: this sync runs every 5 minutes and flights deploys
+    separately, so an un-migrated fares.db must yield NULL airlines rather than
+    "no such column: airline" on every cron tick until the other repo ships."""
+    path = tmp_path / "legacy.db"
+    con = sqlite3.connect(path)
+    con.executescript(schema_pre_airline_sql)
+    con.execute(
+        "INSERT INTO deal_alerts (origin,destination,outbound_date,return_date,"
+        "price,deal_score,sent_at) VALUES ('ORD','KEF','2026-11-10','2026-11-20',400,95,"
+        "'2026-08-12T11:20:00')")
+    con.commit()
+    con.close()
+
+    rows = sync_supabase.read_new_alerts(path, since_id=0)
+    assert len(rows) == 1
+    assert rows[0]["airline"] is None
+    assert rows[0]["city_name"] == "Reykjavik", "every other field must still populate"
+
+
+def test_city_name_is_per_airport_not_per_market(sample_db):
+    """The card subtitle needs the CITY for a code. destination_name cannot serve:
+    RAK/CMN/FEZ all carry "Morocco", but the subtitle reads "Marrakesh · Casablanca"."""
+    rows = sync_supabase.read_new_alerts(sample_db, since_id=0)
+    by_code = {r["destination"]: r for r in rows}
+
+    assert by_code["RAK"]["city_name"] == generate.city("RAK") == "Marrakesh"
+    assert by_code["RAK"]["destination_name"] == "Morocco"
+
+    # Same market, different city — this is the distinction the column exists for.
+    if "CMN" in by_code:
+        assert by_code["CMN"]["city_name"] != by_code["RAK"]["city_name"]
+        assert by_code["CMN"]["destination_name"] == by_code["RAK"]["destination_name"]
+
+    for row in rows:
+        assert row["city_name"] == generate.city(row["destination"])
+
+
 def test_null_booking_url_becomes_json_null_not_empty_string(sample_db):
     # The sample has no booking_url. Empty string would be stored as a real value and
     # then treated as a usable link by any consumer.
