@@ -140,8 +140,11 @@ def test_page_is_self_contained_and_themed(sample_db):
     # explicit light choice wins) and the [data-theme] stamp the toggle sets.
     assert ':root:not([data-theme="light"])' in page
     assert ':root[data-theme="dark"]' in page
-    # The body ground must come from a token; a transparent body borrows the host's.
-    assert "background: var(--paper)" in page
+    # The body ground must come from a token, whatever it is named — a transparent
+    # body silently borrows the host's theme.
+    body_rule = re.search(r"\nbody \{(.*?)\}", page, re.S)
+    assert body_rule, "no body rule"
+    assert re.search(r"background:\s*var\(--", body_rule.group(1))
 
 
 def test_every_card_carries_a_region_and_a_tier(sample_db):
@@ -206,7 +209,7 @@ def test_single_origin_card_has_no_chip_list_but_stays_tappable():
     ])
     card = generate.render_card(sales[0])
     assert "<ul class=\"chips\">" not in card
-    assert 'class="origin-note mono solo"' in card
+    assert 'class="origin-note solo"' in card
     assert "href=" in card
 
 

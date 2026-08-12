@@ -34,7 +34,17 @@ its own price, cheapest first and highlighted. Those 27 Morocco alerts become 5
 cards. Tapping any chip opens that origin's itinerary on Google Flights.
 
 Cards are ordered by alert tier, then price, so the strongest deals lead. The region
-strip filters; both the region and the light/dark choice persist locally.
+strip filters; both the region and the light/dark choice persist locally. A sale with
+more than six origins shows six and a **Show all** toggle — the markup ships expanded
+and is collapsed by script on load, so with JS off you get every option rather than a
+button that does nothing.
+
+The look is Apple's: SF via `-apple-system` with tabular figures throughout, iOS
+grouped-list cards on `systemGroupedBackground`, capsule filters, and the iOS system
+palette in both themes. Tier colours keep the scraper's own ordering so a card agrees
+with the Discord alert that produced it (Exceptional red, Excellent purple, Great
+indigo, Good green) — Great is systemIndigo rather than systemBlue on purpose, since
+blue is reserved for things you can tap.
 
 ## Layout
 
