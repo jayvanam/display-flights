@@ -79,13 +79,25 @@ def load_env() -> tuple[str, str]:
     """Read Supabase credentials from the environment, falling back to a local
     untracked .env. Fails loudly rather than silently syncing nowhere."""
     env_file = HERE / ".env"
+    found: list[str] = []
     if env_file.exists():
-        for line in env_file.read_text().splitlines():
-            line = line.strip()
+        for raw in env_file.read_text().splitlines():
+            line = raw.strip().lstrip("﻿")       # tolerate a UTF-8 BOM
             if not line or line.startswith("#") or "=" not in line:
                 continue
+            # `export FOO=bar` is how most people write an env file by hand; without
+            # this the name parses as "export FOO" and the value is silently lost.
+            if line.startswith("export "):
+                line = line[len("export "):].lstrip()
             name, _, value = line.partition("=")
-            os.environ.setdefault(name.strip(), value.strip().strip("'\""))
+            name, value = name.strip(), value.strip()
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+                value = value[1:-1]                   # matched surrounding quotes
+            elif " #" in value:
+                value = value.split(" #", 1)[0].rstrip()   # trailing comment
+            if name:
+                found.append(name)
+                os.environ.setdefault(name, value)
 
     url = os.environ.get("SUPABASE_URL", "").rstrip("/")
     # SUPABASE_SECRET_KEY is the current name (matching Supabase's own
@@ -96,9 +108,22 @@ def load_env() -> tuple[str, str]:
            or "")
 
     if not url or not key:
+        # Report the NAMES this build actually parsed (never the values). If the
+        # file defines exactly what the error asks for, the checkout is stale — which
+        # is otherwise a genuinely baffling five minutes.
+        if found:
+            seen = "read from .env: " + ", ".join(sorted(set(found)))
+        elif env_file.exists():
+            seen = f"{env_file} exists but no NAME=VALUE lines parsed from it"
+        else:
+            seen = f"no {env_file}"
         sys.exit(
-            "error: SUPABASE_URL and SUPABASE_SECRET_KEY must be set (env or "
-            f"{env_file}).\n\n"
+            "error: SUPABASE_URL and SUPABASE_SECRET_KEY must be set.\n\n"
+            f"  {seen}\n"
+            f"  this build reads: SUPABASE_URL, SUPABASE_SECRET_KEY"
+            " (or SUPABASE_SERVICE_KEY)\n\n"
+            "If the names above already look right, this checkout is older than the\n"
+            "rename — run `git pull` and try again.\n\n"
             "  SUPABASE_URL=https://<ref>.supabase.co\n"
             "  SUPABASE_SECRET_KEY=sb_secret_...   # Settings > API Keys\n\n"
             "A secret key is required. The publishable key is read-only by design —\n"

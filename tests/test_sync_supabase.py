@@ -7,6 +7,7 @@ the derived fields agree with what the page renders.
 
 from __future__ import annotations
 
+import os
 import sqlite3
 
 import generate
@@ -144,6 +145,43 @@ def test_secret_key_env_name_is_preferred_and_service_still_works(monkeypatch, t
     monkeypatch.delenv("SUPABASE_SECRET_KEY")
     _, key = sync_supabase.load_env()
     assert key == "sb_secret_old", "SERVICE_KEY stays a working alias"
+
+
+def test_env_file_parsing_tolerates_how_people_actually_write_them(monkeypatch, tmp_path):
+    (tmp_path / ".env").write_text(
+        "﻿# leading BOM and a comment\n"
+        "\n"
+        "export SUPABASE_URL=https://example.supabase.co\n"
+        '  SUPABASE_SECRET_KEY = "sb_secret_quoted"  \n'
+        "IGNORED_NO_EQUALS\n"
+        "OTHER=value # trailing comment\n"
+    )
+    monkeypatch.setattr(sync_supabase, "HERE", tmp_path)
+    for name in ("SUPABASE_URL", "SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_KEY", "OTHER"):
+        monkeypatch.delenv(name, raising=False)
+
+    url, key = sync_supabase.load_env()
+    assert url == "https://example.supabase.co", "`export ` prefix must be stripped"
+    assert key == "sb_secret_quoted", "quotes and padding must be stripped"
+    assert os.environ["OTHER"] == "value", "trailing comment must not join the value"
+
+
+def test_stale_checkout_error_names_what_it_read(monkeypatch, tmp_path, capsys):
+    """The failure that actually happened: .env defined SECRET_KEY while the running
+    code only read SERVICE_KEY. The message must show the mismatch."""
+    (tmp_path / ".env").write_text("SUPABASE_URL=https://x.supabase.co\n")
+    monkeypatch.setattr(sync_supabase, "HERE", tmp_path)
+    for name in ("SUPABASE_URL", "SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_KEY"):
+        monkeypatch.delenv(name, raising=False)
+
+    import pytest
+    with pytest.raises(SystemExit) as exc:
+        sync_supabase.load_env()
+    msg = str(exc.value)
+    assert "read from .env: SUPABASE_URL" in msg
+    assert "git pull" in msg
+    # Never echo a value, even a partial one.
+    assert "x.supabase.co" not in msg.split("SUPABASE_URL=https://<ref>")[0]
 
 
 def test_publishable_key_in_the_env_exits_rather_than_401ing(monkeypatch, tmp_path):
