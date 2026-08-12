@@ -14,10 +14,25 @@ phone, nothing to keep running — and the page still works when the Pi is off, 
 just shows the last snapshot. The 6-hourly sweep is the only thing that changes the
 data, so there is nothing to gain from live queries.
 
-Everything is inline. The host CSP blocks external subresources, and a linked
-webfont that silently falls back looks worse than none, so the type is a system
-stack and there are zero external requests (the only outbound links are the
-per-origin Google Flights links you tap).
+Everything is inline — CSS, script, icons. GitHub Pages does not forbid external
+subresources, so this is a choice rather than a constraint: one file loads instantly
+on a phone, works from cache when offline, and can't break because a CDN did. The
+type is a system stack for the same reason (a webfont that silently falls back is
+worse than one that never does). The only outbound links are the per-origin Google
+Flights links you tap.
+
+### How fresh it is
+
+`publish.sh` runs on its **own** cron every 15 minutes, decoupled from the scraper.
+It is not "once at the end of a run": the runner writes alerts continuously
+(`db.record_alert` per route) and a sweep routinely spans more than one 6h slot, so
+there is no single end-of-run moment to hook. The script exits without committing
+when nothing changed, so frequent runs are nearly free and produce no commit noise.
+
+Two floors make anything finer pointless: GitHub Pages serves `cache-control:
+max-age=600`, so 10 minutes of CDN caching is the limit on perceived freshness; and
+the data is coarser still, since a route is rescraped every 6h at best and revisited
+every 1–3 days. This design detects sustained sales, not error fares.
 
 ## One card per sale, not per alert
 

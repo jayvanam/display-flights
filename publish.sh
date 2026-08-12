@@ -6,9 +6,19 @@
 # VPN, and the page keeps serving the last snapshot even when the Pi is down.
 #
 #   crontab -e
-#   20 */6 * * * /home/jay/Documents/display-flights/publish.sh >> /home/jay/Documents/display-flights/publish.log 2>&1
+#   */15 * * * * /home/jay/Documents/display-flights/publish.sh >> /home/jay/Documents/display-flights/publish.log 2>&1
 #
-# The :20 offset gives the 0 */6 sweep time to write its alerts first.
+# Every 15 minutes, NOT once per sweep. This is deliberate and cheap: the render
+# takes ~100ms and the script exits without committing when index.html is
+# unchanged, so a quiet quarter-hour costs nothing and produces no commit. It is
+# also decoupled from runner.py on purpose — the runner writes alerts continuously
+# (db.record_alert per route) and a sweep routinely spans more than one 6h cron
+# slot, so there is no single "end of run" moment to hook.
+#
+# Do not bother going below ~15 min: GitHub Pages serves with cache-control
+# max-age=600, so 10 minutes of CDN caching is the floor on perceived freshness
+# regardless of how often this runs. And the data itself is coarser still — a
+# route is rescraped every 6h at best and revisited every 1-3 days.
 #
 # Requires push access to this repo from the Pi. Either an SSH remote with a
 # deploy key, or a PAT in the https remote — check with `git -C <repo> push`.

@@ -3,8 +3,11 @@
    ==========================================================================
 
    Inlined into a <style> block at build time by generate.py, so the published
-   page stays one self-contained file with zero external requests (the host CSP
-   blocks them, and a webfont that silently falls back looks worse than none).
+   page stays one self-contained file with zero external requests. GitHub Pages
+   does NOT forbid external subresources — this is a choice, not a constraint: one
+   file loads instantly on a phone, works from cache offline, and cannot break
+   because some CDN did. A webfont that silently falls back is also worse than a
+   system stack that never does.
    Edit this file, run `dev/preview.py`, reload. No Python involved.
 
    HOW THEMING WORKS — three states, not two.
