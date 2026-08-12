@@ -19,39 +19,49 @@ $css
     <div class="titlebar">
       <div>
         <h1>Fares</h1>
-        <p class="sub">$sale_count sales from $alert_count alerts &middot; last $hours h</p>
+        <!-- Rewritten by the live render; the baked values describe the fallback. -->
+        <p class="sub" id="sub">$sale_count sales from $alert_count alerts &middot; last $hours h</p>
       </div>
       <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9788;</button>
     </div>
-    <div class="tabs" role="tablist" aria-label="Region">
+    <!-- A tab bar, not a filter row: the selected region is marked by an underline
+         against the strip's baseline hairline, and no tab carries a background. The
+         sort control shares the row and is styled as plain text for the same reason —
+         a segmented pill here would put the button language straight back. -->
+    <div class="tab-bar">
+      <div class="tabs" role="tablist" aria-label="Region">
 $tabs
+      </div>
+      <div class="sort" role="group" aria-label="Sort order">
+        <button class="sort-opt" type="button" id="sort-best"
+                data-sort="best" aria-pressed="true">Best</button>
+        <button class="sort-opt" type="button" id="sort-new"
+                data-sort="latest" aria-pressed="false">Latest</button>
+      </div>
     </div>
   </div>
 </header>
 
 <main class="wrap">
-  <!-- Just in: alerts the scraper found AFTER this page was built, read live from
-       Supabase on load. The Pi writes each one the moment it fires, so a fare found
-       an hour into a five-hour sweep shows up here immediately instead of waiting
-       for the next rebuild. Stays empty and silent when there is nothing newer,
-       when Supabase is unreachable, or when JS is off — the grouped snapshot below
-       is always the floor, never replaced. -->
-  <section id="justin" hidden aria-label="Found since this page was built">
-    <div class="justin-head">
-      <span class="live-dot" aria-hidden="true"></span>
-      <h2 id="justin-title">Just in</h2>
-      <span class="justin-note" id="justin-note"></span>
-    </div>
-    <ol class="rows" id="justin-rows"></ol>
-  </section>
+  <!-- The cards below are the FALLBACK, baked in by publish.sh from the scraper's own
+       database. On load, script replaces them wholesale with a live read of the last
+       24h from Supabase, so a fare found mid-sweep appears within one sync interval
+       (~5 min) instead of waiting for the next rebuild.
 
+       The separate "Just in" strip that used to live here is gone: it existed only
+       because this list was static, and now that the list itself is live the two
+       would show every new alert twice.
+
+       If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
+       stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
 $cards
   </div>
   <p class="empty" hidden id="empty">Nothing here in the last $hours hours.</p>
 
   <footer class="foot">
-    <p>Newest alert <b>$newest</b> &middot; built <b>$generated</b></p>
+    <p>Newest alert <b id="newest">$newest</b> &middot; <span id="built">built
+      <b>$generated</b></span></p>
     <p>One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
@@ -83,28 +93,51 @@ $cards
     try { localStorage.setItem("fares-theme", next); } catch (e) {}
   });
 
-  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
-  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  var listEl = document.getElementById("list");
   var empty = document.getElementById("empty");
+  var tabsEl = document.querySelector(".tabs");
+
+  // Re-queried after every render rather than captured once. These used to be
+  // snapshotted at parse time, which was fine when the cards were only ever the
+  // baked-in ones — but the Supabase render replaces them, and a stale NodeList
+  // would leave the filter and sort operating on detached nodes.
+  var cards = [];
+  var tabs = [];
+  function rescan() {
+    cards = Array.prototype.slice.call(listEl.querySelectorAll(".card"));
+    tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+    tabs.forEach(function (tab) {
+      if (tab.dataset.wired) { return; }
+      tab.dataset.wired = "1";      // re-render reuses tabs; don't stack handlers
+      tab.addEventListener("click", function () { show(tab.dataset.region); });
+    });
+  }
 
   // Collapse long origin lists now that we know script is running. The markup ships
   // expanded so a no-JS reader sees every option instead of a button that does
   // nothing.
-  Array.prototype.forEach.call(document.querySelectorAll(".more"), function (btn) {
-    var list = btn.previousElementSibling;
-    var total = list.children.length;
-    list.classList.add("collapsed");
-    btn.hidden = false;
-    btn.setAttribute("aria-expanded", "false");
-    btn.textContent = "Show all " + total;
-    btn.addEventListener("click", function () {
-      var collapsed = list.classList.toggle("collapsed");
-      btn.setAttribute("aria-expanded", String(!collapsed));
-      btn.textContent = collapsed ? "Show all " + total : "Show fewer";
+  function wireMoreButtons() {
+    Array.prototype.forEach.call(listEl.querySelectorAll(".more"), function (btn) {
+      if (btn.dataset.wired) { return; }
+      btn.dataset.wired = "1";
+      var list = btn.previousElementSibling;
+      var total = list.children.length;
+      list.classList.add("collapsed");
+      btn.hidden = false;
+      btn.setAttribute("aria-expanded", "false");
+      btn.textContent = "Show all " + total;
+      btn.addEventListener("click", function () {
+        var collapsed = list.classList.toggle("collapsed");
+        btn.setAttribute("aria-expanded", String(!collapsed));
+        btn.textContent = collapsed ? "Show all " + total : "Show fewer";
+      });
     });
-  });
+  }
 
-  function show(region) {
+  var region = "all";
+
+  function show(next) {
+    region = next;
     var shown = 0;
     cards.forEach(function (card) {
       var match = (region === "all") || (card.dataset.region === region);
@@ -118,41 +151,98 @@ $cards
       t.setAttribute("aria-selected", String(on));
       if (on) { active = t; }
     });
-    // The filter row scrolls horizontally, so a restored region further along it
-    // would otherwise leave the page filtered with no visible active pill.
+    // The tab strip scrolls horizontally, so a restored region further along it
+    // would otherwise leave the page filtered with no visible active tab.
     if (active && active.scrollIntoView) {
       active.scrollIntoView({ inline: "center", block: "nearest" });
     }
     try { localStorage.setItem("fares-region", region); } catch (e) {}
   }
 
-  tabs.forEach(function (tab) {
-    tab.addEventListener("click", function () { show(tab.dataset.region); });
+  // -------------------------------------------------------------------- sorting
+  // Sort REORDERS nodes; the region filter only toggles `hidden`. Keeping those two
+  // concerns apart is what lets them compose — sorting never has to know what is
+  // filtered, and filtering never has to re-run the comparator.
+  var TIER_ORDER = { t1: 0, t2: 1, t3: 2, t4: 3 };
+  var sortMode = "best";
+  var sortButtons = Array.prototype.slice.call(document.querySelectorAll(".sort-opt"));
+
+  function applySort(mode) {
+    sortMode = (mode === "latest") ? "latest" : "best";
+    var ordered = cards.slice().sort(function (a, b) {
+      if (sortMode === "latest") {
+        // Descending string compare is a real time compare: both stamps are UTC ISO.
+        var sa = a.dataset.sent || "", sb = b.dataset.sent || "";
+        if (sa !== sb) { return sa < sb ? 1 : -1; }
+      } else {
+        var ta = TIER_ORDER[a.dataset.tier], tb = TIER_ORDER[b.dataset.tier];
+        ta = (ta === undefined) ? 9 : ta;
+        tb = (tb === undefined) ? 9 : tb;
+        if (ta !== tb) { return ta - tb; }
+      }
+      return (parseInt(a.dataset.price, 10) || 0) - (parseInt(b.dataset.price, 10) || 0);
+    });
+    // appendChild MOVES an existing node, so this reorders in place without
+    // re-rendering and without dropping the wired-up handlers.
+    ordered.forEach(function (card) { listEl.appendChild(card); });
+    cards = ordered;
+
+    sortButtons.forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.sort === sortMode));
+    });
+    try { localStorage.setItem("fares-sort", sortMode); } catch (e) {}
+  }
+
+  sortButtons.forEach(function (b) {
+    b.addEventListener("click", function () { applySort(b.dataset.sort); });
   });
 
-  var start = "all";
+  var startRegion = "all";
+  var startSort = "best";
   try {
     var savedRegion = localStorage.getItem("fares-region");
-    if (savedRegion && tabs.some(function (t) { return t.dataset.region === savedRegion; })) {
-      start = savedRegion;
-    }
+    if (savedRegion) { startRegion = savedRegion; }
+    var savedSort = localStorage.getItem("fares-sort");
+    if (savedSort === "latest" || savedSort === "best") { startSort = savedSort; }
   } catch (e) {}
-  show(start);
 
-  // ------------------------------------------------------------------ just in
-  // Reads the Supabase mirror for anything newer than this build. The key below is
-  // the PUBLISHABLE key and is meant to be public: RLS grants anon SELECT on
-  // fare_alerts and nothing else — insert/update/delete match zero rows (verified).
-  // The service key that can write lives only on the Pi.
+  function refresh(regionWanted, sortWanted) {
+    rescan();
+    wireMoreButtons();
+    applySort(sortWanted || sortMode);
+    // Fall back to "all" when the saved region no longer has any cards — otherwise a
+    // region that has since gone quiet shows an empty page with no obvious way back.
+    var valid = tabs.some(function (t) { return t.dataset.region === regionWanted; });
+    show(valid ? regionWanted : "all");
+  }
+
+  refresh(startRegion, startSort);
+
+  // ------------------------------------------------------------- live rendering
+  // The card list is rendered from Supabase on load. The baked-in cards below are a
+  // FALLBACK floor, not the source: they keep the page useful with JS off, offline
+  // from cache, or when Supabase is unreachable, and are replaced wholesale the
+  // moment a fetch succeeds.
+  //
+  // The key below is the PUBLISHABLE key and is meant to be public. It grants SELECT
+  // on the last 24 hours and on display columns only — deal_score and source_id are
+  // revoked at the column level, so the scoring and the row identity are not
+  // reachable, and neither is any older history. The secret key that can write lives
+  // only on the Pi.
+  //
+  // NOTE: this file is a string.Template, so a literal dollar sign must be DOUBLED
+  // ($$) and $${...} is a placeholder — which is why there is not a single JS
+  // template literal in here. A stray single $$ fails the build loudly rather than
+  // shipping broken markup. (Both this comment and its predecessor tripped that
+  // while being written, which is the best argument for the doubling rule there is.)
   var SB_URL = "$supabase_url";
   var SB_KEY = "$supabase_key";
   var REGIONS = $region_labels;
-  var BUILT_AFTER = "$newest_iso";   // newest sent_at baked into the snapshot
-  var MAX_NEW = 40;
+  var FEED_HOURS = 24;         // must match publish.sh's HOURS, and the RLS window
+  var FEED_LIMIT = 2000;       // a busy day is ~150 alerts; the flood day was 1,965
 
-  var justin = document.getElementById("justin");
-  var justinRows = document.getElementById("justin-rows");
-  var justinNote = document.getElementById("justin-note");
+  var TIER_LABELS = { t1: "Exceptional", t2: "Excellent", t3: "Great", t4: "Good" };
+  var CHIP_COLLAPSE_AFTER = 6;   // mirrors generate.CHIP_COLLAPSE_AFTER + theme.css
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -160,43 +250,202 @@ $cards
     });
   }
 
-  function shortDate(iso) {
-    if (!iso) { return ""; }
-    var d = new Date(iso + (iso.length === 10 ? "T00:00:00Z" : ""));
-    if (isNaN(d)) { return iso; }
-    return d.toLocaleDateString(undefined,
-      { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  // Fixed English abbreviations rather than toLocaleDateString: Python renders
+  // "%a %-d %b" = "Wed 2 Dec", while toLocaleDateString gives "Wed, Dec 2" in en-US.
+  // The two renderers are visible in sequence as the fetch resolves, so a different
+  // date format would read as the page glitching.
+  var DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  function asDate(iso) {
+    if (!iso) { return null; }
+    // A bare YYYY-MM-DD is UTC midnight; without the suffix Safari and Chrome
+    // disagree about whether it is local, which slides dates by a day.
+    var d = new Date(iso.length === 10 ? iso + "T00:00:00Z" : iso);
+    return isNaN(d.getTime()) ? null : d;
   }
 
-  // NOTE: this file is a string.Template, so a literal dollar sign has to be
-  // doubled — see the price span below. A single one followed by punctuation parses
-  // as an invalid placeholder and the build fails loudly rather than shipping
-  // broken markup. (This comment previously tripped that itself.)
-  function rowHtml(r) {
-    var dates = shortDate(r.outbound_date) +
-      (r.return_date ? " → " + shortDate(r.return_date) : "");
-    var region = REGIONS[r.region] || r.region || "";
-    var href = r.booking_url ||
+  function fmtDate(iso) {
+    var d = asDate(iso);
+    if (!d) { return iso || ""; }
+    return DOW[d.getUTCDay()] + " " + d.getUTCDate() + " " + MON[d.getUTCMonth()];
+  }
+
+  function fmtStamp(iso) {
+    var d = asDate(iso);
+    if (!d) { return ""; }
+    var hh = ("0" + d.getUTCHours()).slice(-2), mm = ("0" + d.getUTCMinutes()).slice(-2);
+    return d.getUTCDate() + " " + MON[d.getUTCMonth()] + ", " + hh + ":" + mm + " UTC";
+  }
+
+  // Mirrors generate.fmt_ago — same thresholds, same wording. Clamped at "just now"
+  // rather than going negative, because clock skew between the Pi and a phone is real.
+  function fmtAgo(iso) {
+    var d = asDate(iso);
+    if (!d) { return ""; }
+    var secs = (Date.now() - d.getTime()) / 1000;
+    if (secs < 60) { return "just now"; }
+    if (secs < 3600) { return Math.floor(secs / 60) + "m ago"; }
+    if (secs < 86400) { return Math.floor(secs / 3600) + "h ago"; }
+    return Math.floor(secs / 86400) + "d ago";
+  }
+
+  function nightsBetween(outbound, ret) {
+    var a = asDate(outbound), b = asDate(ret);
+    if (!a || !b) { return null; }
+    return Math.round((b.getTime() - a.getTime()) / 86400000);
+  }
+
+  function linkFor(r) {
+    return r.booking_url ||
       ("https://www.google.com/travel/flights?q=" + encodeURIComponent(
         "Flights from " + r.origin + " to " + r.destination +
         " on " + r.outbound_date +
         (r.return_date ? " through " + r.return_date : "")));
-    return '<li class="row tier-' + esc(r.tier || "t4") + '">' +
-      '<a class="row-link" href="' + esc(href) + '" target="_blank" rel="noopener">' +
-        '<span class="row-dest">' + esc(r.destination_name || r.destination) +
-          '<span class="row-region">' + esc(region) + '</span></span>' +
-        '<span class="row-route">' + esc(r.origin) + "→" + esc(r.destination) + '</span>' +
-        '<span class="row-dates">' + esc(dates) + '</span>' +
-        '<span class="row-price">$$' + esc(r.price) + '</span>' +
-      '</a></li>';
   }
 
-  function loadJustIn() {
-    if (!BUILT_AFTER) { return; }
-    var params = "select=source_id,origin,destination,outbound_date,return_date," +
-      "price,booking_url,sent_at,destination_name,region,tier" +
-      "&sent_at=gt." + encodeURIComponent(BUILT_AFTER) +
-      "&order=sent_at.desc,source_id.desc&limit=" + MAX_NEW;
+  // Port of generate.build_sales: one card per (destination_name, outbound, return),
+  // legs sorted (price, origin), cards sorted by tier then price.
+  function buildSales(rows) {
+    var grouped = {}, order = [];
+    rows.forEach(function (r) {
+      var dest = r.destination_name || r.destination;
+      var key = dest + "|" + r.outbound_date + "|" + (r.return_date || "");
+      var sale = grouped[key];
+      if (!sale) {
+        // region comes from the FIRST leg only, matching generate.py.
+        sale = grouped[key] = { dest: dest, region: r.region || "other",
+                                outbound: r.outbound_date, ret: r.return_date,
+                                legs: [] };
+        order.push(sale);
+      }
+      sale.legs.push(r);
+    });
+
+    order.forEach(function (sale) {
+      sale.legs.sort(function (a, b) {
+        if (a.price !== b.price) { return a.price - b.price; }
+        return a.origin < b.origin ? -1 : (a.origin > b.origin ? 1 : 0);
+      });
+      sale.best = sale.legs[0];
+      sale.maxPrice = sale.legs[sale.legs.length - 1].price;
+      // Best tier across legs, not the cheapest leg's — mirrors best_quality's max().
+      sale.tier = sale.legs.reduce(function (acc, leg) {
+        var t = TIER_ORDER[leg.tier];
+        return (t !== undefined && t < acc) ? t : acc;
+      }, 9);
+      // Newest across legs: the card is fresh if ANY origin just fired.
+      sale.sent = sale.legs.reduce(function (acc, leg) {
+        return (leg.sent_at || "") > acc ? (leg.sent_at || "") : acc;
+      }, "");
+      // Cities de-duplicated preserving order, as generate.Sale.cities does.
+      sale.cities = [];
+      sale.codes = [];
+      sale.legs.forEach(function (leg) {
+        var c = leg.city_name || leg.destination;
+        if (sale.cities.indexOf(c) < 0) { sale.cities.push(c); }
+        if (sale.codes.indexOf(leg.destination) < 0) { sale.codes.push(leg.destination); }
+      });
+      sale.codes.sort();
+    });
+    return order;
+  }
+
+  function tierClass(rank) {
+    return ["t1", "t2", "t3", "t4"][rank] || "t4";
+  }
+
+  function cardHtml(sale) {
+    var tCss = tierClass(sale.tier);
+    var dates = esc(fmtDate(sale.outbound));
+    if (sale.ret) { dates += " &rarr; " + esc(fmtDate(sale.ret)); }
+    var nights = sale.ret ? nightsBetween(sale.outbound, sale.ret) : null;
+    if (nights) {
+      dates += '<span class="dot">·</span>' + nights +
+        (nights === 1 ? " night" : " nights");
+    }
+
+    var spread = (sale.maxPrice !== sale.best.price)
+      ? '<span class="spread">to $$' + esc(sale.maxPrice) + '</span>' : "";
+
+    // The city line earns its space only when it says something the headline does
+    // not; for "Denver / Denver DEN" it collapses to the bare code.
+    var codeStr = esc(sale.codes.join(" "));
+    var subtitle = (sale.cities.length === 1 && sale.cities[0] === sale.dest)
+      ? '<span class="codes">' + codeStr + '</span>'
+      : esc(sale.cities.join(" · ")) + ' <span class="codes">' + codeStr + '</span>';
+
+    var n = sale.legs.length, footNote, chipsBlock = "";
+    if (n === 1) {
+      var solo = sale.legs[0];
+      footNote = '<a class="origin-note solo" href="' + esc(linkFor(solo)) + '"' +
+        ' target="_blank" rel="noopener" aria-label="Open ' + esc(solo.origin) +
+        ' to ' + esc(solo.destination) + ' on Google Flights">' +
+        esc(solo.origin) + '&nbsp;&rarr;&nbsp;' + esc(solo.destination) + '</a>';
+    } else {
+      footNote = '<span class="origin-note">' + n + ' origins</span>';
+      var chips = sale.legs.map(function (leg, i) {
+        var carrier = leg.airline ? ", " + leg.airline : "";
+        return '<li><a class="chip' + (i === 0 ? " is-best" : "") + '" href="' +
+          esc(linkFor(leg)) + '" target="_blank" rel="noopener" title="' +
+          esc(leg.airline || "") + '" aria-label="Open ' + esc(leg.origin) + ' to ' +
+          esc(leg.destination) + ', $$' + esc(leg.price) + esc(carrier) +
+          ', on Google Flights">' +
+          '<span class="chip-route">' + esc(leg.origin) + '&nbsp;&rarr;&nbsp;' +
+          esc(leg.destination) + '</span>' +
+          '<span class="chip-price">$$' + esc(leg.price) + '</span></a></li>';
+      });
+      chipsBlock = '<ul class="chips">' + chips.join("") + '</ul>';
+      if (n > CHIP_COLLAPSE_AFTER) {
+        chipsBlock += '<button class="more" type="button" hidden' +
+          ' aria-expanded="true">Show all ' + n + '</button>';
+      }
+    }
+
+    var airline = sale.best.airline ? esc(sale.best.airline) : "&mdash;";
+    var when = sale.sent
+      ? '<span class="when" title="' + esc(fmtStamp(sale.sent)) + '">' +
+        esc(fmtAgo(sale.sent)) + '</span>'
+      : "";
+
+    return '<article class="card tier-' + tCss + '" data-region="' +
+        esc(sale.region) + '" data-sent="' + esc(sale.sent) + '" data-price="' +
+        esc(sale.best.price) + '" data-tier="' + tCss + '">' +
+      '<header class="card-head"><div class="card-id"><h2>' + esc(sale.dest) +
+        '</h2><p class="cities">' + subtitle + '</p></div>' +
+      '<div class="card-price"><span class="price">$$' + esc(sale.best.price) +
+        '</span>' + spread + '</div></header>' +
+      '<p class="dates">' + dates + '<span class="dot">·</span>' +
+        '<span class="airline">' + airline + '</span></p>' +
+      '<div class="card-foot"><span class="badge">' + TIER_LABELS[tCss] +
+        '</span>' + footNote + when + '</div>' + chipsBlock +
+      '</article>';
+  }
+
+  function tabsHtml(sales) {
+    var counts = {};
+    sales.forEach(function (s) { counts[s.region] = (counts[s.region] || 0) + 1; });
+    var out = ['<button class="tab" type="button" role="tab" data-region="all"' +
+      ' aria-selected="true">All<span class="n">' + sales.length + '</span></button>'];
+    // Object key order is insertion order, and REGIONS is emitted in catalog order —
+    // so tab order follows the catalog, not the counts. A region with nothing in it
+    // is noise, not information, so it is skipped.
+    Object.keys(REGIONS).forEach(function (id) {
+      if (!counts[id]) { return; }
+      out.push('<button class="tab" type="button" role="tab" data-region="' + esc(id) +
+        '" aria-selected="false">' + esc(REGIONS[id]) +
+        '<span class="n">' + counts[id] + '</span></button>');
+    });
+    return out.join("");
+  }
+
+  function loadFeed() {
+    var since = new Date(Date.now() - FEED_HOURS * 3600 * 1000).toISOString();
+    var params = "select=origin,destination,destination_name,city_name,region,tier," +
+      "price,outbound_date,return_date,airline,booking_url,sent_at" +
+      "&sent_at=gte." + encodeURIComponent(since) +
+      "&order=sent_at.desc&limit=" + FEED_LIMIT;
 
     fetch(SB_URL + "/rest/v1/fare_alerts?" + params, {
       headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }
@@ -204,18 +453,36 @@ $cards
       if (!res.ok) { throw new Error("HTTP " + res.status); }
       return res.json();
     }).then(function (data) {
-      // Nothing newer, an empty mirror, or an error all mean the same thing here:
-      // leave the snapshot alone and say nothing. This section only ever ADDS.
-      if (!data.length) { return; }
-      justinRows.innerHTML = data.map(rowHtml).join("");
-      justinNote.textContent = data.length >= MAX_NEW
-        ? MAX_NEW + "+ since this page was built"
-        : data.length + (data.length === 1 ? " alert" : " alerts") +
-          " since this page was built";
-      justin.hidden = false;
+      // An empty feed is NOT a reason to blank the page: it is far more likely that
+      // the window or the grant changed than that a live scraper found nothing at
+      // all. The baked-in snapshot stays as the floor.
+      if (!data || !data.length) { return; }
+      var sales = buildSales(data);
+      listEl.innerHTML = sales.map(cardHtml).join("");
+      tabsEl.innerHTML = tabsHtml(sales);
+
+      // The header and footer describe the FALLBACK until this point. Leaving them
+      // alone would have the page claim a sale and alert count, and a newest-alert
+      // time, belonging to a snapshot whose cards are no longer on screen.
+      var subEl = document.getElementById("sub");
+      if (subEl) {
+        subEl.textContent = sales.length + (sales.length === 1 ? " sale" : " sales") +
+          " from " + data.length + (data.length === 1 ? " alert" : " alerts") +
+          " · last " + FEED_HOURS + " h";
+      }
+      var newestEl = document.getElementById("newest");
+      var newest = data.reduce(function (acc, r) {
+        return (r.sent_at || "") > acc ? (r.sent_at || "") : acc;
+      }, "");
+      if (newestEl && newest) { newestEl.textContent = fmtStamp(newest); }
+      // "built" describes the static snapshot, which is no longer what you see.
+      var builtEl = document.getElementById("built");
+      if (builtEl) { builtEl.textContent = "live"; }
+
+      refresh(region, sortMode);
     }).catch(function () { /* snapshot is the floor; stay quiet */ });
   }
 
-  loadJustIn();
+  loadFeed();
 })();
 </script>

@@ -177,8 +177,10 @@ def test_tabs_omit_empty_regions(sample_db):
     assert "all" in tabbed
 
 
-def _row(origin, code, out, ret, price, quality, url=None):
-    return ("2026-08-12T11:20", origin, code, out, ret, price, quality, url)
+def _row(origin, code, out, ret, price, quality, url=None,
+         airline=None, sent="2026-08-12T11:20"):
+    """A deal_alerts row in load_alerts' column order."""
+    return (sent, origin, code, out, ret, price, quality, url, airline)
 
 
 def test_every_origin_is_tappable(sample_db):

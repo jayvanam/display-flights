@@ -174,30 +174,69 @@ body {
 .themer:active { background: var(--fill-press); }
 .themer:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
+/* Navigation, not filters. Every tab used to be a filled pill with the selected one
+   a solid accent pill, which read as a row of buttons — the thing to avoid. Now:
+   plain text, and the selection is an underline against a baseline hairline, which
+   is the one unambiguous "you are here" signal. No tab carries a background at any
+   time, including the selected one. */
+.tab-bar {
+  display: flex; align-items: flex-end; gap: 12px;
+  margin: 12px -16px 0; padding-inline: 16px;
+  border-bottom: 0.5px solid var(--hairline);
+}
 .tabs {
-  display: flex; gap: 8px; list-style: none;
+  display: flex; gap: 18px; list-style: none; flex: 1 1 auto; min-width: 0;
   overflow-x: auto; scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
-  margin: 12px -16px 0; padding: 0 16px 12px;
+  margin: 0; padding: 0;
 }
 .tabs::-webkit-scrollbar { display: none; }
 .tab {
-  appearance: none; cursor: pointer; border: 0;
-  font-family: var(--ui); font-size: 14px; font-weight: 500;
+  appearance: none; cursor: pointer; border: 0; background: none;
+  font-family: var(--ui); font-size: 15px; font-weight: 500;
   letter-spacing: -0.01em; white-space: nowrap;
-  color: var(--label); background: var(--fill);
-  border-radius: var(--radius-pill); padding: 7px 14px; min-height: 34px;
+  color: var(--label-2);
+  padding: 6px 0 9px; min-height: 34px;
+  /* Reserved from the start so selecting a tab does not shift the row by 2px. */
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;                    /* sit the underline on the hairline */
 }
-.tab:active { background: var(--fill-press); }
-.tab:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.tab:active { color: var(--label); }
+.tab:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px;
+}
 .tab .n {
-  font-variant-numeric: tabular-nums; color: var(--label-2);
-  margin-inline-start: 6px;
+  font-variant-numeric: tabular-nums; color: var(--label-3);
+  margin-inline-start: 5px; font-weight: 400;
 }
+/* Accent on the underline, ink on the label. The rule this palette already states is
+   "blue is for things you can tap", and an active tab qualifies — but putting accent
+   on the text too would make the label compete with the tier badges and the prices,
+   which are what you are actually scanning for. */
 .tab[aria-selected="true"] {
-  background: var(--accent); color: var(--on-accent); font-weight: 600;
+  color: var(--label); font-weight: 600;
+  border-bottom-color: var(--accent);
 }
-.tab[aria-selected="true"] .n { color: var(--on-accent); opacity: .7; }
+.tab[aria-selected="true"] .n { color: var(--label-2); }
+
+/* ------------------------------------------------------------------ sort ---
+   Text, deliberately not a control-looking thing: a segmented pill here would
+   reintroduce exactly the button language the tabs just shed. */
+.sort {
+  display: flex; align-items: center; gap: 10px; flex: none;
+  padding-bottom: 9px;
+}
+.sort-opt {
+  appearance: none; border: 0; background: none; cursor: pointer;
+  font-family: var(--ui); font-size: 13px; font-weight: 500;
+  letter-spacing: -0.008em; white-space: nowrap;
+  color: var(--label-3); padding: 0;
+}
+.sort-opt:active { color: var(--label); }
+.sort-opt:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px;
+}
+.sort-opt[aria-pressed="true"] { color: var(--accent); font-weight: 600; }
 
 /* ---------------------------------------------------------------- cards ---
    Inset grouped-list panels: rounded, filled, hairline-free, no shadow. */
@@ -252,6 +291,21 @@ body {
 .origin-note {
   font-size: 13px; color: var(--label-2);
   font-variant-numeric: tabular-nums;
+}
+
+/* Airline of the cheapest leg, on the meta line. Per-leg airlines differ, so the
+   others live in each chip's title/aria-label rather than being crammed in here. */
+.airline {
+  font-size: 13px; color: var(--label-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 14em;                        /* "JetBlue, Icelandair" must not wrap */
+}
+/* When the alert was posted. Pushed to the end of the foot so the eye lands on
+   tier and price first — freshness matters, but it is not why you tap. */
+.when {
+  font-size: 12px; color: var(--label-3);
+  font-variant-numeric: tabular-nums;
+  margin-inline-start: auto; flex: none;
 }
 
 /* ---------------------------------------------------------------- chips ---

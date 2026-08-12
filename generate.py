@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import json
 import os
 import sqlite3
 import string
@@ -141,6 +142,8 @@ class Leg(NamedTuple):
     price: int
     quality: int
     url: str  # the scraper's stored booking_url; "" when it was never captured
+    airline: str  # free text, "" when the parser captured none; may be comma-joined
+    sent_at: str  # when this alert fired (UTC ISO), for the "found Xh ago" line
 
 
 def search_url(origin: str, code: str, outbound: str, return_date: str | None) -> str:
@@ -192,6 +195,26 @@ class Sale:
                 seen.append(name)
         return seen
 
+    @property
+    def best_airline(self) -> str:
+        """Carrier on the cheapest leg — the one the headline price belongs to.
+
+        Airline is per-leg, so a single card-level value can only ever describe one
+        of them; the rest ride along in each chip's title. Relies on legs being
+        price-sorted, as best_price does.
+        """
+        return self.legs[0].airline
+
+    @property
+    def newest_sent(self) -> str:
+        """Most recent alert in this sale, for the "found Xh ago" line.
+
+        Max rather than the cheapest leg's: the card is fresh if ANY of its origins
+        just fired, and taking the cheapest leg's stamp would age a card that picked
+        up a new origin seconds ago.
+        """
+        return max((leg.sent_at for leg in self.legs), default="")
+
     def link_for(self, leg: Leg) -> str:
         return leg.url or search_url(leg.origin, leg.code,
                                      self.outbound, self.return_date)
@@ -216,10 +239,18 @@ def load_alerts(db_path: Path, hours: int):
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=hours)).isoformat()
     con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     try:
+        # deal_alerts.airline arrived 2026-08-12 and this repo deploys separately from
+        # flights, so publish.sh must keep rendering against a fares.db that has not
+        # been migrated yet — with no airline rather than a hard failure every 20 min.
+        has_airline = any(
+            row[1] == "airline"
+            for row in con.execute("PRAGMA table_info(deal_alerts)")
+        )
+        airline_col = "airline" if has_airline else "NULL AS airline"
         return con.execute(
-            """
+            f"""
             SELECT sent_at, origin, destination, outbound_date, return_date,
-                   price, deal_score, booking_url
+                   price, deal_score, booking_url, {airline_col}
               FROM deal_alerts
              WHERE sent_at >= ?
              ORDER BY sent_at DESC
@@ -233,14 +264,16 @@ def load_alerts(db_path: Path, hours: int):
 def build_sales(rows) -> list[Sale]:
     grouped: dict[tuple, Sale] = {}
     for row in rows:
-        _sent, origin, code, outbound, return_date, price, quality, url = row
+        (sent, origin, code, outbound, return_date,
+         price, quality, url, airline) = row
         dest = dest_name(code)
         key = (dest, outbound, return_date)
         sale = grouped.get(key)
         if sale is None:
             sale = Sale(dest, region_of(code), outbound, return_date)
             grouped[key] = sale
-        sale.legs.append(Leg(origin, code, int(price), int(quality), url or ""))
+        sale.legs.append(Leg(origin, code, int(price), int(quality), url or "",
+                             airline or "", sent or ""))
 
     sales = list(grouped.values())
     for sale in sales:
@@ -271,6 +304,37 @@ def fmt_stamp(iso: str) -> str:
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return dt.strftime("%-d %b, %H:%M UTC")
+
+
+def fmt_ago(iso: str, now: datetime | None = None) -> str:
+    """How long ago an alert fired: "just now", "34m ago", "3h ago", "2d ago".
+
+    ⚠️ Mirrored in the page's JS `fmtAgo`. The thresholds and wording must match, or
+    the static snapshot and the Supabase render disagree about the same alert — and
+    the two are visible in sequence as the fetch resolves. `tests/test_generate.py`
+    pins the boundaries.
+
+    A naive stamp is read as UTC, matching db._utcnow_iso, which writes naive UTC.
+    """
+    if not iso:
+        return ""
+    try:
+        dt = datetime.fromisoformat(iso.replace("Z", "+00:00"))
+    except ValueError:
+        return ""
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    secs = ((now or datetime.now(timezone.utc)) - dt).total_seconds()
+
+    # Clamp instead of rendering "-3m ago": clock skew between the Pi and a phone is
+    # real, and a negative age reads as a bug rather than as freshness.
+    if secs < 60:
+        return "just now"
+    if secs < 3600:
+        return f"{int(secs // 60)}m ago"
+    if secs < 86400:
+        return f"{int(secs // 3600)}h ago"
+    return f"{int(secs // 86400)}d ago"
 
 
 def render_card(sale: Sale) -> str:
@@ -321,10 +385,15 @@ def render_card(sale: Sale) -> str:
             best = " is-best" if i == 0 else ""
             href = html.escape(sale.link_for(leg), quote=True)
             arrow = f"{html.escape(leg.origin)}&nbsp;&rarr;&nbsp;{html.escape(leg.code)}"
+            # Airline rides in the label rather than the visible capsule: it varies per
+            # leg, and printing it inline would double every chip's width.
+            carrier = f", {leg.airline}" if leg.airline else ""
             chips.append(
                 f'<li><a class="chip{best}" href="{href}" target="_blank"'
-                f' rel="noopener" aria-label="Open {html.escape(leg.origin)} to'
-                f' {html.escape(leg.code)}, ${leg.price}, on Google Flights">'
+                f' rel="noopener" title="{html.escape(leg.airline, quote=True)}"'
+                f' aria-label="Open {html.escape(leg.origin)} to'
+                f' {html.escape(leg.code)}, ${leg.price}'
+                f'{html.escape(carrier, quote=True)}, on Google Flights">'
                 f'<span class="chip-route">{arrow}</span>'
                 f'<span class="chip-price">${leg.price}</span></a></li>'
             )
@@ -335,7 +404,21 @@ def render_card(sale: Sale) -> str:
             chips_block += (f'\n        <button class="more" type="button" hidden'
                             f' aria-expanded="true">Show all {n}</button>')
 
-    return f"""      <article class="card tier-{tier_css}" data-region="{sale.region}">
+    # Airline of the cheapest leg — the carrier the headline price belongs to. Em dash
+    # rather than an empty span when the parser captured none, matching the Discord
+    # embed's own fallback (flights/notifier.py:160).
+    airline_str = html.escape(sale.best_airline) if sale.best_airline else "&mdash;"
+    when = sale.newest_sent
+    when_block = ""
+    if when:
+        when_block = (f'<span class="when" title="{html.escape(fmt_stamp(when), quote=True)}">'
+                      f'{html.escape(fmt_ago(when))}</span>')
+
+    # data-sent drives the client-side "Latest" sort without re-parsing the rendered
+    # text, and data-price does the same for the price tiebreak.
+    return f"""      <article class="card tier-{tier_css}" data-region="{sale.region}"\
+ data-sent="{html.escape(when, quote=True)}" data-price="{sale.best_price}"\
+ data-tier="{tier_css}">
         <header class="card-head">
           <div class="card-id">
             <h2>{html.escape(sale.dest)}</h2>
@@ -345,10 +428,10 @@ def render_card(sale: Sale) -> str:
             <span class="price">{price}</span>{spread}
           </div>
         </header>
-        <p class="dates">{dates}</p>
+        <p class="dates">{dates}<span class="dot">·</span><span class="airline">{airline_str}</span></p>
         <div class="card-foot">
           <span class="badge">{tier_label}</span>
-          {foot_note}
+          {foot_note}{when_block}
         </div>{chips_block}
       </article>
 """
@@ -402,11 +485,18 @@ def _as_utc(iso: str) -> str:
 
 
 def _region_labels_json() -> str:
-    """Region id -> label, for the History view's badges. Emitted from the same
-    catalog the snapshot uses so the two cannot disagree."""
-    pairs = ",".join(f'"{rid}":"{html.escape(label)}"'
-                     for rid, label in catalog.REGIONS)
-    return "{" + pairs + "}"
+    """Region id -> label, for the client-rendered tab bar. Emitted from the same
+    catalog the static snapshot uses, so the two cannot disagree — including the
+    ORDER, since JS object keys iterate in insertion order and that is what puts the
+    tabs in catalog order rather than count order.
+
+    Labels are emitted RAW (json.dumps handles JS string escaping) and the page's
+    esc() does the single HTML escape at render time. They used to be html.escaped
+    here as well, so "Caribbean & Mexico" became "Caribbean &amp;amp; Mexico" by the
+    time esc() had run over it a second time, and rendered with the entity visible.
+    """
+    return json.dumps({rid: label for rid, label in catalog.REGIONS},
+                      ensure_ascii=False)
 
 
 def main() -> None:
