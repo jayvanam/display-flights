@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import html
+import os
 import sqlite3
 import string
 import urllib.parse
@@ -41,6 +42,16 @@ import catalog
 HERE = Path(__file__).resolve().parent
 THEME_CSS = HERE / "theme.css"
 TEMPLATE_HTML = HERE / "template.html"
+
+# Supabase, for the History view only. Both values are PUBLIC by design: the
+# publishable key is meant to ship in client code, and RLS grants `anon` SELECT on
+# fare_alerts and nothing else — no insert, update or delete policy exists. The
+# SERVICE key (which bypasses RLS) is used only by sync_supabase.py on the Pi and
+# must never appear here; this repo is public.
+SUPABASE_URL = os.environ.get(
+    "SUPABASE_URL", "https://iceqjfmokjwwcindfuyk.supabase.co").rstrip("/")
+SUPABASE_PUBLISHABLE_KEY = os.environ.get(
+    "SUPABASE_PUBLISHABLE_KEY", "sb_publishable_9givag6OhjI1sDzPty-Usg_lc6m6KwU")
 
 # Alert tiers, keyed on the PERCENTILE the scraper ranked the fare at (0 = cheapest
 # observation in its comparable bucket; lower is better). Vendored from
@@ -376,7 +387,26 @@ def render_page(sales: list[Sale], alert_count: int, hours: int, newest: str) ->
         generated=datetime.now(timezone.utc).strftime("%-d %b, %H:%M UTC"),
         tabs=render_tabs(sales),
         cards="".join(render_card(s) for s in sales),
+        supabase_url=html.escape(SUPABASE_URL, quote=True),
+        supabase_key=html.escape(SUPABASE_PUBLISHABLE_KEY, quote=True),
+        region_labels=_region_labels_json(),
+        # High-water mark for the "Just in" fetch. Explicit UTC, because sent_at is
+        # a naive UTC string locally and PostgREST would compare it in the server's
+        # zone otherwise — silently hiding or duplicating an hour of alerts.
+        newest_iso=html.escape(_as_utc(newest), quote=True) if newest else "",
     )
+
+
+def _as_utc(iso: str) -> str:
+    return iso if (iso.endswith("Z") or "+" in iso[10:]) else iso + "Z"
+
+
+def _region_labels_json() -> str:
+    """Region id -> label, for the History view's badges. Emitted from the same
+    catalog the snapshot uses so the two cannot disagree."""
+    pairs = ",".join(f'"{rid}":"{html.escape(label)}"'
+                     for rid, label in catalog.REGIONS)
+    return "{" + pairs + "}"
 
 
 def main() -> None:

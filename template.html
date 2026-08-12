@@ -30,6 +30,21 @@ $tabs
 </header>
 
 <main class="wrap">
+  <!-- Just in: alerts the scraper found AFTER this page was built, read live from
+       Supabase on load. The Pi writes each one the moment it fires, so a fare found
+       an hour into a five-hour sweep shows up here immediately instead of waiting
+       for the next rebuild. Stays empty and silent when there is nothing newer,
+       when Supabase is unreachable, or when JS is off — the grouped snapshot below
+       is always the floor, never replaced. -->
+  <section id="justin" hidden aria-label="Found since this page was built">
+    <div class="justin-head">
+      <span class="live-dot" aria-hidden="true"></span>
+      <h2 id="justin-title">Just in</h2>
+      <span class="justin-note" id="justin-note"></span>
+    </div>
+    <ol class="rows" id="justin-rows"></ol>
+  </section>
+
   <div class="list" id="list">
 $cards
   </div>
@@ -123,5 +138,84 @@ $cards
     }
   } catch (e) {}
   show(start);
+
+  // ------------------------------------------------------------------ just in
+  // Reads the Supabase mirror for anything newer than this build. The key below is
+  // the PUBLISHABLE key and is meant to be public: RLS grants anon SELECT on
+  // fare_alerts and nothing else — insert/update/delete match zero rows (verified).
+  // The service key that can write lives only on the Pi.
+  var SB_URL = "$supabase_url";
+  var SB_KEY = "$supabase_key";
+  var REGIONS = $region_labels;
+  var BUILT_AFTER = "$newest_iso";   // newest sent_at baked into the snapshot
+  var MAX_NEW = 40;
+
+  var justin = document.getElementById("justin");
+  var justinRows = document.getElementById("justin-rows");
+  var justinNote = document.getElementById("justin-note");
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function shortDate(iso) {
+    if (!iso) { return ""; }
+    var d = new Date(iso + (iso.length === 10 ? "T00:00:00Z" : ""));
+    if (isNaN(d)) { return iso; }
+    return d.toLocaleDateString(undefined,
+      { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  }
+
+  // NOTE: this file is a string.Template, so a literal dollar sign has to be
+  // doubled — see the price span below. A single one followed by punctuation parses
+  // as an invalid placeholder and the build fails loudly rather than shipping
+  // broken markup. (This comment previously tripped that itself.)
+  function rowHtml(r) {
+    var dates = shortDate(r.outbound_date) +
+      (r.return_date ? " → " + shortDate(r.return_date) : "");
+    var region = REGIONS[r.region] || r.region || "";
+    var href = r.booking_url ||
+      ("https://www.google.com/travel/flights?q=" + encodeURIComponent(
+        "Flights from " + r.origin + " to " + r.destination +
+        " on " + r.outbound_date +
+        (r.return_date ? " through " + r.return_date : "")));
+    return '<li class="row tier-' + esc(r.tier || "t4") + '">' +
+      '<a class="row-link" href="' + esc(href) + '" target="_blank" rel="noopener">' +
+        '<span class="row-dest">' + esc(r.destination_name || r.destination) +
+          '<span class="row-region">' + esc(region) + '</span></span>' +
+        '<span class="row-route">' + esc(r.origin) + "→" + esc(r.destination) + '</span>' +
+        '<span class="row-dates">' + esc(dates) + '</span>' +
+        '<span class="row-price">$$' + esc(r.price) + '</span>' +
+      '</a></li>';
+  }
+
+  function loadJustIn() {
+    if (!BUILT_AFTER) { return; }
+    var params = "select=source_id,origin,destination,outbound_date,return_date," +
+      "price,booking_url,sent_at,destination_name,region,tier" +
+      "&sent_at=gt." + encodeURIComponent(BUILT_AFTER) +
+      "&order=sent_at.desc,source_id.desc&limit=" + MAX_NEW;
+
+    fetch(SB_URL + "/rest/v1/fare_alerts?" + params, {
+      headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }
+    }).then(function (res) {
+      if (!res.ok) { throw new Error("HTTP " + res.status); }
+      return res.json();
+    }).then(function (data) {
+      // Nothing newer, an empty mirror, or an error all mean the same thing here:
+      // leave the snapshot alone and say nothing. This section only ever ADDS.
+      if (!data.length) { return; }
+      justinRows.innerHTML = data.map(rowHtml).join("");
+      justinNote.textContent = data.length >= MAX_NEW
+        ? MAX_NEW + "+ since this page was built"
+        : data.length + (data.length === 1 ? " alert" : " alerts") +
+          " since this page was built";
+      justin.hidden = false;
+    }).catch(function () { /* snapshot is the floor; stay quiet */ });
+  }
+
+  loadJustIn();
 })();
 </script>

@@ -294,6 +294,68 @@ body {
 .more[hidden] { display: none; }
 .more:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
+/* -------------------------------------------------------------- history ---
+   Snapshot / History switch, and the dense live log. The log is intentionally a
+   different shape from the snapshot cards: one line per alert, newest first, so
+   the whole archive is scannable and no grouping logic is duplicated in JS. */
+#justin[hidden] { display: none; }
+#justin { padding-top: 16px; }
+.justin-head {
+  display: flex; align-items: baseline; gap: 8px;
+  margin: 0 0 8px; padding-inline-start: 2px;
+}
+.justin-head h2 {
+  margin: 0; font-size: 13px; font-weight: 600;
+  letter-spacing: -0.005em; color: var(--label);
+}
+.justin-note {
+  font-size: 12px; color: var(--label-3);
+  font-variant-numeric: tabular-nums;
+}
+/* Steady, not blinking: a pulsing dot on a page you read at a glance is noise. */
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--t4); flex: none;
+  align-self: center;
+}
+
+.rows {
+  list-style: none; margin: 0; padding: 0;
+  background: var(--surface); border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.row + .row { border-top: 0.5px solid var(--separator); }
+.row-link {
+  display: grid; align-items: center; gap: 2px 10px;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "dest price" "meta price";
+  padding: 10px 14px; text-decoration: none; color: var(--label);
+  border-inline-start: 3px solid var(--tier);
+}
+.row-link:active { background: var(--fill); }
+.row-link:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.row-dest {
+  grid-area: dest; font-size: 15px; font-weight: 600; letter-spacing: -0.012em;
+  display: flex; align-items: baseline; gap: 7px; min-width: 0;
+}
+.row-region {
+  font-size: 11px; font-weight: 500; color: var(--label-3);
+  letter-spacing: 0; white-space: nowrap;
+}
+.row-route, .row-dates {
+  grid-area: meta; font-size: 12px; color: var(--label-2);
+  font-variant-numeric: tabular-nums;
+}
+.row-route { margin-inline-end: 8px; }
+.row-route + .row-dates::before { content: "·"; color: var(--label-3); margin-inline-end: 6px; }
+.row-link > .row-route { justify-self: start; }
+.row-link > .row-dates { justify-self: start; margin-inline-start: 74px; }
+.row-price {
+  grid-area: price; font-size: 17px; font-weight: 600;
+  letter-spacing: -0.018em; font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
 /* ------------------------------------------------------- empty + footer --- */
 .empty {
   font-size: 15px; color: var(--label-2);

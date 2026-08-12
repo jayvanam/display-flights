@@ -16,8 +16,11 @@
    ==========================================================================
 
    Inlined into a <style> block at build time by generate.py, so the published
-   page stays one self-contained file with zero external requests (the host CSP
-   blocks them, and a webfont that silently falls back looks worse than none).
+   page stays one self-contained file with zero external requests. GitHub Pages
+   does NOT forbid external subresources — this is a choice, not a constraint: one
+   file loads instantly on a phone, works from cache offline, and cannot break
+   because some CDN did. A webfont that silently falls back is also worse than a
+   system stack that never does.
    Edit this file, run `dev/preview.py`, reload. No Python involved.
 
    HOW THEMING WORKS — three states, not two.
@@ -304,6 +307,68 @@ body {
 .more[hidden] { display: none; }
 .more:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
+/* -------------------------------------------------------------- history ---
+   Snapshot / History switch, and the dense live log. The log is intentionally a
+   different shape from the snapshot cards: one line per alert, newest first, so
+   the whole archive is scannable and no grouping logic is duplicated in JS. */
+#justin[hidden] { display: none; }
+#justin { padding-top: 16px; }
+.justin-head {
+  display: flex; align-items: baseline; gap: 8px;
+  margin: 0 0 8px; padding-inline-start: 2px;
+}
+.justin-head h2 {
+  margin: 0; font-size: 13px; font-weight: 600;
+  letter-spacing: -0.005em; color: var(--label);
+}
+.justin-note {
+  font-size: 12px; color: var(--label-3);
+  font-variant-numeric: tabular-nums;
+}
+/* Steady, not blinking: a pulsing dot on a page you read at a glance is noise. */
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--t4); flex: none;
+  align-self: center;
+}
+
+.rows {
+  list-style: none; margin: 0; padding: 0;
+  background: var(--surface); border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.row + .row { border-top: 0.5px solid var(--separator); }
+.row-link {
+  display: grid; align-items: center; gap: 2px 10px;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "dest price" "meta price";
+  padding: 10px 14px; text-decoration: none; color: var(--label);
+  border-inline-start: 3px solid var(--tier);
+}
+.row-link:active { background: var(--fill); }
+.row-link:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.row-dest {
+  grid-area: dest; font-size: 15px; font-weight: 600; letter-spacing: -0.012em;
+  display: flex; align-items: baseline; gap: 7px; min-width: 0;
+}
+.row-region {
+  font-size: 11px; font-weight: 500; color: var(--label-3);
+  letter-spacing: 0; white-space: nowrap;
+}
+.row-route, .row-dates {
+  grid-area: meta; font-size: 12px; color: var(--label-2);
+  font-variant-numeric: tabular-nums;
+}
+.row-route { margin-inline-end: 8px; }
+.row-route + .row-dates::before { content: "·"; color: var(--label-3); margin-inline-end: 6px; }
+.row-link > .row-route { justify-self: start; }
+.row-link > .row-dates { justify-self: start; margin-inline-start: 74px; }
+.row-price {
+  grid-area: price; font-size: 17px; font-weight: 600;
+  letter-spacing: -0.018em; font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
 /* ------------------------------------------------------- empty + footer --- */
 .empty {
   font-size: 15px; color: var(--label-2);
@@ -355,6 +420,21 @@ body {
 </header>
 
 <main class="wrap">
+  <!-- Just in: alerts the scraper found AFTER this page was built, read live from
+       Supabase on load. The Pi writes each one the moment it fires, so a fare found
+       an hour into a five-hour sweep shows up here immediately instead of waiting
+       for the next rebuild. Stays empty and silent when there is nothing newer,
+       when Supabase is unreachable, or when JS is off — the grouped snapshot below
+       is always the floor, never replaced. -->
+  <section id="justin" hidden aria-label="Found since this page was built">
+    <div class="justin-head">
+      <span class="live-dot" aria-hidden="true"></span>
+      <h2 id="justin-title">Just in</h2>
+      <span class="justin-note" id="justin-note"></span>
+    </div>
+    <ol class="rows" id="justin-rows"></ol>
+  </section>
+
   <div class="list" id="list">
       <article class="card tier-t1" data-region="domestic">
         <header class="card-head">
@@ -1742,7 +1822,7 @@ body {
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
 
   <footer class="foot">
-    <p>Newest alert <b>12 Aug, 11:20 UTC</b> &middot; built <b>12 Aug, 16:40 UTC</b></p>
+    <p>Newest alert <b>12 Aug, 11:20 UTC</b> &middot; built <b>12 Aug, 17:09 UTC</b></p>
     <p>One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
@@ -1829,5 +1909,84 @@ body {
     }
   } catch (e) {}
   show(start);
+
+  // ------------------------------------------------------------------ just in
+  // Reads the Supabase mirror for anything newer than this build. The key below is
+  // the PUBLISHABLE key and is meant to be public: RLS grants anon SELECT on
+  // fare_alerts and nothing else — insert/update/delete match zero rows (verified).
+  // The service key that can write lives only on the Pi.
+  var SB_URL = "https://iceqjfmokjwwcindfuyk.supabase.co";
+  var SB_KEY = "sb_publishable_9givag6OhjI1sDzPty-Usg_lc6m6KwU";
+  var REGIONS = {"domestic":"Domestic","caribbean":"Caribbean &amp; Mexico","canada":"Canada","europe":"Europe","asia":"Asia","mideast":"Middle East","africa":"Africa","southamerica":"South America","hawaii":"Hawaii","oceania":"Oceania","other":"Other"};
+  var BUILT_AFTER = "2026-08-12T11:20Z";   // newest sent_at baked into the snapshot
+  var MAX_NEW = 40;
+
+  var justin = document.getElementById("justin");
+  var justinRows = document.getElementById("justin-rows");
+  var justinNote = document.getElementById("justin-note");
+
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function shortDate(iso) {
+    if (!iso) { return ""; }
+    var d = new Date(iso + (iso.length === 10 ? "T00:00:00Z" : ""));
+    if (isNaN(d)) { return iso; }
+    return d.toLocaleDateString(undefined,
+      { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+  }
+
+  // NOTE: this file is a string.Template, so a literal dollar sign has to be
+  // doubled — see the price span below. A single one followed by punctuation parses
+  // as an invalid placeholder and the build fails loudly rather than shipping
+  // broken markup. (This comment previously tripped that itself.)
+  function rowHtml(r) {
+    var dates = shortDate(r.outbound_date) +
+      (r.return_date ? " → " + shortDate(r.return_date) : "");
+    var region = REGIONS[r.region] || r.region || "";
+    var href = r.booking_url ||
+      ("https://www.google.com/travel/flights?q=" + encodeURIComponent(
+        "Flights from " + r.origin + " to " + r.destination +
+        " on " + r.outbound_date +
+        (r.return_date ? " through " + r.return_date : "")));
+    return '<li class="row tier-' + esc(r.tier || "t4") + '">' +
+      '<a class="row-link" href="' + esc(href) + '" target="_blank" rel="noopener">' +
+        '<span class="row-dest">' + esc(r.destination_name || r.destination) +
+          '<span class="row-region">' + esc(region) + '</span></span>' +
+        '<span class="row-route">' + esc(r.origin) + "→" + esc(r.destination) + '</span>' +
+        '<span class="row-dates">' + esc(dates) + '</span>' +
+        '<span class="row-price">$' + esc(r.price) + '</span>' +
+      '</a></li>';
+  }
+
+  function loadJustIn() {
+    if (!BUILT_AFTER) { return; }
+    var params = "select=source_id,origin,destination,outbound_date,return_date," +
+      "price,booking_url,sent_at,destination_name,region,tier" +
+      "&sent_at=gt." + encodeURIComponent(BUILT_AFTER) +
+      "&order=sent_at.desc,source_id.desc&limit=" + MAX_NEW;
+
+    fetch(SB_URL + "/rest/v1/fare_alerts?" + params, {
+      headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }
+    }).then(function (res) {
+      if (!res.ok) { throw new Error("HTTP " + res.status); }
+      return res.json();
+    }).then(function (data) {
+      // Nothing newer, an empty mirror, or an error all mean the same thing here:
+      // leave the snapshot alone and say nothing. This section only ever ADDS.
+      if (!data.length) { return; }
+      justinRows.innerHTML = data.map(rowHtml).join("");
+      justinNote.textContent = data.length >= MAX_NEW
+        ? MAX_NEW + "+ since this page was built"
+        : data.length + (data.length === 1 ? " alert" : " alerts") +
+          " since this page was built";
+      justin.hidden = false;
+    }).catch(function () { /* snapshot is the floor; stay quiet */ });
+  }
+
+  loadJustIn();
 })();
 </script>
