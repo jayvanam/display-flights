@@ -91,3 +91,67 @@ def test_null_booking_url_becomes_json_null_not_empty_string(sample_db):
 
 def test_batch_size_is_sane():
     assert 100 <= sync_supabase.BATCH <= 1000
+
+
+# ------------------------------------------------------------------ key handling
+
+def _jwt(role: str) -> str:
+    """A legacy-style Supabase JWT with the given role. Unsigned — classify_key only
+    reads the payload, and these never leave the test."""
+    import base64
+    import json as _json
+
+    def seg(obj):
+        raw = base64.urlsafe_b64encode(_json.dumps(obj).encode()).decode()
+        return raw.rstrip("=")   # real tokens are unpadded; the classifier re-pads
+
+    return f"{seg({'alg': 'HS256'})}.{seg({'iss': 'supabase', 'role': role})}.sig"
+
+
+def test_modern_key_prefixes_are_classified():
+    assert sync_supabase.classify_key("sb_secret_abc123") == "secret"
+    assert sync_supabase.classify_key("sb_publishable_abc123") == "publishable"
+
+
+def test_legacy_jwt_role_is_read_from_the_payload():
+    assert sync_supabase.classify_key(_jwt("service_role")) == "secret"
+    assert sync_supabase.classify_key(_jwt("anon")) == "publishable"
+    assert sync_supabase.classify_key(_jwt("authenticated")) == "publishable"
+
+
+def test_the_real_publishable_key_is_recognised_as_unwritable():
+    """The exact key the page ships. Pasting it into the sync must be caught before
+    the first request, not discovered as a wall of 401s."""
+    import generate as g
+    assert sync_supabase.classify_key(g.SUPABASE_PUBLISHABLE_KEY) == "publishable"
+
+
+def test_garbage_is_unknown_not_misread_as_secret():
+    for bad in ("", "hunter2", "eyJ-not-base64", "eyJhbGciOiJIUzI1NiJ9.!!!.sig"):
+        assert sync_supabase.classify_key(bad) == "unknown"
+
+
+def test_secret_key_env_name_is_preferred_and_service_still_works(monkeypatch, tmp_path):
+    monkeypatch.setattr(sync_supabase, "HERE", tmp_path)  # no stray .env
+    monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co/")
+
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", "sb_secret_new")
+    monkeypatch.setenv("SUPABASE_SERVICE_KEY", "sb_secret_old")
+    url, key = sync_supabase.load_env()
+    assert key == "sb_secret_new", "SECRET must win when both are set"
+    assert url == "https://example.supabase.co", "trailing slash must be stripped"
+
+    monkeypatch.delenv("SUPABASE_SECRET_KEY")
+    _, key = sync_supabase.load_env()
+    assert key == "sb_secret_old", "SERVICE_KEY stays a working alias"
+
+
+def test_publishable_key_in_the_env_exits_rather_than_401ing(monkeypatch, tmp_path):
+    monkeypatch.setattr(sync_supabase, "HERE", tmp_path)
+    monkeypatch.setenv("SUPABASE_URL", "https://example.supabase.co")
+    monkeypatch.setenv("SUPABASE_SECRET_KEY", "sb_publishable_oops")
+
+    import pytest
+    with pytest.raises(SystemExit) as exc:
+        sync_supabase.load_env()
+    assert "PUBLISHABLE" in str(exc.value)

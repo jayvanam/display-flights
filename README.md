@@ -118,6 +118,46 @@ pytest tests/ -q
 The database is only ever opened read-only (`mode=ro`). `.gitignore` blocks `*.db`
 and `.env` — this repo is public and the scraper's is not.
 
+## Supabase mirror
+
+`sync_supabase.py` copies new `deal_alerts` rows into the `fare_alerts` table, which
+is both the off-host backup of every alert and what the page's **Just in** section
+reads so a fare found mid-sweep shows up without waiting for a rebuild.
+
+`fare_history` is deliberately **not** mirrored: ~8.85M rows / ~2.4 GB does not fit
+Supabase's free tier (500 MB), would not fit Pro (8 GB) comfortably, and cannot move
+through a REST API in one write. Use the scraper's `.db.gz` snapshots and
+`BACKUP_RSYNC_DEST` for the bulk history; `deal_alerts` is the small irreplaceable part.
+
+Two keys, and the distinction matters:
+
+| key | where it lives | can it write? |
+|---|---|---|
+| `sb_publishable_...` | inlined in `index.html`, public | **No.** RLS grants `anon` SELECT only |
+| `sb_secret_...` | `.env` on the Pi, gitignored | Yes — bypasses RLS |
+
+Verified rather than assumed: an anon `DELETE` returns `200 []`, which looks like
+success. Seeding a real row and re-running it confirmed the row survives untouched —
+RLS filters the rows to zero rather than deleting them.
+
+Pi setup:
+
+```sh
+cat > .env <<'EOF'
+SUPABASE_URL=https://<ref>.supabase.co
+SUPABASE_SECRET_KEY=sb_secret_...
+EOF
+chmod 600 .env
+
+./sync_supabase.py --dry-run                # reads only, prints the first row
+./sync_supabase.py --max-batches 4           # cap the first backfill
+```
+
+`SUPABASE_SERVICE_KEY` still works as an alias for a legacy `service_role` JWT.
+Pasting the publishable key exits immediately with an explanation rather than
+401-ing on every batch. Request cost per sync: one GET for the high-water mark, one
+POST per 500 new rows, one POST to log the run — so a quiet cycle is two requests.
+
 ## On the phone
 
 Open the URL, then Share → Add to Home Screen. It installs standalone with its own

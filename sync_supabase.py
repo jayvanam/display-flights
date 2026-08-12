@@ -14,11 +14,14 @@ scraper's own compact `.db.gz` snapshots plus `BACKUP_RSYNC_DEST` in maintenance
 REQUEST BUDGET, since that was the point: one GET for the high-water mark, one POST
 per 500 new rows, one POST to log the run. A quiet 15-minute cycle is 2 requests.
 
-Auth: the SERVICE key, which bypasses RLS. It must never reach this public repo —
-keep it in an untracked `.env` beside this script or in the crontab environment:
+Auth: the SECRET key, which bypasses RLS. It must never reach this public repo —
+keep it in an untracked `.env` beside this script, or in the crontab environment:
 
     SUPABASE_URL=https://iceqjfmokjwwcindfuyk.supabase.co
-    SUPABASE_SERVICE_KEY=<secret, from Settings > API in the dashboard>
+    SUPABASE_SECRET_KEY=sb_secret_...        # Settings > API Keys
+
+The publishable key will NOT work: RLS grants it SELECT and nothing else, so every
+insert would 401. classify_key() checks for that mistake before the first request.
 
 Usage:
     ./sync_supabase.py --db ../flights/data/fares.db [--dry-run] [--max-batches N]
@@ -27,6 +30,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
 import sqlite3
@@ -44,6 +48,33 @@ TIMEOUT = 30
 
 # ------------------------------------------------------------------------ config
 
+def classify_key(key: str) -> str:
+    """'secret' | 'publishable' | 'unknown'.
+
+    Worth doing up front: only a secret key bypasses RLS. A publishable/anon key
+    reads fine and then fails on every insert, which surfaces as a wall of 401s
+    rather than "you pasted the wrong key".
+    """
+    if key.startswith("sb_secret_"):
+        return "secret"
+    if key.startswith("sb_publishable_"):
+        return "publishable"
+    if key.startswith("eyJ"):
+        # Legacy JWT: the role lives unsigned in the payload, so just read it. No
+        # verification needed — we only want to know which key the user pasted.
+        try:
+            payload = key.split(".")[1]
+            payload += "=" * (-len(payload) % 4)          # restore base64 padding
+            role = json.loads(base64.urlsafe_b64decode(payload)).get("role", "")
+        except Exception:
+            return "unknown"
+        if role == "service_role":
+            return "secret"
+        if role in ("anon", "authenticated"):
+            return "publishable"
+    return "unknown"
+
+
 def load_env() -> tuple[str, str]:
     """Read Supabase credentials from the environment, falling back to a local
     untracked .env. Fails loudly rather than silently syncing nowhere."""
@@ -53,23 +84,38 @@ def load_env() -> tuple[str, str]:
             line = line.strip()
             if not line or line.startswith("#") or "=" not in line:
                 continue
-            key, _, value = line.partition("=")
-            os.environ.setdefault(key.strip(), value.strip().strip("'\""))
+            name, _, value = line.partition("=")
+            os.environ.setdefault(name.strip(), value.strip().strip("'\""))
 
     url = os.environ.get("SUPABASE_URL", "").rstrip("/")
-    key = os.environ.get("SUPABASE_SERVICE_KEY", "")
+    # SUPABASE_SECRET_KEY is the current name (matching Supabase's own
+    # sb_secret_... keys). SUPABASE_SERVICE_KEY is accepted as an alias for the
+    # legacy service_role JWT so an older .env keeps working.
+    key = (os.environ.get("SUPABASE_SECRET_KEY")
+           or os.environ.get("SUPABASE_SERVICE_KEY")
+           or "")
+
     if not url or not key:
         sys.exit(
-            "error: SUPABASE_URL and SUPABASE_SERVICE_KEY must be set (env or "
-            f"{env_file}).\n"
-            "The SERVICE key is required — the publishable/anon key is read-only by\n"
-            "design (RLS grants it SELECT and nothing else), so a sync with it would\n"
-            "fail on every insert."
+            "error: SUPABASE_URL and SUPABASE_SECRET_KEY must be set (env or "
+            f"{env_file}).\n\n"
+            "  SUPABASE_URL=https://<ref>.supabase.co\n"
+            "  SUPABASE_SECRET_KEY=sb_secret_...   # Settings > API Keys\n\n"
+            "A secret key is required. The publishable key is read-only by design —\n"
+            "RLS grants it SELECT and nothing else — so a sync with it would fail on\n"
+            "every insert."
         )
-    if "service" not in key and key.startswith("eyJ"):
-        # Legacy JWTs encode the role; a quick sanity check beats a 401 per batch.
-        print("warning: SUPABASE_SERVICE_KEY does not look like a service key",
-              file=sys.stderr)
+
+    kind = classify_key(key)
+    if kind == "publishable":
+        sys.exit(
+            "error: that is a PUBLISHABLE (anon) key, which cannot write.\n"
+            "RLS grants it SELECT only, so every batch would 401. Use the secret\n"
+            "key from Settings > API Keys — it bypasses RLS."
+        )
+    if kind == "unknown":
+        print("warning: could not identify the key type; expected sb_secret_... "
+              "or a service_role JWT. Continuing.", file=sys.stderr)
     return url, key
 
 

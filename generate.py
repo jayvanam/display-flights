@@ -46,8 +46,8 @@ TEMPLATE_HTML = HERE / "template.html"
 # Supabase, for the History view only. Both values are PUBLIC by design: the
 # publishable key is meant to ship in client code, and RLS grants `anon` SELECT on
 # fare_alerts and nothing else — no insert, update or delete policy exists. The
-# SERVICE key (which bypasses RLS) is used only by sync_supabase.py on the Pi and
-# must never appear here; this repo is public.
+# SECRET key (sb_secret_..., which bypasses RLS) is used only by sync_supabase.py on
+# the Pi and must never appear here; this repo is public.
 SUPABASE_URL = os.environ.get(
     "SUPABASE_URL", "https://iceqjfmokjwwcindfuyk.supabase.co").rstrip("/")
 SUPABASE_PUBLISHABLE_KEY = os.environ.get(
