@@ -187,8 +187,14 @@ def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None,
     `since_date` (YYYY-MM-DD) additionally skips older alerts. Worth using for the
     initial backfill: alerts sent before the 2026-08-11 deal-logic overhaul were
     scored against the page-pooled baseline that inflated every percentile, so a
-    June row labelled "Exceptional" does not mean what an August one does. Syncing
-    from the overhaul forward keeps every row in the feed comparable.
+    June row labelled "Exceptional" does not mean what an August one does.
+
+    ⚠️ The overhaul date is NOT a sufficient cutoff, and this argument's day
+    granularity is why: the anchor-rotation flood ran on 2026-08-12 itself (142
+    alerts in one run, 36 above the $700 ceiling), so `--since 2026-08-12` admits
+    all of it. The first genuinely comparable run is 2026-08-12 18:47 UTC; use
+    `--since 2026-08-13` for a clean backfill. See README "Supabase: the live deal
+    feed".
     """
     con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     try:
@@ -256,7 +262,8 @@ def main() -> None:
     ap.add_argument("--since", metavar="YYYY-MM-DD", default=None,
                     help="skip alerts sent before this date. Use for the initial "
                          "backfill: pre-2026-08-11 alerts were scored on the old "
-                         "inflated baseline and are not comparable to current ones.")
+                         "inflated baseline, and 2026-08-12 itself holds the "
+                         "anchor-rotation flood, so pass 2026-08-13 for a clean one.")
     args = ap.parse_args()
 
     if not args.db.exists():
