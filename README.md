@@ -1,38 +1,57 @@
 # display-flights
 
 A phone-readable page for the fare alerts produced by the (private) `flights`
-scraper. One static file, no server, no inbound network path to the Pi.
+scraper. One file, no server, no inbound network path to the Pi.
 
 **Live:** https://jayvanam.github.io/display-flights/
 
-## Why a static page
+## How the page gets its data
 
-The view is a *snapshot*, not a query: 24 hours of alerts is ~150 rows and a few KB
-of HTML. So the Pi renders the page after each sweep and pushes it here; GitHub
-Pages serves it. That means no port forwarding, no tunnel, no VPN client on the
-phone, nothing to keep running — and the page still works when the Pi is off, it
-just shows the last snapshot. The 6-hourly sweep is the only thing that changes the
-data, so there is nothing to gain from live queries.
+**Cards are rendered client-side from Supabase, with the baked-in HTML as a
+fallback.** On load, script reads the last 24h of `fare_alerts` and replaces the card
+list wholesale. `publish.sh` still bakes cards into `index.html` from the scraper's own
+database — that copy is the floor when JS is off, when the phone is offline on a cached
+page, or when Supabase is unreachable, and it is what makes the page work at all
+without a round trip.
+
+This was a hybrid that only *looked* Supabase-backed until 2026-08-12: every card was
+static and a single fetch filled a small "Just in" strip of anything newer than the
+build. That strip is **gone** — it existed only because the list was static, and two
+live views would show every new alert twice.
+
+Nothing reaches into the Pi. It pushes out (git) and the browser reads Supabase, so
+there is no port forwarding, no tunnel, and no VPN client on the phone.
 
 Everything is inline — CSS, script, icons. GitHub Pages does not forbid external
 subresources, so this is a choice rather than a constraint: one file loads instantly
-on a phone, works from cache when offline, and can't break because a CDN did. The
-type is a system stack for the same reason (a webfont that silently falls back is
-worse than one that never does). The only outbound links are the per-origin Google
-Flights links you tap.
+on a phone and can't break because a CDN did. The type is a system stack for the same
+reason (a webfont that silently falls back is worse than one that never does).
+
+⚠️ Because `template.html` is a `string.Template`, a literal `$` must be doubled and
+`${...}` parses as a placeholder — so there is **not one JS template literal** in the
+page script, and there must not be. `.substitute` fails the build loudly rather than
+shipping broken markup, which is the only reason this is survivable.
 
 ### How fresh it is
 
-`publish.sh` runs on its **own** cron every 15 minutes, decoupled from the scraper.
-It is not "once at the end of a run": the runner writes alerts continuously
-(`db.record_alert` per route) and a sweep routinely spans more than one 6h slot, so
-there is no single end-of-run moment to hook. The script exits without committing
-when nothing changed, so frequent runs are nearly free and produce no commit noise.
+Two clocks, on purpose:
 
-Two floors make anything finer pointless: GitHub Pages serves `cache-control:
-max-age=600`, so 10 minutes of CDN caching is the limit on perceived freshness; and
-the data is coarser still, since a route is rescraped every 6h at best and revisited
-every 1–3 days. This design detects sustained sales, not error fares.
+- `sync_supabase.py` every **5 min** — Pi → Supabase. Cheap (one GET, plus a POST only
+  when there is something new), so it runs often. **This is what sets how fresh the
+  page feels**, because the browser's fetch goes straight to Supabase and bypasses the
+  Pages CDN.
+- `publish.sh` every **20 min** — regenerates `index.html`, commits, pushes. Makes a git
+  commit, so it runs less often, and exits without committing when nothing changed.
+
+Neither is "once at the end of a run": the runner writes alerts continuously
+(`db.record_alert` per route) and a sweep spans more than one 6h slot, so there is no
+end-of-run moment to hook.
+
+The *fallback* copy is still bounded by GitHub Pages' `cache-control: max-age=600`, so
+10 minutes of CDN caching is the floor on how stale the no-JS view can be. The live
+cards are not subject to that. Underneath both, the data is coarser still — a route is
+rescraped every 6h at best and revisited every 1–3 days — so this design detects
+sustained sales, not error fares.
 
 ## One card per sale, not per alert
 
@@ -48,24 +67,46 @@ unreadable as a list. Here alerts collapse to one card per
 its own price, cheapest first and highlighted. Those 27 Morocco alerts become 5
 cards. Tapping any chip opens that origin's itinerary on Google Flights.
 
-Cards are ordered by alert tier, then price, so the strongest deals lead. The region
-strip filters; both the region and the light/dark choice persist locally. A sale with
-more than six origins shows six and a **Show all** toggle — the markup ships expanded
-and is collapsed by script on load, so with JS off you get every option rather than a
-button that does nothing.
+Each card also carries the **airline** of its cheapest leg on the meta line (an em dash
+when the parser captured none, matching the Discord embed) and a relative **posting
+date** in the foot — "3h ago", with the absolute UTC in a `title`. Per-leg airlines
+differ, so the rest ride in each chip's `title`/`aria-label` rather than doubling every
+capsule's width.
+
+**Sort** is `Best` (alert tier, then price — the default, so the page opens strongest
+first) or `Latest` (newest alert first). Sorting **reorders** nodes while the region
+filter only toggles `hidden`; keeping those separate is what lets them compose, so
+"Europe + Latest" works without either knowing about the other. Region, sort and the
+light/dark choice all persist locally.
+
+A sale with more than six origins shows six and a **Show all** toggle. In the fallback
+copy the markup ships expanded and is collapsed by script, so with JS off you get every
+option rather than a button that does nothing.
 
 The look is Apple's: SF via `-apple-system` with tabular figures throughout, iOS
-grouped-list cards on `systemGroupedBackground`, capsule filters, and the iOS system
-palette in both themes. Tier colours keep the scraper's own ordering so a card agrees
-with the Discord alert that produced it (Exceptional red, Excellent purple, Great
-indigo, Good green) — Great is systemIndigo rather than systemBlue on purpose, since
-blue is reserved for things you can tap.
+grouped-list cards on `systemGroupedBackground`, and the iOS system palette in both
+themes. Region tabs are **navigation, not filter buttons** — no background on any tab
+including the selected one, which carries an accent underline against the strip's
+baseline hairline. Tier colours keep the scraper's own ordering so a card agrees with
+the Discord alert that produced it (Exceptional red, Excellent purple, Great indigo,
+Good green) — Great is systemIndigo rather than systemBlue on purpose, since blue is
+reserved for things you can tap.
+
+⚠️ Card rendering exists **twice**: Python (`generate.render_card`) for the fallback and
+JS (`cardHtml` in `template.html`) for the live view. They are visible in sequence as
+the fetch resolves, so any divergence reads as the page glitching. In particular
+`fmtDate` is hand-rolled rather than using `toLocaleDateString`, which yields
+"Wed, Dec 2" where Python's `%a %-d %b` yields "Wed 2 Dec"; and `fmtAgo` mirrors
+`generate.fmt_ago`'s thresholds exactly. A grayscale palette was built and reverted on
+2026-08-12 — the tier hues above are deliberate.
 
 ## Layout
 
 | Path | Role |
 |---|---|
-| `generate.py` | The generator. Reads `deal_alerts` read-only, writes `index.html`. |
+| `generate.py` | Builds the FALLBACK page. Reads `deal_alerts` read-only, writes `index.html`. |
+| `template.html` | The shell **and** the live client renderer (`buildSales`/`cardHtml`/`loadFeed`). |
+| `sync_supabase.py` | Pi-side: pushes newly alerted deals into Supabase `fare_alerts`. |
 | `catalog.py` | **Generated.** Vendored destination / region / airport tables. |
 | `sync_catalog.py` | Regenerates `catalog.py` from the `flights` repo. |
 | `publish.sh` | Pi-side cron entry: pull, generate, commit, push. |
@@ -120,9 +161,16 @@ and `.env` — this repo is public and the scraper's is not.
 
 ## Supabase: the live deal feed
 
-`sync_supabase.py` pushes newly alerted deals into the `fare_alerts` table, which the
-page's **Just in** section reads so a fare found mid-sweep appears without waiting for
-the next static rebuild. Scope is exactly that: **deals that actually alerted**.
+`sync_supabase.py` pushes newly alerted deals into the `fare_alerts` table, which is
+what the page **renders from**, so a fare found mid-sweep appears within one sync
+interval instead of waiting for a rebuild. Scope is exactly that: **deals that actually
+alerted**.
+
+Two columns exist only for the page and are derived on the Pi from the vendored catalog
+rather than in the browser: `airline`, and `city_name` — which is **not** a duplicate of
+`destination_name`. The latter is the market ("Miami", "Hawaii"); `city_name` is the
+airport's city ("Fort Lauderdale", "Maui"), which is what the card subtitle needs. When
+they match, the subtitle collapses to the bare code.
 
 This is *not* a backup. `fare_history` is never touched — it isn't a target here, and
 couldn't be anyway (~8.85M rows / ~2.4 GB against a 500 MB free tier).
@@ -146,16 +194,34 @@ high-water mark is `max(source_id)`, deleting old rows does **not** cause a re-p
 `deal_alerts` on the Pi remains the system of record, so any of this is recoverable by
 re-running without `--since`.
 
-Two keys, and the distinction matters:
+### What the public key can and cannot reach
 
-| key | where it lives | can it write? |
+| key | where it lives | reach |
 |---|---|---|
-| `sb_publishable_...` | inlined in `index.html`, public | **No.** RLS grants `anon` SELECT only |
-| `sb_secret_...` | `.env` on the Pi, gitignored | Yes — bypasses RLS |
+| `sb_publishable_...` | inlined in `index.html`, public | SELECT on the **last 24h**, **12 display columns only** |
+| `sb_secret_...` | `.env` on the Pi, gitignored | Full; bypasses RLS. Never in this repo. |
 
-Verified rather than assumed: an anon `DELETE` returns `200 []`, which looks like
-success. Seeding a real row and re-running it confirmed the row survives untouched —
+Since a static page has no server, the credential must ship in the HTML — so **whatever
+the page displays is obtainable by anyone who opens devtools, and that cannot be fixed.**
+What *can* be closed is everything beyond the current view, and as of 2026-08-12 it is:
+an RLS policy limits `anon` to `sent_at >= now() - interval '24 hours'`, and table-level
+`SELECT` is revoked in favour of a **column-level** grant. Verified with the real
+publishable key — `deal_score`, `source_id`, `select=*`, any older row, and `sync_runs`
+all return `42501 permission denied` or empty, while the page's exact 12-column select
+works. `service_role` is untouched, so the Pi's sync (which reads `source_id` for its
+high-water mark) is unaffected.
+
+Column grants rather than a view on purpose: a definer view achieves the same thing but
+trips Supabase's security-definer lint.
+
+Writes were verified rather than assumed: an anon `DELETE` returns `200 []`, which looks
+like success. Seeding a real row and re-running it confirmed the row survives untouched —
 RLS filters the rows to zero rather than deleting them.
+
+⚠️ **The public repo is a bigger exposure than the key.** `index.html` is committed with
+every fare price in plaintext, readable with no credential, and git history keeps a
+snapshot per publish. That is the cost of keeping a no-JS fallback; genuinely private
+would mean a private repo, not a code change.
 
 Pi setup:
 
@@ -173,9 +239,16 @@ chmod 600 .env
 
 Cron — the two run on **separate clocks** on purpose. The sync is cheap (one GET, plus
 a POST only when there is something new, no git operation), so it runs often; the
-publish makes a git commit, so it runs less often. The "Just in" fetch goes straight
-to Supabase and bypasses the Pages CDN, so sync frequency — not publish frequency —
-is what sets how fresh the page feels.
+publish makes a git commit, so it runs less often. The page's fetch goes straight to
+Supabase and bypasses the Pages CDN, so **sync** frequency — not publish frequency —
+is what sets how fresh the page feels. Publish frequency only bounds how stale the
+no-JS fallback can be.
+
+Both were installed on 2026-08-12; before that neither existed and the mirror had only
+ever been filled by hand. Two ways to tell a dead sync remotely, no Pi access needed:
+`sync_runs` logs **every** run including `rows_added: 0` no-ops, so a gap there means
+the cron is not firing; and `publish.sh` commits as `pi-publisher`, so an absence of
+commits by that author means it has never run from cron.
 
 ```
 */5  * * * *  /home/jay/Documents/display-flights/sync_supabase.py
