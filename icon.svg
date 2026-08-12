@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Bucket List Fares">
+  <rect width="64" height="64" rx="14" fill="#171612"/>
+  <path d="M9 37.5 L55 15 L45.5 40.5 L33.5 34.5 L23 43 L22.5 34.2 Z" fill="#D8A94F"/>
+  <path d="M22.5 34.2 L55 15 L33.5 34.5 Z" fill="#A8802F"/>
+</svg>

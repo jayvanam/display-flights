@@ -1,0 +1,1749 @@
+<title>Bucket List Fares</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="144 fare alerts from the last 24 hours, grouped by sale.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fares">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%23171612'/><path d='M6 19.5l20-7.5-3.2 8.2-7-1.2-4.3 4.1-.6-4.2z' fill='%23D8A94F'/></svg>">
+<style>
+/* ------------------------------------------------------------------ tokens
+   Light is the full palette on bare :root. Dark redefines ONLY tokens, twice:
+   once behind prefers-color-scheme (guarded so an explicit light choice beats a
+   dark OS) and once behind the [data-theme] stamp (so the toggle wins both ways).
+   No component color is ever declared inside a media or [data-theme] block. */
+:root {
+  --paper:    #FBF9F5;
+  --card:     #FFFFFF;
+  --ink:      #1C1B18;
+  --ink-2:    #5A5751;
+  --ink-3:    #8A857C;
+  --rule:     #E4DFD5;
+  --rule-2:   #F0EBE1;
+  --brass:    #8F6620;
+  --brass-dim:#EFE4CE;
+  --t1:       #B3382C;
+  --t2:       #71449B;
+  --t3:       #2A6394;
+  --t4:       #3B7248;
+  --shadow:   0 1px 2px rgba(28,27,24,.06), 0 6px 16px -10px rgba(28,27,24,.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:    #171612;
+    --card:     #1F1E19;
+    --ink:      #F2EEE4;
+    --ink-2:    #ADA698;
+    --ink-3:    #7C7568;
+    --rule:     #322E26;
+    --rule-2:   #272520;
+    --brass:    #D8A94F;
+    --brass-dim:#3A3021;
+    --t1:       #E8695A;
+    --t2:       #A98BD1;
+    --t3:       #6BA3D6;
+    --t4:       #6FB283;
+    --shadow:   0 1px 2px rgba(0,0,0,.4), 0 6px 18px -10px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"] {
+  --paper:    #171612;
+  --card:     #1F1E19;
+  --ink:      #F2EEE4;
+  --ink-2:    #ADA698;
+  --ink-3:    #7C7568;
+  --rule:     #322E26;
+  --rule-2:   #272520;
+  --brass:    #D8A94F;
+  --brass-dim:#3A3021;
+  --t1:       #E8695A;
+  --t2:       #A98BD1;
+  --t3:       #6BA3D6;
+  --t4:       #6FB283;
+  --shadow:   0 1px 2px rgba(0,0,0,.4), 0 6px 18px -10px rgba(0,0,0,.6);
+}
+
+/* Type. No @font-face and no font CDN link: the host CSP blocks external font
+   requests, so a linked webfont would silently fall back to a default face. These
+   stacks resolve to real faces on the target devices (Iowan Old Style ships on
+   macOS/iOS, Palatino elsewhere) and degrade to Georgia. */
+:root {
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --sans:  system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono:  ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+
+.wrap { max-width: 940px; margin: 0 auto; padding: 0 16px 64px; }
+
+/* ------------------------------------------------------------------ header */
+.top {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+}
+.top-inner {
+  max-width: 940px; margin: 0 auto; padding: 14px 16px 0;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.masthead { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.masthead h1 {
+  font-family: var(--serif);
+  font-size: 1.5rem; font-weight: 600; letter-spacing: -.01em;
+  margin: 0; text-wrap: balance;
+}
+.meta {
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-3);
+  font-variant-numeric: tabular-nums; letter-spacing: .02em;
+  margin: 0; margin-inline-start: auto;
+}
+.meta b { color: var(--ink-2); font-weight: 600; }
+
+.themer {
+  appearance: none; border: 1px solid var(--rule); background: var(--card);
+  color: var(--ink-2); border-radius: 999px; width: 34px; height: 34px;
+  font-size: .95rem; cursor: pointer; line-height: 1; flex: none;
+}
+.themer:hover { border-color: var(--brass); color: var(--brass); }
+.themer:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+/* Region strip. Scrolls horizontally on a phone rather than wrapping into a
+   stack that pushes the first card off-screen. */
+.tabs {
+  display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none;
+  margin: 0 -16px; padding: 0 16px;
+  list-style: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  appearance: none; background: none; border: 0; cursor: pointer;
+  font-family: var(--sans); font-size: .82rem; color: var(--ink-2);
+  padding: 9px 12px 11px; white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  min-height: 44px; /* thumb target */
+}
+.tab:focus-visible { outline: 2px solid var(--brass); outline-offset: -2px; }
+.tab .n {
+  font-family: var(--mono); font-size: .72rem; color: var(--ink-3);
+  font-variant-numeric: tabular-nums; margin-inline-start: 5px;
+}
+.tab[aria-selected="true"] {
+  color: var(--ink); border-bottom-color: var(--brass); font-weight: 600;
+}
+.tab[aria-selected="true"] .n { color: var(--brass); }
+
+/* ------------------------------------------------------------------- cards */
+.list { display: flex; flex-direction: column; gap: 10px; padding-top: 18px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-inline-start: 3px solid var(--tier);
+  border-radius: 4px;
+  padding: 13px 15px 12px;
+  box-shadow: var(--shadow);
+}
+.tier-t1 { --tier: var(--t1); }
+.tier-t2 { --tier: var(--t2); }
+.tier-t3 { --tier: var(--t3); }
+.tier-t4 { --tier: var(--t4); }
+.card[hidden] { display: none; }
+
+.card-head { display: flex; align-items: flex-start; gap: 12px; }
+.card-id { min-width: 0; flex: 1; }
+.card-id h2 {
+  font-family: var(--serif); font-size: 1.22rem; font-weight: 600;
+  margin: 0; letter-spacing: -.01em; line-height: 1.2;
+}
+.cities {
+  margin: 2px 0 0; font-size: .8rem; color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+.codes {
+  font-family: var(--mono); font-size: .7rem; color: var(--ink-3);
+  letter-spacing: .04em; margin-inline-start: 4px;
+}
+
+.card-price { text-align: end; flex: none; }
+.price {
+  font-family: var(--mono); font-size: 1.35rem; font-weight: 600;
+  font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+  display: block; line-height: 1.1;
+}
+.spread {
+  font-family: var(--mono); font-size: .68rem; color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.dates {
+  font-family: var(--mono); font-size: .78rem; color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  margin: 9px 0 0;
+}
+.dates .sep { color: var(--ink-3); margin: 0 7px; }
+
+.card-foot { display: flex; align-items: center; gap: 9px; margin-top: 9px; }
+.badge {
+  font-size: .64rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--tier);
+  border: 1px solid var(--tier); border-radius: 3px; padding: 2px 6px;
+}
+.origin-note { font-size: .72rem; color: var(--ink-3); }
+.origin-note.mono {
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .02em;
+  color: var(--ink-2);
+}
+
+.chips {
+  list-style: none; margin: 10px 0 0; padding: 10px 0 0;
+  border-top: 1px solid var(--rule-2);
+  display: flex; flex-wrap: wrap; gap: 5px;
+}
+/* Chips are links to that exact origin's itinerary on Google Flights, so they get
+   a real tap target (min 32px) and visible pressed/focus states. */
+.chips li { display: flex; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 32px;
+  font-family: var(--mono); font-size: .72rem;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--rule); border-radius: 3px;
+  padding: 4px 8px; color: var(--ink-2);
+  text-decoration: none;
+  transition: border-color .12s ease, background-color .12s ease;
+}
+.chip:hover { border-color: var(--brass); color: var(--ink); }
+.chip:active { background: var(--rule-2); }
+.chip:focus-visible { outline: 2px solid var(--brass); outline-offset: 1px; }
+.chip-price { color: var(--ink); font-weight: 600; }
+.chip.is-best {
+  border-color: var(--brass); background: var(--brass-dim);
+  color: var(--ink);
+}
+.chip.is-best .chip-price { color: var(--brass); }
+
+.origin-note.solo {
+  text-decoration: none; border-bottom: 1px dotted var(--ink-3);
+  padding-bottom: 1px;
+}
+.origin-note.solo:hover { color: var(--brass); border-bottom-color: var(--brass); }
+.origin-note.solo:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .chip { transition: none; }
+}
+
+.empty {
+  font-family: var(--mono); font-size: .8rem; color: var(--ink-3);
+  padding: 40px 0; text-align: center;
+}
+.empty[hidden] { display: none; }
+
+.foot {
+  margin-top: 30px; padding-top: 14px; border-top: 1px solid var(--rule);
+  font-family: var(--mono); font-size: .68rem; color: var(--ink-3);
+  line-height: 1.7;
+}
+.foot b { color: var(--ink-2); font-weight: 600; }
+
+@media (min-width: 620px) {
+  .masthead h1 { font-size: 1.8rem; }
+  .card { padding: 15px 18px 14px; }
+  .card-id h2 { font-size: 1.32rem; }
+  .price { font-size: 1.5rem; }
+}
+</style>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="masthead">
+      <h1>Bucket List Fares</h1>
+      <p class="meta"><b>76</b> sales &middot; <b>144</b> alerts &middot; 24 h</p>
+      <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9682;</button>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Region">
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">76</span></button>
+      <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">44</span></button>
+      <button class="tab" type="button" role="tab" data-region="caribbean" aria-selected="false">Caribbean &amp; Mexico<span class="n">7</span></button>
+      <button class="tab" type="button" role="tab" data-region="europe" aria-selected="false">Europe<span class="n">6</span></button>
+      <button class="tab" type="button" role="tab" data-region="asia" aria-selected="false">Asia<span class="n">4</span></button>
+      <button class="tab" type="button" role="tab" data-region="mideast" aria-selected="false">Middle East<span class="n">8</span></button>
+      <button class="tab" type="button" role="tab" data-region="africa" aria-selected="false">Africa<span class="n">5</span></button>
+      <button class="tab" type="button" role="tab" data-region="hawaii" aria-selected="false">Hawaii<span class="n">2</span></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="list" id="list">
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Miami</h2>
+            <p class="cities">Fort Lauderdale <span class="codes">FLL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$74</span><span class="spread">to $117</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20FLL%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to FLL, $74, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;FLL</span><span class="chip-price">$74</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20FLL%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open MDW to FLL, $117, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;FLL</span><span class="chip-price">$117</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Denver</h2>
+            <p class="cities"><span class="codes">DEN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$74</span><span class="spread">to $192</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20DEN%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to DEN, $74, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$74</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20DEN%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open JFK to DEN, $192, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$192</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Philadelphia</h2>
+            <p class="cities"><span class="codes">PHL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$94</span>
+          </div>
+        </header>
+        <p class="dates">Thu 3 Sep &rarr; Mon 7 Sep<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20PHL%20on%202026-09-03%20through%202026-09-07" target="_blank" rel="noopener" aria-label="Open ORD to PHL on Google Flights">ORD&thinsp;&rarr;&thinsp;PHL</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Las Vegas</h2>
+            <p class="cities"><span class="codes">LAS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$96</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20LAS%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to LAS on Google Flights">ORD&thinsp;&rarr;&thinsp;LAS</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Denver</h2>
+            <p class="cities"><span class="codes">DEN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$97</span><span class="spread">to $196</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Fri 6 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">3 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20DEN%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open ORD to DEN, $97, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$97</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20DEN%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open DFW to DEN, $102, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$102</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20DEN%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open DAL to DEN, $196, on Google Flights"><span class="chip-route">DAL&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$196</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Phoenix</h2>
+            <p class="cities"><span class="codes">PHX</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$100</span><span class="spread">to $189</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">4 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20PHX%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open DFW to PHX, $100, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;PHX</span><span class="chip-price">$100</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20PHX%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open ORD to PHX, $164, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;PHX</span><span class="chip-price">$164</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20PHX%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to PHX, $183, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;PHX</span><span class="chip-price">$183</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20PHX%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open DAL to PHX, $189, on Google Flights"><span class="chip-route">DAL&thinsp;&rarr;&thinsp;PHX</span><span class="chip-price">$189</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Denver</h2>
+            <p class="cities"><span class="codes">DEN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$112</span><span class="spread">to $192</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">5 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20DEN%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open ORD to DEN, $112, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$112</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20DEN%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open EWR to DEN, $146, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$146</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20DEN%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to DEN, $160, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$160</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20DEN%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open DAL to DEN, $161, on Google Flights"><span class="chip-route">DAL&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$161</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20LGA%20to%20DEN%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open LGA to DEN, $192, on Google Flights"><span class="chip-route">LGA&thinsp;&rarr;&thinsp;DEN</span><span class="chip-price">$192</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Chicago</h2>
+            <p class="cities"><span class="codes">ORD</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$120</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20ORD%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open DFW to ORD on Google Flights">DFW&thinsp;&rarr;&thinsp;ORD</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Las Vegas</h2>
+            <p class="cities"><span class="codes">LAS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$128</span><span class="spread">to $165</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20LAS%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open ORD to LAS, $128, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;LAS</span><span class="chip-price">$128</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20LAS%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to LAS, $165, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;LAS</span><span class="chip-price">$165</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Austin</h2>
+            <p class="cities"><span class="codes">AUS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$129</span><span class="spread">to $154</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20AUS%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open DAL to AUS, $129, on Google Flights"><span class="chip-route">DAL&thinsp;&rarr;&thinsp;AUS</span><span class="chip-price">$129</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20AUS%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open ORD to AUS, $154, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;AUS</span><span class="chip-price">$154</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Washington DC</h2>
+            <p class="cities">Baltimore · Washington <span class="codes">BWI DCA</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$132</span><span class="spread">to $160</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20BWI%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open DFW to BWI, $132, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;BWI</span><span class="chip-price">$132</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20DCA%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to DCA, $160, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;DCA</span><span class="chip-price">$160</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Chicago</h2>
+            <p class="cities"><span class="codes">MDW ORD</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$144</span><span class="spread">to $172</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">4 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20ORD%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open DFW to ORD, $144, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;ORD</span><span class="chip-price">$144</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20ORD%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open JFK to ORD, $159, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;ORD</span><span class="chip-price">$159</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20LGA%20to%20ORD%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open LGA to ORD, $159, on Google Flights"><span class="chip-route">LGA&thinsp;&rarr;&thinsp;ORD</span><span class="chip-price">$159</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20MDW%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open EWR to MDW, $172, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;MDW</span><span class="chip-price">$172</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Miami</h2>
+            <p class="cities">Miami · Fort Lauderdale <span class="codes">FLL MIA</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$146</span><span class="spread">to $189</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">3 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20MIA%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open ORD to MIA, $146, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;MIA</span><span class="chip-price">$146</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20FLL%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open EWR to FLL, $168, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;FLL</span><span class="chip-price">$168</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20FLL%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open DAL to FLL, $189, on Google Flights"><span class="chip-route">DAL&thinsp;&rarr;&thinsp;FLL</span><span class="chip-price">$189</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Salt Lake City</h2>
+            <p class="cities"><span class="codes">SLC</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$146</span><span class="spread">to $164</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20SLC%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open DFW to SLC, $146, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;SLC</span><span class="chip-price">$146</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20SLC%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to SLC, $164, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;SLC</span><span class="chip-price">$164</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Los Angeles</h2>
+            <p class="cities">Ontario · Burbank <span class="codes">BUR ONT</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$146</span><span class="spread">to $188</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20ONT%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to ONT, $146, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;ONT</span><span class="chip-price">$146</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20BUR%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open DFW to BUR, $188, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;BUR</span><span class="chip-price">$188</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>New Orleans</h2>
+            <p class="cities"><span class="codes">MSY</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$150</span><span class="spread">to $176</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Fri 6 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20MSY%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open ORD to MSY, $150, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;MSY</span><span class="chip-price">$150</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20MSY%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open MDW to MSY, $176, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;MSY</span><span class="chip-price">$176</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Phoenix</h2>
+            <p class="cities"><span class="codes">PHX</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$153</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Fri 6 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20PHX%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open ORD to PHX on Google Flights">ORD&thinsp;&rarr;&thinsp;PHX</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Nashville</h2>
+            <p class="cities"><span class="codes">BNA</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$154</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20BNA%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to BNA on Google Flights">ORD&thinsp;&rarr;&thinsp;BNA</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>New Orleans</h2>
+            <p class="cities"><span class="codes">MSY</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$156</span><span class="spread">to $194</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">4 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20MSY%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open EWR to MSY, $156, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;MSY</span><span class="chip-price">$156</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20MSY%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to MSY, $161, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;MSY</span><span class="chip-price">$161</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20LGA%20to%20MSY%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open LGA to MSY, $183, on Google Flights"><span class="chip-route">LGA&thinsp;&rarr;&thinsp;MSY</span><span class="chip-price">$183</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20MSY%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open JFK to MSY, $194, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;MSY</span><span class="chip-price">$194</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Philadelphia</h2>
+            <p class="cities"><span class="codes">PHL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$157</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20PHL%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open MDW to PHL on Google Flights">MDW&thinsp;&rarr;&thinsp;PHL</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>New York</h2>
+            <p class="cities">New York · Newark <span class="codes">EWR JFK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$159</span><span class="spread">to $179</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20JFK%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open ORD to JFK, $159, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;JFK</span><span class="chip-price">$159</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20EWR%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to EWR, $179, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;EWR</span><span class="chip-price">$179</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Los Angeles</h2>
+            <p class="cities">Ontario · Long Beach <span class="codes">LGB ONT</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$165</span><span class="spread">to $190</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">4 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20ONT%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to ONT, $165, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;ONT</span><span class="chip-price">$165</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20ONT%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open ORD to ONT, $173, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;ONT</span><span class="chip-price">$173</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20LGA%20to%20ONT%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open LGA to ONT, $186, on Google Flights"><span class="chip-route">LGA&thinsp;&rarr;&thinsp;ONT</span><span class="chip-price">$186</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20LGB%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open DAL to LGB, $190, on Google Flights"><span class="chip-route">DAL&thinsp;&rarr;&thinsp;LGB</span><span class="chip-price">$190</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>San Diego</h2>
+            <p class="cities"><span class="codes">SAN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$166</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20SAN%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to SAN on Google Flights">ORD&thinsp;&rarr;&thinsp;SAN</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Seattle</h2>
+            <p class="cities"><span class="codes">SEA</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$178</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20SEA%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open ORD to SEA on Google Flights">ORD&thinsp;&rarr;&thinsp;SEA</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Los Angeles</h2>
+            <p class="cities"><span class="codes">LAX</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$186</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Fri 6 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20LAX%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open MDW to LAX on Google Flights">MDW&thinsp;&rarr;&thinsp;LAX</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bay Area</h2>
+            <p class="cities">Oakland <span class="codes">OAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$187</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20OAK%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open DFW to OAK on Google Flights">DFW&thinsp;&rarr;&thinsp;OAK</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Salt Lake City</h2>
+            <p class="cities"><span class="codes">SLC</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$199</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20SLC%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open ORD to SLC on Google Flights">ORD&thinsp;&rarr;&thinsp;SLC</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="hawaii">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Hawaii</h2>
+            <p class="cities">Maui · Honolulu · Kauai <span class="codes">HNL LIH OGG</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$312</span><span class="spread">to $360</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Tue 17 Nov<span class="sep">·</span>7 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">4 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20SFO%20to%20OGG%20on%202026-11-10%20through%202026-11-17" target="_blank" rel="noopener" aria-label="Open SFO to OGG, $312, on Google Flights"><span class="chip-route">SFO&thinsp;&rarr;&thinsp;OGG</span><span class="chip-price">$312</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20SEA%20to%20HNL%20on%202026-11-10%20through%202026-11-17" target="_blank" rel="noopener" aria-label="Open SEA to HNL, $332, on Google Flights"><span class="chip-route">SEA&thinsp;&rarr;&thinsp;HNL</span><span class="chip-price">$332</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20LIH%20on%202026-11-10%20through%202026-11-17" target="_blank" rel="noopener" aria-label="Open DAL to LIH, $350, on Google Flights"><span class="chip-route">DAL&thinsp;&rarr;&thinsp;LIH</span><span class="chip-price">$350</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20LIH%20on%202026-11-10%20through%202026-11-17" target="_blank" rel="noopener" aria-label="Open DFW to LIH, $360, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;LIH</span><span class="chip-price">$360</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="caribbean">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Dominican Republic</h2>
+            <p class="cities">Santo Domingo <span class="codes">SDQ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$335</span>
+          </div>
+        </header>
+        <p class="dates">Sun 31 Jan &rarr; Fri 5 Feb<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20SDQ%20on%202027-01-31%20through%202027-02-05" target="_blank" rel="noopener" aria-label="Open EWR to SDQ on Google Flights">EWR&thinsp;&rarr;&thinsp;SDQ</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="caribbean">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Dominican Republic</h2>
+            <p class="cities">Santo Domingo · Punta Cana <span class="codes">PUJ SDQ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$344</span><span class="spread">to $345</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Sat 7 Nov<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20SDQ%20on%202026-11-02%20through%202026-11-07" target="_blank" rel="noopener" aria-label="Open JFK to SDQ, $344, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;SDQ</span><span class="chip-price">$344</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20PUJ%20on%202026-11-02%20through%202026-11-07" target="_blank" rel="noopener" aria-label="Open ORD to PUJ, $345, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;PUJ</span><span class="chip-price">$345</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="europe">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Scandinavia</h2>
+            <p class="cities">Stockholm · Copenhagen <span class="codes">ARN CPH</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$378</span><span class="spread">to $476</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Tue 17 Nov<span class="sep">·</span>7 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20BOS%20to%20ARN%20on%202026-11-10%20through%202026-11-17" target="_blank" rel="noopener" aria-label="Open BOS to ARN, $378, on Google Flights"><span class="chip-route">BOS&thinsp;&rarr;&thinsp;ARN</span><span class="chip-price">$378</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20SEA%20to%20CPH%20on%202026-11-10%20through%202026-11-17" target="_blank" rel="noopener" aria-label="Open SEA to CPH, $476, on Google Flights"><span class="chip-route">SEA&thinsp;&rarr;&thinsp;CPH</span><span class="chip-price">$476</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="europe">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Norway</h2>
+            <p class="cities">Oslo <span class="codes">OSL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$426</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Fri 20 Nov<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20BOS%20to%20OSL%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open BOS to OSL on Google Flights">BOS&thinsp;&rarr;&thinsp;OSL</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="europe">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Norway</h2>
+            <p class="cities">Oslo · Bergen · Trondheim <span class="codes">BGO OSL TRD</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$457</span><span class="spread">to $496</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Thu 12 Nov<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">3 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20SEA%20to%20OSL%20on%202026-11-02%20through%202026-11-12" target="_blank" rel="noopener" aria-label="Open SEA to OSL, $457, on Google Flights"><span class="chip-route">SEA&thinsp;&rarr;&thinsp;OSL</span><span class="chip-price">$457</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20IAD%20to%20BGO%20on%202026-11-02%20through%202026-11-12" target="_blank" rel="noopener" aria-label="Open IAD to BGO, $488, on Google Flights"><span class="chip-route">IAD&thinsp;&rarr;&thinsp;BGO</span><span class="chip-price">$488</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20BOS%20to%20TRD%20on%202026-11-02%20through%202026-11-12" target="_blank" rel="noopener" aria-label="Open BOS to TRD, $496, on Google Flights"><span class="chip-route">BOS&thinsp;&rarr;&thinsp;TRD</span><span class="chip-price">$496</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="europe">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Scandinavia</h2>
+            <p class="cities">Helsinki <span class="codes">HEL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$469</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Wed 9 Dec<span class="sep">·</span>7 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20HEL%20on%202026-12-02%20through%202026-12-09" target="_blank" rel="noopener" aria-label="Open ORD to HEL on Google Flights">ORD&thinsp;&rarr;&thinsp;HEL</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="africa">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca · Marrakesh <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$650</span><span class="spread">to $795</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Fri 20 Nov<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">16 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20BOS%20to%20CMN%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open BOS to CMN, $650, on Google Flights"><span class="chip-route">BOS&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$650</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20CMN%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open EWR to CMN, $650, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$650</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20CMN%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open JFK to CMN, $670, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$670</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20IAD%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open IAD to RAK, $704, on Google Flights"><span class="chip-route">IAD&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$704</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20PHL%20to%20CMN%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open PHL to CMN, $710, on Google Flights"><span class="chip-route">PHL&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$710</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20CLT%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open CLT to RAK, $718, on Google Flights"><span class="chip-route">CLT&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$718</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DEN%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open DEN to RAK, $718, on Google Flights"><span class="chip-route">DEN&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$718</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open DFW to RAK, $730, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$730</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20PHX%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open PHX to RAK, $730, on Google Flights"><span class="chip-route">PHX&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$730</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MSP%20to%20CMN%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open MSP to CMN, $734, on Google Flights"><span class="chip-route">MSP&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$734</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DTW%20to%20CMN%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open DTW to CMN, $735, on Google Flights"><span class="chip-route">DTW&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$735</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20SEA%20to%20CMN%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open SEA to CMN, $755, on Google Flights"><span class="chip-route">SEA&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$755</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20AUS%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open AUS to RAK, $790, on Google Flights"><span class="chip-route">AUS&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$790</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20LAS%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open LAS to RAK, $790, on Google Flights"><span class="chip-route">LAS&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$790</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20LAX%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open LAX to RAK, $790, on Google Flights"><span class="chip-route">LAX&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$790</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20SFO%20to%20RAK%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open SFO to RAK, $795, on Google Flights"><span class="chip-route">SFO&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$795</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="africa">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca · Marrakesh <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$695</span><span class="spread">to $797</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Sat 12 Dec<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">4 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20BOS%20to%20CMN%20on%202026-12-02%20through%202026-12-12" target="_blank" rel="noopener" aria-label="Open BOS to CMN, $695, on Google Flights"><span class="chip-route">BOS&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$695</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20PHL%20to%20RAK%20on%202026-12-02%20through%202026-12-12" target="_blank" rel="noopener" aria-label="Open PHL to RAK, $768, on Google Flights"><span class="chip-route">PHL&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$768</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DTW%20to%20CMN%20on%202026-12-02%20through%202026-12-12" target="_blank" rel="noopener" aria-label="Open DTW to CMN, $787, on Google Flights"><span class="chip-route">DTW&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$787</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DEN%20to%20CMN%20on%202026-12-02%20through%202026-12-12" target="_blank" rel="noopener" aria-label="Open DEN to CMN, $797, on Google Flights"><span class="chip-route">DEN&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$797</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="mideast">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Dubai</h2>
+            <p class="cities"><span class="codes">DXB</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$705</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Thu 12 Nov<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20DXB%20on%202026-11-02%20through%202026-11-12" target="_blank" rel="noopener" aria-label="Open ORD to DXB on Google Flights">ORD&thinsp;&rarr;&thinsp;DXB</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="africa">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Marrakesh · Casablanca <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$706</span><span class="spread">to $710</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Tue 13 Oct<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20MIA%20to%20RAK%20on%202026-10-03%20through%202026-10-13" target="_blank" rel="noopener" aria-label="Open MIA to RAK, $706, on Google Flights"><span class="chip-route">MIA&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$706</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20CMN%20on%202026-10-03%20through%202026-10-13" target="_blank" rel="noopener" aria-label="Open EWR to CMN, $710, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$710</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="africa">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca <span class="codes">CMN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$720</span><span class="spread">to $751</span>
+          </div>
+        </header>
+        <p class="dates">Fri 1 Jan &rarr; Mon 11 Jan<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20CMN%20on%202027-01-01%20through%202027-01-11" target="_blank" rel="noopener" aria-label="Open JFK to CMN, $720, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$720</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20IAD%20to%20CMN%20on%202027-01-01%20through%202027-01-11" target="_blank" rel="noopener" aria-label="Open IAD to CMN, $751, on Google Flights"><span class="chip-route">IAD&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$751</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="mideast">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Dubai</h2>
+            <p class="cities"><span class="codes">DXB</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$722</span>
+          </div>
+        </header>
+        <p class="dates">Fri 1 Jan &rarr; Mon 11 Jan<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MIA%20to%20DXB%20on%202027-01-01%20through%202027-01-11" target="_blank" rel="noopener" aria-label="Open MIA to DXB on Google Flights">MIA&thinsp;&rarr;&thinsp;DXB</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="asia">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Southeast Asia</h2>
+            <p class="cities">Hanoi <span class="codes">HAN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$732</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Wed 16 Dec<span class="sep">·</span>14 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20PHX%20to%20HAN%20on%202026-12-02%20through%202026-12-16" target="_blank" rel="noopener" aria-label="Open PHX to HAN on Google Flights">PHX&thinsp;&rarr;&thinsp;HAN</a>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="africa">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Marrakesh · Casablanca <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$758</span><span class="spread">to $792</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Thu 12 Nov<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">3 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20MIA%20to%20RAK%20on%202026-11-02%20through%202026-11-12" target="_blank" rel="noopener" aria-label="Open MIA to RAK, $758, on Google Flights"><span class="chip-route">MIA&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$758</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ATL%20to%20RAK%20on%202026-11-02%20through%202026-11-12" target="_blank" rel="noopener" aria-label="Open ATL to RAK, $785, on Google Flights"><span class="chip-route">ATL&thinsp;&rarr;&thinsp;RAK</span><span class="chip-price">$785</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MSP%20to%20CMN%20on%202026-11-02%20through%202026-11-12" target="_blank" rel="noopener" aria-label="Open MSP to CMN, $792, on Google Flights"><span class="chip-route">MSP&thinsp;&rarr;&thinsp;CMN</span><span class="chip-price">$792</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t2" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Nashville</h2>
+            <p class="cities"><span class="codes">BNA</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$125</span><span class="spread">to $195</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <span class="origin-note">4 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20LGA%20to%20BNA%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open LGA to BNA, $125, on Google Flights"><span class="chip-route">LGA&thinsp;&rarr;&thinsp;BNA</span><span class="chip-price">$125</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20BNA%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open EWR to BNA, $137, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;BNA</span><span class="chip-price">$137</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20BNA%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open JFK to BNA, $137, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;BNA</span><span class="chip-price">$137</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20BNA%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to BNA, $195, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;BNA</span><span class="chip-price">$195</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t2" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Miami</h2>
+            <p class="cities">Fort Lauderdale <span class="codes">FLL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$126</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Fri 6 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20FLL%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open MDW to FLL on Google Flights">MDW&thinsp;&rarr;&thinsp;FLL</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Nashville</h2>
+            <p class="cities"><span class="codes">BNA</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$133</span><span class="spread">to $146</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Fri 6 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20BNA%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open DFW to BNA, $133, on Google Flights"><span class="chip-route">DFW&thinsp;&rarr;&thinsp;BNA</span><span class="chip-price">$133</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20BNA%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open EWR to BNA, $146, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;BNA</span><span class="chip-price">$146</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t2" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bay Area</h2>
+            <p class="cities">San Francisco <span class="codes">SFO</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$140</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20SFO%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open DFW to SFO on Google Flights">DFW&thinsp;&rarr;&thinsp;SFO</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Washington DC</h2>
+            <p class="cities">Washington <span class="codes">IAD</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$160</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20IAD%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to IAD on Google Flights">MDW&thinsp;&rarr;&thinsp;IAD</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Boston</h2>
+            <p class="cities"><span class="codes">BOS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$165</span>
+          </div>
+        </header>
+        <p class="dates">Thu 3 Sep &rarr; Mon 7 Sep<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20BOS%20on%202026-09-03%20through%202026-09-07" target="_blank" rel="noopener" aria-label="Open ORD to BOS on Google Flights">ORD&thinsp;&rarr;&thinsp;BOS</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Philadelphia</h2>
+            <p class="cities"><span class="codes">PHL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$167</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sat 14 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20PHL%20on%202026-11-10%20through%202026-11-14" target="_blank" rel="noopener" aria-label="Open MDW to PHL on Google Flights">MDW&thinsp;&rarr;&thinsp;PHL</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Palm Springs</h2>
+            <p class="cities"><span class="codes">PSP</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$194</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20PSP%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open MDW to PSP on Google Flights">MDW&thinsp;&rarr;&thinsp;PSP</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="caribbean">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bahamas</h2>
+            <p class="cities">Nassau <span class="codes">NAS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$308</span><span class="spread">to $337</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Thu 8 Oct<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20NAS%20on%202026-10-03%20through%202026-10-08" target="_blank" rel="noopener" aria-label="Open JFK to NAS, $308, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;NAS</span><span class="chip-price">$308</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20NAS%20on%202026-10-03%20through%202026-10-08" target="_blank" rel="noopener" aria-label="Open EWR to NAS, $337, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;NAS</span><span class="chip-price">$337</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t2" data-region="caribbean">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Costa Rica</h2>
+            <p class="cities">San Jose <span class="codes">SJO</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$321</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Thu 8 Oct<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20SJO%20on%202026-10-03%20through%202026-10-08" target="_blank" rel="noopener" aria-label="Open JFK to SJO on Google Flights">JFK&thinsp;&rarr;&thinsp;SJO</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="hawaii">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Hawaii</h2>
+            <p class="cities">Kauai <span class="codes">LIH</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$385</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Wed 9 Dec<span class="sep">·</span>7 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20LIH%20on%202026-12-02%20through%202026-12-09" target="_blank" rel="noopener" aria-label="Open DAL to LIH on Google Flights">DAL&thinsp;&rarr;&thinsp;LIH</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="europe">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Ireland</h2>
+            <p class="cities">Dublin <span class="codes">DUB</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$492</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Wed 9 Dec<span class="sep">·</span>7 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20DUB%20on%202026-12-02%20through%202026-12-09" target="_blank" rel="noopener" aria-label="Open JFK to DUB on Google Flights">JFK&thinsp;&rarr;&thinsp;DUB</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="mideast">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Dubai</h2>
+            <p class="cities"><span class="codes">DXB</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$743</span>
+          </div>
+        </header>
+        <p class="dates">Sun 31 Jan &rarr; Wed 10 Feb<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20DXB%20on%202027-01-31%20through%202027-02-10" target="_blank" rel="noopener" aria-label="Open EWR to DXB on Google Flights">EWR&thinsp;&rarr;&thinsp;DXB</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="mideast">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Dubai</h2>
+            <p class="cities"><span class="codes">DXB</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$754</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Fri 20 Nov<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DTW%20to%20DXB%20on%202026-11-10%20through%202026-11-20" target="_blank" rel="noopener" aria-label="Open DTW to DXB on Google Flights">DTW&thinsp;&rarr;&thinsp;DXB</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="mideast">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Egypt</h2>
+            <p class="cities">Cairo <span class="codes">CAI</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$781</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Sat 12 Dec<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20IAD%20to%20CAI%20on%202026-12-02%20through%202026-12-12" target="_blank" rel="noopener" aria-label="Open IAD to CAI on Google Flights">IAD&thinsp;&rarr;&thinsp;CAI</a>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="asia">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Southeast Asia</h2>
+            <p class="cities">Ho Chi Minh City <span class="codes">SGN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$786</span><span class="spread">to $798</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Tue 24 Nov<span class="sep">·</span>14 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20SEA%20to%20SGN%20on%202026-11-10%20through%202026-11-24" target="_blank" rel="noopener" aria-label="Open SEA to SGN, $786, on Google Flights"><span class="chip-route">SEA&thinsp;&rarr;&thinsp;SGN</span><span class="chip-price">$786</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20SGN%20on%202026-11-10%20through%202026-11-24" target="_blank" rel="noopener" aria-label="Open JFK to SGN, $798, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;SGN</span><span class="chip-price">$798</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t2" data-region="asia">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bali</h2>
+            <p class="cities"><span class="codes">DPS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$787</span>
+          </div>
+        </header>
+        <p class="dates">Sun 31 Jan &rarr; Sun 14 Feb<span class="sep">·</span>14 nights</p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20SFO%20to%20DPS%20on%202027-01-31%20through%202027-02-14" target="_blank" rel="noopener" aria-label="Open SFO to DPS on Google Flights">SFO&thinsp;&rarr;&thinsp;DPS</a>
+        </div>
+      </article>
+      <article class="card tier-t3" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bay Area</h2>
+            <p class="cities">San Francisco <span class="codes">SFO</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$165</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Fri 6 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Great</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20SFO%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open DFW to SFO on Google Flights">DFW&thinsp;&rarr;&thinsp;SFO</a>
+        </div>
+      </article>
+      <article class="card tier-t3" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Orlando</h2>
+            <p class="cities"><span class="codes">MCO</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$195</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Great</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20MCO%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open MDW to MCO on Google Flights">MDW&thinsp;&rarr;&thinsp;MCO</a>
+        </div>
+      </article>
+      <article class="card tier-t3" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bozeman</h2>
+            <p class="cities"><span class="codes">BZN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$217</span><span class="spread">to $309</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Sat 7 Nov<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Great</span>
+          <span class="origin-note">3 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20BZN%20on%202026-11-02%20through%202026-11-07" target="_blank" rel="noopener" aria-label="Open MDW to BZN, $217, on Google Flights"><span class="chip-route">MDW&thinsp;&rarr;&thinsp;BZN</span><span class="chip-price">$217</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20BZN%20on%202026-11-02%20through%202026-11-07" target="_blank" rel="noopener" aria-label="Open ORD to BZN, $217, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;BZN</span><span class="chip-price">$217</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20BZN%20on%202026-11-02%20through%202026-11-07" target="_blank" rel="noopener" aria-label="Open DAL to BZN, $309, on Google Flights"><span class="chip-route">DAL&thinsp;&rarr;&thinsp;BZN</span><span class="chip-price">$309</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t3" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bozeman</h2>
+            <p class="cities"><span class="codes">BZN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$309</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Mon 7 Dec<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Great</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DFW%20to%20BZN%20on%202026-12-02%20through%202026-12-07" target="_blank" rel="noopener" aria-label="Open DFW to BZN on Google Flights">DFW&thinsp;&rarr;&thinsp;BZN</a>
+        </div>
+      </article>
+      <article class="card tier-t3" data-region="caribbean">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Puerto Rico</h2>
+            <p class="cities">San Juan <span class="codes">SJU</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$310</span>
+          </div>
+        </header>
+        <p class="dates">Mon 2 Nov &rarr; Fri 6 Nov<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Great</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DAL%20to%20SJU%20on%202026-11-02%20through%202026-11-06" target="_blank" rel="noopener" aria-label="Open DAL to SJU on Google Flights">DAL&thinsp;&rarr;&thinsp;SJU</a>
+        </div>
+      </article>
+      <article class="card tier-t3" data-region="europe">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Ireland</h2>
+            <p class="cities">Dublin <span class="codes">DUB</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$492</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Tue 17 Nov<span class="sep">·</span>7 nights</p>
+        <div class="card-foot">
+          <span class="badge">Great</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20DUB%20on%202026-11-10%20through%202026-11-17" target="_blank" rel="noopener" aria-label="Open EWR to DUB on Google Flights">EWR&thinsp;&rarr;&thinsp;DUB</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Nashville</h2>
+            <p class="cities"><span class="codes">BNA</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$146</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Sun 6 Dec<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20BNA%20on%202026-12-02%20through%202026-12-06" target="_blank" rel="noopener" aria-label="Open JFK to BNA on Google Flights">JFK&thinsp;&rarr;&thinsp;BNA</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Austin</h2>
+            <p class="cities"><span class="codes">AUS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$173</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20MDW%20to%20AUS%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open MDW to AUS on Google Flights">MDW&thinsp;&rarr;&thinsp;AUS</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>New York</h2>
+            <p class="cities"><span class="codes">JFK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$181</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Sun 6 Dec<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20JFK%20on%202026-12-02%20through%202026-12-06" target="_blank" rel="noopener" aria-label="Open ORD to JFK on Google Flights">ORD&thinsp;&rarr;&thinsp;JFK</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>New Orleans</h2>
+            <p class="cities"><span class="codes">MSY</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$183</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Wed 7 Oct<span class="sep">·</span>4 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20MSY%20on%202026-10-03%20through%202026-10-07" target="_blank" rel="noopener" aria-label="Open EWR to MSY on Google Flights">EWR&thinsp;&rarr;&thinsp;MSY</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="domestic">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bozeman</h2>
+            <p class="cities"><span class="codes">BZN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$267</span>
+          </div>
+        </header>
+        <p class="dates">Tue 10 Nov &rarr; Sun 15 Nov<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20BZN%20on%202026-11-10%20through%202026-11-15" target="_blank" rel="noopener" aria-label="Open ORD to BZN on Google Flights">ORD&thinsp;&rarr;&thinsp;BZN</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="caribbean">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Cancun</h2>
+            <p class="cities"><span class="codes">CUN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$310</span><span class="spread">to $336</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Thu 8 Oct<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20ORD%20to%20CUN%20on%202026-10-03%20through%202026-10-08" target="_blank" rel="noopener" aria-label="Open ORD to CUN, $310, on Google Flights"><span class="chip-route">ORD&thinsp;&rarr;&thinsp;CUN</span><span class="chip-price">$310</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20CUN%20on%202026-10-03%20through%202026-10-08" target="_blank" rel="noopener" aria-label="Open EWR to CUN, $336, on Google Flights"><span class="chip-route">EWR&thinsp;&rarr;&thinsp;CUN</span><span class="chip-price">$336</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t4" data-region="caribbean">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Jamaica</h2>
+            <p class="cities">Montego Bay <span class="codes">MBJ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$329</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Thu 8 Oct<span class="sep">·</span>5 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20MBJ%20on%202026-10-03%20through%202026-10-08" target="_blank" rel="noopener" aria-label="Open EWR to MBJ on Google Flights">EWR&thinsp;&rarr;&thinsp;MBJ</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="mideast">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Dubai</h2>
+            <p class="cities"><span class="codes">DXB</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$658</span><span class="spread">to $780</span>
+          </div>
+        </header>
+        <p class="dates">Wed 2 Dec &rarr; Sat 12 Dec<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <span class="origin-note">2 origins &middot; tap to open</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights?q=Flights%20from%20JFK%20to%20DXB%20on%202026-12-02%20through%202026-12-12" target="_blank" rel="noopener" aria-label="Open JFK to DXB, $658, on Google Flights"><span class="chip-route">JFK&thinsp;&rarr;&thinsp;DXB</span><span class="chip-price">$658</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights?q=Flights%20from%20ATL%20to%20DXB%20on%202026-12-02%20through%202026-12-12" target="_blank" rel="noopener" aria-label="Open ATL to DXB, $780, on Google Flights"><span class="chip-route">ATL&thinsp;&rarr;&thinsp;DXB</span><span class="chip-price">$780</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t4" data-region="mideast">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Egypt</h2>
+            <p class="cities">Cairo <span class="codes">CAI</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$729</span>
+          </div>
+        </header>
+        <p class="dates">Sun 31 Jan &rarr; Wed 10 Feb<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20EWR%20to%20CAI%20on%202027-01-31%20through%202027-02-10" target="_blank" rel="noopener" aria-label="Open EWR to CAI on Google Flights">EWR&thinsp;&rarr;&thinsp;CAI</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="asia">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>India</h2>
+            <p class="cities">Mumbai <span class="codes">BOM</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$744</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Sat 17 Oct<span class="sep">·</span>14 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20IAD%20to%20BOM%20on%202026-10-03%20through%202026-10-17" target="_blank" rel="noopener" aria-label="Open IAD to BOM on Google Flights">IAD&thinsp;&rarr;&thinsp;BOM</a>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="mideast">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Egypt</h2>
+            <p class="cities">Cairo <span class="codes">CAI</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$751</span>
+          </div>
+        </header>
+        <p class="dates">Sat 3 Oct &rarr; Tue 13 Oct<span class="sep">·</span>10 nights</p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note mono solo" href="https://www.google.com/travel/flights?q=Flights%20from%20DTW%20to%20CAI%20on%202026-10-03%20through%202026-10-13" target="_blank" rel="noopener" aria-label="Open DTW to CAI on Google Flights">DTW&thinsp;&rarr;&thinsp;CAI</a>
+        </div>
+      </article>
+
+  </div>
+  <p class="empty" hidden id="empty">No alerts in this region.</p>
+
+  <footer class="foot">
+    <div>Newest alert <b>12 Aug, 11:20 UTC</b> &middot; generated <b>12 Aug, 16:17 UTC</b></div>
+    <div>144 alerts collapsed into 76 sales. One card per
+      destination and date pair; each chip is one origin the scraper alerted on,
+      cheapest first. Prices are round trip, as seen at scrape time.</div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  // Theme toggle. Stamps data-theme on <html>, which both dark blocks key on, so
+  // an explicit choice beats the OS setting in either direction.
+  var root = document.documentElement;
+  var btn = document.getElementById("themer");
+  try {
+    var saved = localStorage.getItem("fares-theme");
+    if (saved) { root.setAttribute("data-theme", saved); }
+  } catch (e) {}
+  function currentTheme() {
+    // Read the stamp when present, otherwise ask the OS. Deliberately does NOT
+    // sniff a computed color: that would put a copy of a palette hex in the JS,
+    // which then silently disagrees the first time a token changes.
+    var stamp = root.getAttribute("data-theme");
+    if (stamp === "dark" || stamp === "light") { return stamp; }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  btn.addEventListener("click", function () {
+    var next = currentTheme() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("fares-theme", next); } catch (e) {}
+  });
+
+  // Region filter.
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  var empty = document.getElementById("empty");
+
+  function show(region) {
+    var shown = 0;
+    cards.forEach(function (card) {
+      var match = (region === "all") || (card.dataset.region === region);
+      card.hidden = !match;
+      if (match) { shown++; }
+    });
+    empty.hidden = shown > 0;
+    var active = null;
+    tabs.forEach(function (t) {
+      var on = t.dataset.region === region;
+      t.setAttribute("aria-selected", String(on));
+      if (on) { active = t; }
+    });
+    // The strip scrolls horizontally, so a restored region further along it would
+    // otherwise leave the page filtered with no visible active tab.
+    if (active && active.scrollIntoView) {
+      active.scrollIntoView({ inline: "center", block: "nearest" });
+    }
+    try { localStorage.setItem("fares-region", region); } catch (e) {}
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", function () { show(tab.dataset.region); });
+  });
+
+  var start = "all";
+  try {
+    var savedRegion = localStorage.getItem("fares-region");
+    if (savedRegion && tabs.some(function (t) { return t.dataset.region === savedRegion; })) {
+      start = savedRegion;
+    }
+  } catch (e) {}
+  show(start);
+})();
+</script>

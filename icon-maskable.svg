@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Bucket List Fares">
+  <!-- Maskable: art kept inside the safe zone (centre 80%) so Android can crop it
+       to any shape without clipping the plane. -->
+  <rect width="64" height="64" fill="#171612"/>
+  <path d="M15 36.8 L49 20 L42 39 L33.1 34.6 L25.3 40.9 L24.9 34.3 Z" fill="#D8A94F"/>
+  <path d="M24.9 34.3 L49 20 L33.1 34.6 Z" fill="#A8802F"/>
+</svg>

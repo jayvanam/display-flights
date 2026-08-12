@@ -1,0 +1,15 @@
+# Never let the scraper's data or secrets into this PUBLIC repo.
+*.db
+*.db-wal
+*.db-shm
+*.db.gz
+.env
+.env.*
+
+publish.log
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.DS_Store
