@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="0 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="8 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -470,7 +470,7 @@ body {
       <div>
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">0 sales from 0 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">6 sales from 8 alerts &middot; last 24 h</p>
       </div>
       <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9788;</button>
     </div>
@@ -480,7 +480,8 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">0</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">6</span></button>
+      <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">6</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -505,13 +506,117 @@ body {
        If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
        stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
+      <article class="card tier-t1" data-region="domestic" data-sent="2026-08-13T23:05:57.024891+00:00" data-price="69" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Denver</h2>
+            <p class="cities"><span class="codes">DEN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$69</span>
+          </div>
+        </header>
+        <p class="dates">Sat 26 Sep &rarr; Wed 30 Sep<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">F9</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMjZqBRIDREZXcgUSA0RFThoaEgoyMDI2LTA5LTMwagUSA0RFTnIFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to DEN on Google Flights">DFW&nbsp;&rarr;&nbsp;DEN</a><span class="when" title="13 Aug, 23:05 UTC">14m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic" data-sent="2026-08-13T23:05:57.351132+00:00" data-price="96" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Las Vegas</h2>
+            <p class="cities"><span class="codes">LAS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$96</span>
+          </div>
+        </header>
+        <p class="dates">Sat 26 Sep &rarr; Wed 30 Sep<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">F9</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMjZqBRIDT1JEcgUSA0xBUxoaEgoyMDI2LTA5LTMwagUSA0xBU3IFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to LAS on Google Flights">ORD&nbsp;&rarr;&nbsp;LAS</a><span class="when" title="13 Aug, 23:05 UTC">14m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic" data-sent="2026-08-13T23:05:56.647775+00:00" data-price="207" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Jackson Hole</h2>
+            <p class="cities"><span class="codes">JAC</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$207</span>
+          </div>
+        </header>
+        <p class="dates">Thu 27 Aug &rarr; Tue 1 Sep<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">DL</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDgtMjdqBRIDREZXcgUSA0pBQxoaEgoyMDI2LTA5LTAxagUSA0pBQ3IFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to JAC on Google Flights">DFW&nbsp;&rarr;&nbsp;JAC</a><span class="when" title="13 Aug, 23:05 UTC">14m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic" data-sent="2026-08-13T23:05:56.655799+00:00" data-price="212" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Jackson Hole</h2>
+            <p class="cities"><span class="codes">JAC</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$212</span>
+          </div>
+        </header>
+        <p class="dates">Sat 26 Sep &rarr; Thu 1 Oct<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">DL</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMjZqBRIDREZXcgUSA0pBQxoaEgoyMDI2LTEwLTAxagUSA0pBQ3IFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to JAC on Google Flights">DFW&nbsp;&rarr;&nbsp;JAC</a><span class="when" title="13 Aug, 23:05 UTC">14m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic" data-sent="2026-08-13T23:05:55.784426+00:00" data-price="222" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Bozeman</h2>
+            <p class="cities"><span class="codes">BZN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$222</span><span class="spread">to $225</span>
+          </div>
+        </header>
+        <p class="dates">Sat 26 Sep &rarr; Thu 1 Oct<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">DL</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins</span><span class="when" title="13 Aug, 23:05 UTC">14m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMjZqBRIDT1JEcgUSA0JaThoaEgoyMDI2LTEwLTAxagUSA0JaTnIFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="DL" aria-label="Open ORD to BZN, $222, DL, on Google Flights"><span class="chip-route">ORD&nbsp;&rarr;&nbsp;BZN</span><span class="chip-price">$222</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMjZqBRIDTURXcgUSA0JaThoaEgoyMDI2LTEwLTAxagUSA0JaTnIFEgNNRFdAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="DL" aria-label="Open MDW to BZN, $225, DL, on Google Flights"><span class="chip-route">MDW&nbsp;&rarr;&nbsp;BZN</span><span class="chip-price">$225</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t2" data-region="domestic" data-sent="2026-08-13T23:05:55.388495+00:00" data-price="129" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Austin</h2>
+            <p class="cities"><span class="codes">AUS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$129</span><span class="spread">to $131</span>
+          </div>
+        </header>
+        <p class="dates">Sat 26 Sep &rarr; Wed 30 Sep<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AA</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <span class="origin-note">2 origins</span><span class="when" title="13 Aug, 23:05 UTC">14m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMjZqBRIDREZXcgUSA0FVUxoaEgoyMDI2LTA5LTMwagUSA0FVU3IFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="AA" aria-label="Open DFW to AUS, $129, AA, on Google Flights"><span class="chip-route">DFW&nbsp;&rarr;&nbsp;AUS</span><span class="chip-price">$129</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMjZqBRIDREFMcgUSA0FVUxoaEgoyMDI2LTA5LTMwagUSA0FVU3IFEgNEQUxAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="WN" aria-label="Open DAL to AUS, $131, WN, on Google Flights"><span class="chip-route">DAL&nbsp;&rarr;&nbsp;AUS</span><span class="chip-price">$131</span></a></li>
+        </ul>
+      </article>
 
   </div>
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
 
   <footer class="foot">
-    <p>Newest alert <b id="newest">n/a</b> &middot; <span id="built">built
-      <b>13 Aug, 23:00 UTC</b></span></p>
+    <p>Newest alert <b id="newest">13 Aug, 23:05 UTC</b> &middot; <span id="built">built
+      <b>13 Aug, 23:20 UTC</b></span></p>
     <p>One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
