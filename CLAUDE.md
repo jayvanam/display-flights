@@ -13,6 +13,23 @@ page script, and there must not be — add one and `.substitute` fails the build
 fails loudly rather than shipping broken markup, which is the only reason this is
 survivable.
 
+**2b. There are two KINDS of card.** `kind='deal'` cleared analyzer's percentile gate
+against six months of that route's own history. `kind='mistake'` is a region-hunter hit
+(`flights/mistake_hunter.py`) that only cleared a hand-set ABSOLUTE floor — no
+statistics, no comparison, and error fares are routinely pulled. They share one feed, so
+the distinction has to survive in three places at once: `generate.MISTAKE_CSS` /
+`MISTAKE_LABEL`, `MISTAKE_CSS` / `TIER_LABELS.mistake` in `template.html`, and
+`.tier-mistake` in `theme.css`. `deal_score` and `tier` are **NULL** for them — deriving
+a tier would put an unverified fare behind an earned badge, on a public page.
+
+`kind` is part of the grouping key in BOTH renderers. Without that, a hunter hit and a
+scored deal for the same destination and dates merge, `best_quality` comes from the
+scored leg, and the whole card renders as tiered.
+
+Their `source_id` is **NEGATIVE** (`-mistake_alerts.id`). It is the primary key and
+`mistake_alerts.id` starts at 1 exactly like `deal_alerts.id`, so unsigned ids would
+collide and each table would overwrite the other's rows on upsert.
+
 **2. Card rendering exists twice.** `generate.render_card` (Python, fallback) and
 `cardHtml` in `template.html` (JS, live view). Both are visible in sequence as the
 fetch resolves, so any divergence reads as the page glitching. In particular `fmtDate`
@@ -24,7 +41,8 @@ renderer, change the other.
 intentional and unavoidable for a static page: whatever the page displays is obtainable
 by anyone who opens devtools. Everything beyond the current view is closed off — RLS
 limits `anon` to the last 24h, and table-level `SELECT` is revoked in favour of a
-column-level grant on 12 display columns. The bigger exposure is the repo itself: every
+column-level grant on the display columns (15 as of 2026-08-13 — `kind` needed its own
+`grant select`, since a new column is invisible to the page without one). The bigger exposure is the repo itself: every
 fare price is committed in plaintext with a snapshot per publish in git history. Don't
 "fix" the key by moving it; genuinely private would mean a private repo.
 
@@ -51,9 +69,9 @@ After changing destinations upstream:
 
 | Path | Role |
 |---|---|
-| `generate.py` | Builds the FALLBACK page. Reads `deal_alerts` read-only, writes `index.html`. |
+| `generate.py` | Builds the FALLBACK page. Reads `deal_alerts` + `mistake_alerts` read-only, writes `index.html`. |
 | `template.html` | The shell **and** the live client renderer (`buildSales`/`cardHtml`/`loadFeed`). |
-| `sync_supabase.py` | Pi-side: pushes newly alerted deals into Supabase `fare_alerts`. |
+| `sync_supabase.py` | Pi-side: pushes newly alerted deals **and region-hunter hits** into Supabase `fare_alerts`. |
 | `catalog.py` | **Generated.** Vendored destination / region / airport tables. |
 | `sync_catalog.py` | Regenerates `catalog.py` from the `flights` repo. |
 | `publish.sh` | Pi-side cron entry: pull, generate, commit, push. |

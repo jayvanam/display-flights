@@ -53,6 +53,8 @@
   --t3-tint:     rgba(88,86,214,0.12);
   --t4:          #34C759;
   --t4-tint:     rgba(52,199,89,0.16);
+  --tm:          #FF9500;                  /* region-hunter: unverified */
+  --tm-tint:     rgba(255,149,0,0.14);
   --hairline:    rgba(60,60,67,0.12);
   --blur-bg:     rgba(242,242,247,0.82);
 
@@ -83,6 +85,8 @@
     --t3-tint:     rgba(94,92,230,0.24);
     --t4:          #30D158;
     --t4-tint:     rgba(48,209,88,0.22);
+    --tm:          #FF9F0A;
+    --tm-tint:     rgba(255,159,10,0.22);
     --hairline:    rgba(84,84,88,0.45);
     --blur-bg:     rgba(0,0,0,0.72);
   }
@@ -107,6 +111,8 @@
   --t3-tint:     rgba(94,92,230,0.24);
   --t4:          #30D158;
   --t4-tint:     rgba(48,209,88,0.22);
+  --tm:          #FF9F0A;
+  --tm-tint:     rgba(255,159,10,0.22);
   --hairline:    rgba(84,84,88,0.45);
   --blur-bg:     rgba(0,0,0,0.72);
 }
@@ -251,6 +257,13 @@ body {
 .tier-t2 { --tier: var(--t2); --tier-tint: var(--t2-tint); }
 .tier-t3 { --tier: var(--t3); --tier-tint: var(--t3-tint); }
 .tier-t4 { --tier: var(--t4); --tier-tint: var(--t4-tint); }
+/* Region-hunter card: an ABSOLUTE-price hit, not a percentile against this route's
+   history, and error fares are routinely pulled. The badge carries the wording; the
+   ring is here because this page is public and a caption alone is easy to skim past. */
+.tier-mistake {
+  --tier: var(--tm); --tier-tint: var(--tm-tint);
+  box-shadow: inset 0 0 0 1px var(--tm-tint);
+}
 .card[hidden] { display: none; }
 
 .card-head { display: flex; align-items: flex-start; gap: 12px; }

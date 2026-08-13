@@ -144,6 +144,7 @@ class Leg(NamedTuple):
     url: str  # the scraper's stored booking_url; "" when it was never captured
     airline: str  # free text, "" when the parser captured none; may be comma-joined
     sent_at: str  # when this alert fired (UTC ISO), for the "found Xh ago" line
+    kind: str = "deal"  # "deal" = percentile-scored; "mistake" = region-hunter hit
 
 
 def search_url(origin: str, code: str, outbound: str, return_date: str | None) -> str:
@@ -185,6 +186,12 @@ class Sale:
     @property
     def best_quality(self) -> int:
         return max(leg.quality for leg in self.legs)
+
+    @property
+    def is_mistake(self) -> bool:
+        """True for a region-hunter card. build_sales keys on kind, so a sale's legs
+        are all one kind and the first leg settles it."""
+        return self.legs[0].kind == "mistake"
 
     @property
     def cities(self) -> list[str]:
@@ -250,30 +257,60 @@ def load_alerts(db_path: Path, hours: int):
         return con.execute(
             f"""
             SELECT sent_at, origin, destination, outbound_date, return_date,
-                   price, deal_score, booking_url, {airline_col}
+                   price, deal_score, booking_url, {airline_col}, 'deal' AS kind
               FROM deal_alerts
              WHERE sent_at >= ?
              ORDER BY sent_at DESC
             """,
             (cutoff,),
-        ).fetchall()
+        ).fetchall() + _load_mistakes(con, cutoff)
     finally:
         con.close()
+
+
+def _load_mistakes(con, cutoff: str) -> list:
+    """Region-hunter rows, shaped like the deal_alerts SELECT above. [] if absent.
+
+    Absent is normal — publish.sh runs every 20 minutes and this repo deploys
+    independently of the scraper, so it must render against a fares.db predating the
+    hunter rather than failing. deal_score is NULL because a hunter hit has no
+    percentile; it cleared an absolute floor, not a comparison against history.
+    """
+    if not con.execute("SELECT 1 FROM sqlite_master WHERE type='table'"
+                       " AND name='mistake_alerts'").fetchone():
+        return []
+    return con.execute(
+        """
+        SELECT sent_at, origin, destination, outbound_date, return_date,
+               price, NULL AS deal_score, booking_url, airline, 'mistake' AS kind
+          FROM mistake_alerts
+         WHERE sent_at >= ?
+         ORDER BY sent_at DESC
+        """,
+        (cutoff,),
+    ).fetchall()
 
 
 def build_sales(rows) -> list[Sale]:
     grouped: dict[tuple, Sale] = {}
     for row in rows:
         (sent, origin, code, outbound, return_date,
-         price, quality, url, airline) = row
+         price, quality, url, airline) = row[:9]
+        # A row without a kind is a deal — mirrors the fare_alerts column default, and
+        # keeps every existing caller (and any fares.db predating the hunter) working.
+        kind = row[9] if len(row) > 9 else "deal"
         dest = dest_name(code)
-        key = (dest, outbound, return_date)
+        # kind is part of the key ON PURPOSE. A hunter hit and a scored deal for the
+        # same destination and dates are different claims; merging them would let
+        # best_quality come from the scored leg and badge the whole card as tiered.
+        key = (dest, outbound, return_date, kind)
         sale = grouped.get(key)
         if sale is None:
             sale = Sale(dest, region_of(code), outbound, return_date)
             grouped[key] = sale
-        sale.legs.append(Leg(origin, code, int(price), int(quality), url or "",
-                             airline or "", sent or ""))
+        sale.legs.append(Leg(origin, code, int(price),
+                             int(quality) if quality is not None else 0,
+                             url or "", airline or "", sent or "", kind or "deal"))
 
     sales = list(grouped.values())
     for sale in sales:
@@ -287,6 +324,12 @@ def build_sales(rows) -> list[Sale]:
 
 # Origins beyond this many collapse behind a "Show all N" toggle.
 CHIP_COLLAPSE_AFTER = 6
+
+# Region-hunter cards. MUST match TIER_LABELS/MISTAKE_CSS in template.html and the
+# .tier-mistake rules in theme.css — the Python fallback and the JS live view are
+# visible in sequence as the fetch resolves, so any divergence reads as a glitch.
+MISTAKE_CSS = "mistake"
+MISTAKE_LABEL = "Error fare · unverified"
 
 
 def fmt_date(iso: str) -> str:
@@ -338,7 +381,13 @@ def fmt_ago(iso: str, now: datetime | None = None) -> str:
 
 
 def render_card(sale: Sale) -> str:
-    tier_css, tier_label = tier_for_quality(sale.best_quality)
+    # A hunter card gets its own class and label rather than a tier. It cleared an
+    # absolute floor, not a percentile against this route's history, and this page is
+    # public — rendering it as "Exceptional" would assert a comparison never made.
+    if sale.is_mistake:
+        tier_css, tier_label = MISTAKE_CSS, MISTAKE_LABEL
+    else:
+        tier_css, tier_label = tier_for_quality(sale.best_quality)
     cities = " · ".join(sale.cities)
     codes = sorted({leg.code for leg in sale.legs})
 

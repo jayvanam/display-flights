@@ -220,6 +220,7 @@ def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None,
             sql += " LIMIT ?"
             params.append(limit)
         rows = con.execute(sql, tuple(params)).fetchall()
+        mistakes = _load_mistakes(con, since_date)
     finally:
         con.close()
 
@@ -230,6 +231,7 @@ def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None,
         # would read a naive value in the server's zone, so make the UTC explicit.
         stamp = sent_at if (sent_at.endswith("Z") or "+" in sent_at[10:]) else sent_at + "Z"
         out.append({
+            "kind": "deal",
             "source_id": rid,
             "origin": origin,
             "destination": code,
@@ -252,7 +254,62 @@ def read_new_alerts(db_path: Path, since_id: int, limit: int | None = None,
             "region": generate.region_of(code),
             "tier": generate.tier_for_quality(int(score))[0],
         })
+
+    for (rid, origin, code, outbound, ret, price, booking, sent_at, airline) in mistakes:
+        stamp = sent_at if (sent_at.endswith("Z") or "+" in sent_at[10:]) else sent_at + "Z"
+        out.append({
+            "kind": "mistake",
+            # NEGATIVE: source_id is the primary key and mistake_alerts.id starts at 1
+            # exactly like deal_alerts.id, so unsigned ids would collide and each table
+            # would overwrite the other's rows on upsert.
+            "source_id": -rid,
+            "origin": origin,
+            "destination": code,
+            "outbound_date": outbound,
+            "return_date": ret,
+            "price": int(price),
+            # NULL, not a number. deal_score is what `tier` is derived from, and a
+            # hunter hit has no percentile — inventing one would render an unverified
+            # fare with an earned-looking tier on a public page.
+            "deal_score": None,
+            "tier": None,
+            "booking_url": booking or None,
+            "sent_at": stamp,
+            "airline": airline or None,
+            "destination_name": generate.dest_name(code),
+            "city_name": generate.city(code),
+            "region": generate.region_of(code),
+        })
     return out
+
+
+def _load_mistakes(con, since_date: str | None) -> list:
+    """Region-hunter hits (flights/mistake_hunter.py), or [] if the table is absent.
+
+    Absent is normal, not an error: this sync runs every 5 minutes and the two repos
+    deploy independently, so it must keep working against a fares.db predating the
+    hunter — the same reasoning as the `airline` probe above.
+
+    ⚠️ These are a DIFFERENT KIND of claim. A deal_alerts row cleared analyzer's
+    percentile gate against six months of that route's own history. A hunter hit only
+    cleared a hand-set absolute floor, with no statistics at all, and error fares are
+    routinely pulled. They carry kind='mistake' so the page can badge them, and a
+    NEGATIVE source_id so they cannot collide with deal_alerts.id on the primary key.
+    """
+    has_table = con.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='mistake_alerts'"
+    ).fetchone()
+    if not has_table:
+        return []
+    sql = ("SELECT id, origin, destination, outbound_date, return_date, price,"
+           "       booking_url, sent_at, airline"
+           "  FROM mistake_alerts")
+    params: list = []
+    if since_date:
+        sql += " WHERE sent_at >= ?"
+        params.append(since_date)
+    sql += " ORDER BY id"
+    return con.execute(sql, tuple(params)).fetchall()
 
 
 def push(url: str, key: str, rows: list[dict]) -> None:

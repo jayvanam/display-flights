@@ -11,6 +11,8 @@ import os
 import sqlite3
 
 import generate
+from datetime import date, datetime, timedelta, timezone
+
 import sync_supabase
 
 
@@ -37,14 +39,24 @@ def test_limit_caps_the_first_backfill(sample_db):
 
 def test_since_date_skips_the_pre_overhaul_era(sample_db):
     """Alerts before 2026-08-11 were scored on the inflated baseline, so the initial
-    backfill needs to be able to start at the overhaul."""
+    backfill needs to be able to start at the overhaul.
+
+    Cutoffs are derived from the fixture's OWN timestamps, not hardcoded. conftest's
+    parse_sample deliberately shifts the sample so its newest row lands a minute ago
+    (otherwise the 24h tests would pass against zero rows a day after recording), so
+    the fixture is dated TODAY — not the 2026-08-12 it was captured on. A literal
+    "2026-08-13" therefore matched everything from 2026-08-13 onward, and this test
+    began failing on that date for reasons that had nothing to do with the code."""
     all_rows = sync_supabase.read_new_alerts(sample_db, since_id=0)
-    # The whole fixture is 2026-08-12, so a cutoff before it keeps everything...
+    newest = max(r["sent_at"][:10] for r in all_rows)
+    day = date.fromisoformat(newest)
+    before_all = (day - timedelta(days=1)).isoformat()
+    after_all = (day + timedelta(days=1)).isoformat()
+
     assert len(sync_supabase.read_new_alerts(
-        sample_db, since_id=0, since_date="2026-08-01")) == len(all_rows)
-    # ...and one after it keeps nothing.
+        sample_db, since_id=0, since_date=before_all)) == len(all_rows)
     assert sync_supabase.read_new_alerts(
-        sample_db, since_id=0, since_date="2026-08-13") == []
+        sample_db, since_id=0, since_date=after_all) == []
 
 
 def test_since_date_and_limit_compose(sample_db):
@@ -274,3 +286,63 @@ def test_publishable_key_in_the_env_exits_rather_than_401ing(monkeypatch, tmp_pa
     with pytest.raises(SystemExit) as exc:
         sync_supabase.load_env()
     assert "PUBLISHABLE" in str(exc.value)
+
+
+# ── region-hunter hits share the table with a NEGATIVE key ────────────────────
+
+def _add_mistakes(db_path, n=2):
+    con = sqlite3.connect(db_path)
+    con.executescript("""
+      CREATE TABLE IF NOT EXISTS mistake_alerts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, region TEXT NOT NULL,
+        origin TEXT NOT NULL, destination TEXT NOT NULL, outbound_date TEXT NOT NULL,
+        return_date TEXT, price INTEGER NOT NULL, threshold INTEGER NOT NULL,
+        airline TEXT, booking_url TEXT, sent_at TEXT NOT NULL);""")
+    stamp = datetime.now(timezone.utc).replace(tzinfo=None).isoformat()
+    con.executemany(
+        """INSERT INTO mistake_alerts (region,origin,destination,outbound_date,
+             return_date,price,threshold,airline,booking_url,sent_at)
+           VALUES ('Europe',?,?,'2026-11-10','2026-11-17',?,250,'AF','http://x',?)""",
+        [(f"OR{i}", "CDG", 180 + i, stamp) for i in range(n)])
+    con.commit(); con.close()
+
+
+def test_a_missing_mistake_alerts_table_is_not_an_error(sample_db):
+    """This sync runs every 5 minutes and the repos deploy independently, so it must
+    keep working against a fares.db that predates the hunter."""
+    rows = sync_supabase.read_new_alerts(sample_db, since_id=0)
+    assert rows and all(r["kind"] == "deal" for r in rows)
+
+
+def test_hunter_hits_get_a_negative_source_id(sample_db):
+    """source_id is the PRIMARY KEY and mistake_alerts.id starts at 1 exactly like
+    deal_alerts.id, so unsigned ids would collide and each table would overwrite the
+    other's rows on upsert."""
+    _add_mistakes(sample_db, n=2)
+    rows = sync_supabase.read_new_alerts(sample_db, since_id=0)
+    hits = [r for r in rows if r["kind"] == "mistake"]
+    assert len(hits) == 2
+    assert all(r["source_id"] < 0 for r in hits)
+    deals = {r["source_id"] for r in rows if r["kind"] == "deal"}
+    assert not deals & {r["source_id"] for r in hits}, "keys must not collide"
+
+
+def test_hunter_hits_carry_no_score_and_no_tier(sample_db):
+    """deal_score is what tier derives from, and a hunter hit has no percentile.
+    Inventing one would render an unverified fare with an earned-looking tier."""
+    _add_mistakes(sample_db, n=1)
+    hit = [r for r in sync_supabase.read_new_alerts(sample_db, since_id=0)
+           if r["kind"] == "mistake"][0]
+    assert hit["deal_score"] is None and hit["tier"] is None
+    # ...but the display fields the page needs are still derived.
+    assert hit["destination_name"] and hit["region"]
+
+
+def test_hunter_hits_are_enriched_like_deals(sample_db):
+    _add_mistakes(sample_db, n=1)
+    hit = [r for r in sync_supabase.read_new_alerts(sample_db, since_id=0)
+           if r["kind"] == "mistake"][0]
+    assert hit["destination_name"] == generate.dest_name("CDG")
+    assert hit["city_name"] == generate.city("CDG")
+    assert hit["region"] == generate.region_of("CDG")
+    assert hit["sent_at"].endswith("Z"), "naive UTC must be made explicit for timestamptz"

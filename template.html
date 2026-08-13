@@ -241,7 +241,12 @@ $cards
   var FEED_HOURS = 24;         // must match publish.sh's HOURS, and the RLS window
   var FEED_LIMIT = 2000;       // a busy day is ~150 alerts; the flood day was 1,965
 
-  var TIER_LABELS = { t1: "Exceptional", t2: "Excellent", t3: "Great", t4: "Good" };
+  var TIER_LABELS = { t1: "Exceptional", t2: "Excellent", t3: "Great", t4: "Good",
+                      mistake: "Error fare \u00b7 unverified" };
+  // Region-hunter cards. MUST match generate.MISTAKE_CSS / MISTAKE_LABEL and the
+  // .tier-mistake rules in theme.css — both renderers are visible in sequence as the
+  // fetch resolves, so a divergence reads as the page glitching.
+  var MISTAKE_CSS = "mistake";
   var CHIP_COLLAPSE_AFTER = 6;   // mirrors generate.CHIP_COLLAPSE_AFTER + theme.css
 
   function esc(s) {
@@ -311,7 +316,11 @@ $cards
     var grouped = {}, order = [];
     rows.forEach(function (r) {
       var dest = r.destination_name || r.destination;
-      var key = dest + "|" + r.outbound_date + "|" + (r.return_date || "");
+      // kind is part of the key, mirroring generate.build_sales: a hunter hit and a
+      // scored deal for the same destination and dates are different claims, and
+      // merging them would badge an unverified fare with an earned tier.
+      var key = dest + "|" + r.outbound_date + "|" + (r.return_date || "") +
+                "|" + (r.kind || "deal");
       var sale = grouped[key];
       if (!sale) {
         // region comes from the FIRST leg only, matching generate.py.
@@ -357,7 +366,8 @@ $cards
   }
 
   function cardHtml(sale) {
-    var tCss = tierClass(sale.tier);
+    var isMistake = (sale.legs[0].kind === "mistake");
+    var tCss = isMistake ? MISTAKE_CSS : tierClass(sale.tier);
     var dates = esc(fmtDate(sale.outbound));
     if (sale.ret) { dates += " &rarr; " + esc(fmtDate(sale.ret)); }
     var nights = sale.ret ? nightsBetween(sale.outbound, sale.ret) : null;
@@ -443,7 +453,7 @@ $cards
   function loadFeed() {
     var since = new Date(Date.now() - FEED_HOURS * 3600 * 1000).toISOString();
     var params = "select=origin,destination,destination_name,city_name,region,tier," +
-      "price,outbound_date,return_date,airline,booking_url,sent_at" +
+      "price,outbound_date,return_date,airline,booking_url,sent_at,kind" +
       "&sent_at=gte." + encodeURIComponent(since) +
       "&order=sent_at.desc&limit=" + FEED_LIMIT;
 

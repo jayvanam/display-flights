@@ -6,6 +6,7 @@ than invented rows, so the assertions describe behaviour that actually happened.
 
 from __future__ import annotations
 
+import pathlib
 import re
 
 import generate
@@ -263,3 +264,60 @@ def test_prices_are_escaped_and_tabular(sample_db):
     page = generate.render_page(generate.build_sales(rows), len(rows), 24, rows[0][0])
     assert "$650" in page
     assert "font-variant-numeric: tabular-nums" in page
+
+
+# ── region-hunter cards (kind='mistake') ──────────────────────────────────────
+
+def _mrow(origin, code, outbound, ret, price, sent="2026-08-13T20:00", airline=""):
+    """A mistake_alerts row shaped like load_alerts' SELECT: deal_score is NULL."""
+    return (sent, origin, code, outbound, ret, price, None, "", airline, "mistake")
+
+
+def test_a_hunter_card_is_badged_not_tiered():
+    """It cleared an ABSOLUTE floor, not a percentile against this route's history,
+    and this page is public. Rendering it as "Exceptional" would assert a comparison
+    that never happened."""
+    sales = generate.build_sales([_mrow("ORD", "CDG", "2026-11-10", "2026-11-17", 188)])
+    assert len(sales) == 1 and sales[0].is_mistake
+    card = generate.render_card(sales[0])
+    assert 'class="card tier-mistake"' in card
+    assert generate.MISTAKE_LABEL in card
+    for _, css, label in generate.TIERS:
+        assert f'class="badge">{label}<' not in card, label
+
+
+def test_a_hunter_hit_never_merges_into_a_scored_card():
+    """Same destination, same dates, different KIND. If they merged, best_quality would
+    come from the scored leg and the whole card would render as tiered — putting an
+    unverified fare behind an earned badge."""
+    rows = [
+        _row("ORD", "CDG", "2026-11-10", "2026-11-17", 700, 100),
+        _mrow("ORD", "CDG", "2026-11-10", "2026-11-17", 188),
+    ]
+    sales = generate.build_sales(rows)
+    assert len(sales) == 2, "kind must be part of the grouping key"
+    assert sorted(s.is_mistake for s in sales) == [False, True]
+
+
+def test_a_scored_card_is_unaffected_by_the_kind_column():
+    sales = generate.build_sales([_row("ORD", "RAK", "2026-11-10", "2026-11-20", 700, 100)])
+    card = generate.render_card(sales[0])
+    assert "tier-mistake" not in card and generate.MISTAKE_LABEL not in card
+
+
+def test_rows_without_a_kind_are_treated_as_deals():
+    """Every existing caller passes 9-tuples, and a fares.db predating the hunter has
+    no kind at all. Mirrors the fare_alerts column default."""
+    sales = generate.build_sales([_row("ORD", "RAK", "2026-11-10", "2026-11-20", 700, 100)])
+    assert sales[0].is_mistake is False
+
+
+def test_the_two_renderers_agree_on_the_hunter_label_and_class():
+    """Card rendering exists twice (generate.render_card and cardHtml in
+    template.html) and both are visible in sequence as the fetch resolves, so a
+    divergence reads as the page glitching."""
+    tpl = (pathlib.Path(__file__).resolve().parents[1] / "template.html").read_text()
+    assert f'var MISTAKE_CSS = "{generate.MISTAKE_CSS}";' in tpl
+    # The JS carries the label as a \u escape for the middle dot.
+    assert generate.MISTAKE_LABEL.replace("·", "\\u00b7") in tpl
+    assert ",kind" in tpl, "the feed must request the kind column or it is always deal"
