@@ -66,6 +66,8 @@
   --t3-tint:     rgba(88,86,214,0.12);
   --t4:          #34C759;
   --t4-tint:     rgba(52,199,89,0.16);
+  --tm:          #FF9500;                  /* region-hunter: unverified */
+  --tm-tint:     rgba(255,149,0,0.14);
   --hairline:    rgba(60,60,67,0.12);
   --blur-bg:     rgba(242,242,247,0.82);
 
@@ -96,6 +98,8 @@
     --t3-tint:     rgba(94,92,230,0.24);
     --t4:          #30D158;
     --t4-tint:     rgba(48,209,88,0.22);
+    --tm:          #FF9F0A;
+    --tm-tint:     rgba(255,159,10,0.22);
     --hairline:    rgba(84,84,88,0.45);
     --blur-bg:     rgba(0,0,0,0.72);
   }
@@ -120,6 +124,8 @@
   --t3-tint:     rgba(94,92,230,0.24);
   --t4:          #30D158;
   --t4-tint:     rgba(48,209,88,0.22);
+  --tm:          #FF9F0A;
+  --tm-tint:     rgba(255,159,10,0.22);
   --hairline:    rgba(84,84,88,0.45);
   --blur-bg:     rgba(0,0,0,0.72);
 }
@@ -264,6 +270,13 @@ body {
 .tier-t2 { --tier: var(--t2); --tier-tint: var(--t2-tint); }
 .tier-t3 { --tier: var(--t3); --tier-tint: var(--t3-tint); }
 .tier-t4 { --tier: var(--t4); --tier-tint: var(--t4-tint); }
+/* Region-hunter card: an ABSOLUTE-price hit, not a percentile against this route's
+   history, and error fares are routinely pulled. The badge carries the wording; the
+   ring is here because this page is public and a caption alone is easy to skim past. */
+.tier-mistake {
+  --tier: var(--tm); --tier-tint: var(--tm-tint);
+  box-shadow: inset 0 0 0 1px var(--tm-tint);
+}
 .card[hidden] { display: none; }
 
 .card-head { display: flex; align-items: flex-start; gap: 12px; }
@@ -498,7 +511,7 @@ body {
 
   <footer class="foot">
     <p>Newest alert <b id="newest">n/a</b> &middot; <span id="built">built
-      <b>13 Aug, 20:40 UTC</b></span></p>
+      <b>13 Aug, 21:00 UTC</b></span></p>
     <p>One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
@@ -678,7 +691,12 @@ body {
   var FEED_HOURS = 24;         // must match publish.sh's HOURS, and the RLS window
   var FEED_LIMIT = 2000;       // a busy day is ~150 alerts; the flood day was 1,965
 
-  var TIER_LABELS = { t1: "Exceptional", t2: "Excellent", t3: "Great", t4: "Good" };
+  var TIER_LABELS = { t1: "Exceptional", t2: "Excellent", t3: "Great", t4: "Good",
+                      mistake: "Error fare \u00b7 unverified" };
+  // Region-hunter cards. MUST match generate.MISTAKE_CSS / MISTAKE_LABEL and the
+  // .tier-mistake rules in theme.css — both renderers are visible in sequence as the
+  // fetch resolves, so a divergence reads as the page glitching.
+  var MISTAKE_CSS = "mistake";
   var CHIP_COLLAPSE_AFTER = 6;   // mirrors generate.CHIP_COLLAPSE_AFTER + theme.css
 
   function esc(s) {
@@ -748,7 +766,11 @@ body {
     var grouped = {}, order = [];
     rows.forEach(function (r) {
       var dest = r.destination_name || r.destination;
-      var key = dest + "|" + r.outbound_date + "|" + (r.return_date || "");
+      // kind is part of the key, mirroring generate.build_sales: a hunter hit and a
+      // scored deal for the same destination and dates are different claims, and
+      // merging them would badge an unverified fare with an earned tier.
+      var key = dest + "|" + r.outbound_date + "|" + (r.return_date || "") +
+                "|" + (r.kind || "deal");
       var sale = grouped[key];
       if (!sale) {
         // region comes from the FIRST leg only, matching generate.py.
@@ -794,7 +816,8 @@ body {
   }
 
   function cardHtml(sale) {
-    var tCss = tierClass(sale.tier);
+    var isMistake = (sale.legs[0].kind === "mistake");
+    var tCss = isMistake ? MISTAKE_CSS : tierClass(sale.tier);
     var dates = esc(fmtDate(sale.outbound));
     if (sale.ret) { dates += " &rarr; " + esc(fmtDate(sale.ret)); }
     var nights = sale.ret ? nightsBetween(sale.outbound, sale.ret) : null;
@@ -880,7 +903,7 @@ body {
   function loadFeed() {
     var since = new Date(Date.now() - FEED_HOURS * 3600 * 1000).toISOString();
     var params = "select=origin,destination,destination_name,city_name,region,tier," +
-      "price,outbound_date,return_date,airline,booking_url,sent_at" +
+      "price,outbound_date,return_date,airline,booking_url,sent_at,kind" +
       "&sent_at=gte." + encodeURIComponent(since) +
       "&order=sent_at.desc&limit=" + FEED_LIMIT;
 
