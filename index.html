@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="3 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="5 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -470,7 +470,7 @@ body {
       <div>
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">2 sales from 3 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">3 sales from 5 alerts &middot; last 24 h</p>
       </div>
       <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9788;</button>
     </div>
@@ -480,9 +480,9 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">2</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">3</span></button>
       <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">1</span></button>
-      <button class="tab" type="button" role="tab" data-region="hawaii" aria-selected="false">Hawaii<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="hawaii" aria-selected="false">Hawaii<span class="n">2</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -507,6 +507,26 @@ body {
        If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
        stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
+      <article class="card tier-t1" data-region="hawaii" data-sent="2026-08-16T11:35:35.887872+00:00" data-price="271" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Hawaii</h2>
+            <p class="cities">Maui · Honolulu <span class="codes">HNL OGG</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$271</span><span class="spread">to $290</span>
+          </div>
+        </header>
+        <p class="dates">Tue 15 Sep &rarr; Tue 22 Sep<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">UA</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins</span><span class="when" title="16 Aug, 11:35 UTC">4m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMDktMTVqBRIDU0ZPcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTA5LTIyagUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNTRk9AAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open SFO to OGG, $271, UA, on Google Flights"><span class="chip-route">SFO&nbsp;&rarr;&nbsp;OGG</span><span class="chip-price">$271</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMDktMTVqBRIDU0VBcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTA5LTIyagUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNTRUFAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open SEA to HNL, $290, UA, on Google Flights"><span class="chip-route">SEA&nbsp;&rarr;&nbsp;HNL</span><span class="chip-price">$290</span></a></li>
+        </ul>
+      </article>
       <article class="card tier-t1" data-region="hawaii" data-sent="2026-08-15T22:46:34.835201+00:00" data-price="294" data-tier="t1">
         <header class="card-head">
           <div class="card-id">
@@ -548,8 +568,8 @@ body {
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
 
   <footer class="foot">
-    <p>Newest alert <b id="newest">16 Aug, 00:59 UTC</b> &middot; <span id="built">built
-      <b>16 Aug, 11:20 UTC</b></span></p>
+    <p>Newest alert <b id="newest">16 Aug, 11:35 UTC</b> &middot; <span id="built">built
+      <b>16 Aug, 11:40 UTC</b></span></p>
     <p>One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
