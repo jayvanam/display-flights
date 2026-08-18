@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="3 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="1 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -470,7 +470,7 @@ body {
       <div>
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">3 sales from 3 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">1 sales from 1 alerts &middot; last 24 h</p>
       </div>
       <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9788;</button>
     </div>
@@ -480,9 +480,7 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">3</span></button>
-      <button class="tab" type="button" role="tab" data-region="caribbean" aria-selected="false">Caribbean &amp; Mexico<span class="n">1</span></button>
-      <button class="tab" type="button" role="tab" data-region="europe" aria-selected="false">Europe<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">1</span></button>
       <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">1</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
@@ -508,22 +506,6 @@ body {
        If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
        stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
-      <article class="card tier-t2" data-region="caribbean" data-sent="2026-08-17T17:16:56.948267+00:00" data-price="226" data-tier="t2">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Puerto Rico</h2>
-            <p class="cities">San Juan <span class="codes">SJU</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$226</span>
-          </div>
-        </header>
-        <p class="dates">Tue 8 Sep &rarr; Sat 12 Sep<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">WN</span></p>
-        <div class="card-foot">
-          <span class="badge">Excellent</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMDhqBRIDTURXcgUSA1NKVRoaEgoyMDI2LTA5LTEyagUSA1NKVXIFEgNNRFdAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MDW to SJU on Google Flights">MDW&nbsp;&rarr;&nbsp;SJU</a><span class="when" title="17 Aug, 17:16 UTC">23h ago</span>
-        </div>
-      </article>
       <article class="card tier-t2" data-region="southamerica" data-sent="2026-08-18T12:54:40.021205+00:00" data-price="387" data-tier="t2">
         <header class="card-head">
           <div class="card-id">
@@ -540,29 +522,13 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMDktMDlqBRIDQk9TcgUSA0JPR3IFEgNDVEdyBRIDTURFGigSCjIwMjYtMDktMTZqBRIDQk9HagUSA0NUR2oFEgNNREVyBRIDQk9TQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open BOS to MDE on Google Flights">BOS&nbsp;&rarr;&nbsp;MDE</a><span class="when" title="18 Aug, 12:54 UTC">4h ago</span>
         </div>
       </article>
-      <article class="card tier-t3" data-region="europe" data-sent="2026-08-17T17:16:56.468546+00:00" data-price="389" data-tier="t3">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Scandinavia</h2>
-            <p class="cities">Helsinki <span class="codes">HEL</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$389</span>
-          </div>
-        </header>
-        <p class="dates">Wed 16 Sep &rarr; Wed 23 Sep<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">SK</span></p>
-        <div class="card-foot">
-          <span class="badge">Great</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMDktMTZqBRIDSUFEcgUSA0NQSHIFEgNBUk5yBRIDSEVMGigSCjIwMjYtMDktMjNqBRIDQ1BIagUSA0FSTmoFEgNIRUxyBRIDSUFEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open IAD to HEL on Google Flights">IAD&nbsp;&rarr;&nbsp;HEL</a><span class="when" title="17 Aug, 17:16 UTC">23h ago</span>
-        </div>
-      </article>
 
   </div>
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
 
   <footer class="foot">
     <p>Newest alert <b id="newest">18 Aug, 12:54 UTC</b> &middot; <span id="built">built
-      <b>18 Aug, 17:00 UTC</b></span></p>
+      <b>18 Aug, 17:20 UTC</b></span></p>
     <p>One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
