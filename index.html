@@ -183,15 +183,27 @@ body {
   font-variant-numeric: tabular-nums; letter-spacing: -0.004em;
 }
 
-.themer {
+/* Both top-right controls. Grouped in one flex box so they stay pinned together at
+   the trailing edge regardless of how the title wraps. */
+.top-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+
+.themer, .histbtn {
   appearance: none; border: 0; background: var(--fill);
   color: var(--accent); border-radius: 50%;
   width: 34px; height: 34px; flex: none;
   font-size: 15px; line-height: 1; cursor: pointer;
   display: grid; place-items: center;
 }
-.themer:active { background: var(--fill-press); }
-.themer:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.themer:active, .histbtn:active { background: var(--fill-press); }
+.themer:focus-visible, .histbtn:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+/* Selected state is a FILL, not an underline: unlike the region tabs this is a
+   mode switch, and the thing it switches is which list you are looking at. */
+.histbtn[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+/* Ships hidden and is unhidden by script, like .more — the archive is a live
+   Supabase read, so with JS off the button would be a control that does nothing. */
+.histbtn[hidden] { display: none; }
 
 /* Navigation, not filters. Every tab used to be a filled pill with the selected one
    a solid accent pill, which read as a row of buttons — the thing to avoid. Now:
@@ -203,6 +215,10 @@ body {
   margin: 12px -16px 0; padding-inline: 16px;
   border-bottom: 0.5px solid var(--hairline);
 }
+/* Needed because the rule above sets `display`, which outranks the UA sheet's
+   [hidden] { display: none } — without this the archive would open with the region
+   tabs still sitting above it. Same reason .card[hidden] and .empty[hidden] exist. */
+.tab-bar[hidden] { display: none; }
 .tabs {
   display: flex; gap: 18px; list-style: none; flex: 1 1 auto; min-width: 0;
   overflow-x: auto; scrollbar-width: none;
@@ -260,6 +276,9 @@ body {
 /* ---------------------------------------------------------------- cards ---
    Inset grouped-list panels: rounded, filled, hairline-free, no shadow. */
 .list { display: flex; flex-direction: column; gap: var(--gap-card); padding-top: 16px; }
+/* As with .tab-bar: `display` above would defeat the `hidden` attribute the archive
+   sets, leaving the snapshot cards stacked underneath the archive rows. */
+.list[hidden] { display: none; }
 
 .card {
   background: var(--surface);
@@ -270,6 +289,11 @@ body {
 .tier-t2 { --tier: var(--t2); --tier-tint: var(--t2-tint); }
 .tier-t3 { --tier: var(--t3); --tier-tint: var(--t3-tint); }
 .tier-t4 { --tier: var(--t4); --tier-tint: var(--t4-tint); }
+/* No tier claimed. Used by archive rows whose `tier` is NULL and by rows sent
+   before the deal gate was fixed (2026-08-12 18:00 UTC) — those were scored against
+   the old inflated baseline, so painting them with a tier colour would assert a
+   ranking that never held. Grey is the absence of a claim, not a fifth tier. */
+.tier-none { --tier: var(--separator); --tier-tint: var(--fill); }
 /* Region-hunter card: an ABSOLUTE-price hit, not a percentile against this route's
    history, and error fares are routinely pulled. The badge carries the wording; the
    ring is here because this page is public and a caption alone is easy to skim past. */
@@ -375,29 +399,44 @@ body {
 .more:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 /* -------------------------------------------------------------- history ---
-   Snapshot / History switch, and the dense live log. The log is intentionally a
-   different shape from the snapshot cards: one line per alert, newest first, so
-   the whole archive is scannable and no grouping logic is duplicated in JS. */
-#justin[hidden] { display: none; }
-#justin { padding-top: 16px; }
-.justin-head {
+   The archive. Deliberately a different SHAPE from the snapshot cards: one line per
+   alert, newest first, so the whole archive is scannable and the sale-grouping logic
+   is not duplicated here. A card answers "what should I book"; a row answers "what
+   has fired", and at ~150 alerts a day only the second one survives the volume.
+
+   Rows are grouped under day headings rather than collapsed into sales, because in
+   an archive the date IS the organising fact. */
+.hist[hidden] { display: none; }
+.hist { padding-top: 4px; }
+
+/* Deliberately NOT sticky. `.top` is already sticky at z-index 10, so a day heading
+   stuck at top:0 would sit silently behind it — an effect that looks broken rather
+   than helpful, and pinning it below a header whose height varies with the title
+   wrap would need a magic number that goes stale. */
+.day-head {
   display: flex; align-items: baseline; gap: 8px;
-  margin: 0 0 8px; padding-inline-start: 2px;
-}
-.justin-head h2 {
-  margin: 0; font-size: 13px; font-weight: 600;
+  margin: 18px 0 8px; padding: 4px 2px;
+  font-size: 13px; font-weight: 600;
   letter-spacing: -0.005em; color: var(--label);
 }
-.justin-note {
-  font-size: 12px; color: var(--label-3);
+.day-head:first-child { margin-top: 4px; }
+.day-n {
+  font-size: 12px; font-weight: 500; color: var(--label-3);
   font-variant-numeric: tabular-nums;
 }
-/* Steady, not blinking: a pulsing dot on a page you read at a glance is noise. */
-.live-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--t4); flex: none;
-  align-self: center;
+
+/* Full-width, unlike the in-card .more it borrows its type from. */
+.load-more {
+  display: block; width: 100%; margin-top: 14px;
+  padding: 12px 0; min-height: 44px;
+  border-radius: var(--radius-card); background: var(--surface);
 }
+.load-more:active { background: var(--fill); }
+.hist-note {
+  margin: 14px 0 0; font-size: 12px; color: var(--label-3);
+  text-align: center; line-height: 1.5;
+}
+.hist-note[hidden] { display: none; }
 
 .rows {
   list-style: none; margin: 0; padding: 0;
@@ -472,7 +511,14 @@ body {
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
         <p class="sub" id="sub">2 sales from 2 alerts &middot; last 24 h</p>
       </div>
-      <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9788;</button>
+      <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
+           unhidden by script: the archive is a live Supabase read, so with JS off it
+           would be a button that does nothing. -->
+      <div class="top-actions">
+        <button class="histbtn" type="button" id="histbtn" hidden
+                aria-pressed="false" aria-label="Show all past alerts">&#8634;</button>
+        <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9788;</button>
+      </div>
     </div>
     <!-- A tab bar, not a filter row: the selected region is marked by an underline
          against the strip's baseline hairline, and no tab carries a background. The
@@ -542,10 +588,20 @@ body {
   </div>
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
 
+  <!-- The archive. Nothing is baked in here on purpose: every row is a live Supabase
+       read, and the fallback page has no access to anything older than its own build.
+       Stays empty until the history button is first pressed, so the default 24h view
+       costs no extra request. -->
+  <section class="hist" id="history" hidden>
+    <div id="hist-body"></div>
+    <button class="more load-more" type="button" id="hist-more" hidden>Load more</button>
+    <p class="hist-note" id="hist-note" hidden></p>
+  </section>
+
   <footer class="foot">
     <p>Newest alert <b id="newest">21 Aug, 12:27 UTC</b> &middot; <span id="built">built
-      <b>21 Aug, 17:00 UTC</b></span></p>
-    <p>One card per destination and date pair; each pill is one origin that
+      <b>21 Aug, 17:15 UTC</b></span></p>
+    <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
   </footer>
@@ -618,6 +674,10 @@ body {
   }
 
   var region = "all";
+  // Declared here beside `region` because show() consults it: the archive is a view
+  // mode, and the empty-state message belongs to the snapshot only.
+  var histOpen = false;
+  var subEl = document.getElementById("sub");
 
   function show(next) {
     region = next;
@@ -627,7 +687,10 @@ body {
       card.hidden = !match;
       if (match) { shown++; }
     });
-    empty.hidden = shown > 0;
+    // `|| histOpen`: with the archive open every card is hidden, so shown is 0 and
+    // this would otherwise print "Nothing here in the last 24 hours" underneath a
+    // perfectly full archive.
+    empty.hidden = histOpen || shown > 0;
     var active = null;
     tabs.forEach(function (t) {
       var on = t.dataset.region === region;
@@ -957,8 +1020,10 @@ body {
       // The header and footer describe the FALLBACK until this point. Leaving them
       // alone would have the page claim a sale and alert count, and a newest-alert
       // time, belonging to a snapshot whose cards are no longer on screen.
-      var subEl = document.getElementById("sub");
-      if (subEl) {
+      // Guarded on histOpen: the archive puts its own count in this line, and a feed
+      // that resolves (or re-resolves) afterwards would silently replace it with the
+      // 24h one while the archive is still on screen.
+      if (subEl && !histOpen) {
         subEl.textContent = sales.length + (sales.length === 1 ? " sale" : " sales") +
           " from " + data.length + (data.length === 1 ? " alert" : " alerts") +
           " · last " + FEED_HOURS + " h";
@@ -977,5 +1042,189 @@ body {
   }
 
   loadFeed();
+
+  // ------------------------------------------------------------------- archive
+  // A second VIEW, not another filter. The region tabs and the sort control both
+  // describe the snapshot's cards — "Best" means tier order, and a tab counts sales —
+  // and neither means anything against a flat chronological log, so the whole tab bar
+  // is hidden while the archive is open rather than left there doing nothing.
+  //
+  // Rows, not cards: at ~150 alerts a day the sale-grouping that makes 24h readable
+  // makes a month unreadable, and the archive's job is scanning rather than booking.
+  //
+  // ⚠️ RLS currently grants `anon` SELECT on the LAST 24 HOURS ONLY, so this pages
+  // through 24h and then stops, however far back the rows actually go. Verified by
+  // request, not assumed: sent_at=gte.<168h ago> returns exactly the same rows as
+  // <12h ago>, and an explicit sent_at=lt.<5 days ago> returns []. Widening the
+  // window is a one-statement policy change server-side; nothing here changes.
+  var histBtn = document.getElementById("histbtn");
+  var histEl = document.getElementById("history");
+  var histBody = document.getElementById("hist-body");
+  var histMore = document.getElementById("hist-more");
+  var histNote = document.getElementById("hist-note");
+  var footNote = document.getElementById("foot-note");
+  var tabBar = document.querySelector(".tab-bar");
+
+  var HIST_PAGE = 500;         // one PostgREST page; a busy day is ~150 alerts
+  var histRows = [];           // every row fetched so far, newest first
+  var histOffset = 0;
+  var histLoading = false;
+  var histDone = false;
+  var snapSubText = null;      // the snapshot's own header line, to restore on close
+
+  var FOOT_SNAP = footNote ? footNote.textContent : "";
+  var FOOT_HIST = "Every alert in the mirror, newest first \u2014 one line per alert, " +
+    "not one per sale. A grey bar means no tier was claimed: either a region-hunter " +
+    "hit or an alert predating the deal gate. Tap a row to open it on Google Flights.";
+
+  // Alerts sent before this instant were ranked against a pooled baseline that
+  // inflated every percentile, so a stored "Exceptional" from before it does not mean
+  // what one from after it means. They render with NO tier colour rather than an
+  // earned-looking one — the same reason kind='mistake' never borrows a tier.
+  var GATE_MS = Date.parse("2026-08-12T18:00:00Z");
+
+  function rowTierCss(r) {
+    if (r.kind === "mistake") { return MISTAKE_CSS; }
+    if (!r.tier) { return "none"; }
+    var d = asDate(r.sent_at);
+    if (d && d.getTime() < GATE_MS) { return "none"; }
+    return r.tier;
+  }
+
+  function rowHtml(r) {
+    var dest = r.destination_name || r.destination;
+    var dates = fmtDate(r.outbound_date);
+    if (r.return_date) { dates += " \u2192 " + fmtDate(r.return_date); }
+    return '<li class="row tier-' + rowTierCss(r) + '">' +
+      '<a class="row-link" href="' + esc(linkFor(r)) + '" target="_blank"' +
+      ' rel="noopener" aria-label="Open ' + esc(r.origin) + ' to ' +
+      esc(r.destination) + ', $' + esc(r.price) + ', on Google Flights">' +
+      '<span class="row-dest">' + esc(dest) +
+        '<span class="row-region">' + esc(REGIONS[r.region] || "") + '</span></span>' +
+      '<span class="row-route">' + esc(r.origin) + '&nbsp;&rarr;&nbsp;' +
+        esc(r.destination) + '</span>' +
+      '<span class="row-dates">' + esc(dates) + '</span>' +
+      '<span class="row-price">$' + esc(r.price) + '</span></a></li>';
+  }
+
+  // UTC, matching fmtDate/fmtStamp. Grouping on a local date would put the same alert
+  // under different headings for two readers in different zones.
+  function dayKey(iso) {
+    var d = asDate(iso);
+    if (!d) { return ""; }
+    return d.getUTCFullYear() + "-" + ("0" + (d.getUTCMonth() + 1)).slice(-2) +
+      "-" + ("0" + d.getUTCDate()).slice(-2);
+  }
+
+  // Re-renders every fetched row rather than appending only the new page: a day can
+  // straddle a page boundary, and rebuilding is both cheaper to reason about and
+  // fast enough at these counts than splicing rows into an existing heading.
+  function renderHistory() {
+    var out = [], curDay = null, buf = [];
+    function flush() {
+      if (curDay === null) { return; }
+      out.push('<h3 class="day-head">' + esc(fmtDate(curDay)) +
+        '<span class="day-n">' + buf.length +
+        (buf.length === 1 ? " alert" : " alerts") + '</span></h3>' +
+        '<ul class="rows">' + buf.join("") + '</ul>');
+      buf = [];
+    }
+    histRows.forEach(function (r) {
+      var k = dayKey(r.sent_at);
+      if (k !== curDay) { flush(); curDay = k; }
+      buf.push(rowHtml(r));
+    });
+    flush();
+    histBody.innerHTML = out.join("");
+  }
+
+  function updateHistChrome() {
+    histMore.hidden = histDone || !histRows.length;
+    if (!histRows.length) {
+      histNote.hidden = false;
+      histNote.textContent = "Nothing in the archive.";
+    } else if (histDone) {
+      histNote.hidden = false;
+      histNote.textContent = histRows.length +
+        (histRows.length === 1 ? " alert" : " alerts") + ", back to " +
+        fmtDate(dayKey(histRows[histRows.length - 1].sent_at)) + ".";
+    } else {
+      histNote.hidden = true;
+    }
+    if (subEl) {
+      subEl.textContent = histRows.length +
+        (histRows.length === 1 ? " alert" : " alerts") + " \u00b7 all history";
+    }
+  }
+
+  function fetchHistoryPage() {
+    if (histLoading || histDone) { return; }
+    histLoading = true;
+    histMore.disabled = true;
+    histMore.textContent = "Loading\u2026";
+
+    var params = "select=origin,destination,destination_name,city_name,region,tier," +
+      "price,outbound_date,return_date,airline,booking_url,sent_at,kind" +
+      "&order=sent_at.desc&limit=" + HIST_PAGE + "&offset=" + histOffset;
+
+    fetch(SB_URL + "/rest/v1/fare_alerts?" + params, {
+      headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY }
+    }).then(function (res) {
+      if (!res.ok) { throw new Error("HTTP " + res.status); }
+      return res.json();
+    }).then(function (data) {
+      histLoading = false;
+      histMore.disabled = false;
+      histMore.textContent = "Load more";
+      if (!data || !data.length) {
+        histDone = true;
+      } else {
+        histRows = histRows.concat(data);
+        histOffset += data.length;
+        // A short page means the end. Saves one request that would return [].
+        if (data.length < HIST_PAGE) { histDone = true; }
+      }
+      renderHistory();
+      updateHistChrome();
+    }).catch(function () {
+      // Unlike the snapshot there is no baked-in floor to fall back to, so unlike
+      // loadFeed this failure has to be said out loud rather than swallowed.
+      histLoading = false;
+      histMore.disabled = false;
+      histMore.hidden = false;
+      histMore.textContent = "Retry";
+      histNote.hidden = false;
+      histNote.textContent = "Could not reach the archive.";
+    });
+  }
+
+  function setHistory(open) {
+    histOpen = open;
+    histEl.hidden = !open;
+    listEl.hidden = open;
+    if (tabBar) { tabBar.hidden = open; }
+    histBtn.setAttribute("aria-pressed", String(open));
+    histBtn.setAttribute("aria-label",
+      open ? "Back to the last 24 hours" : "Show all past alerts");
+    if (footNote) { footNote.textContent = open ? FOOT_HIST : FOOT_SNAP; }
+
+    if (open) {
+      if (snapSubText === null && subEl) { snapSubText = subEl.textContent; }
+      empty.hidden = true;
+      // Fetched on FIRST open, not on load: the default view is the 24h snapshot, and
+      // most visits never open the archive at all.
+      if (!histRows.length && !histLoading) { fetchHistoryPage(); }
+      else { updateHistChrome(); }
+    } else {
+      if (subEl && snapSubText !== null) { subEl.textContent = snapSubText; }
+      snapSubText = null;
+      refresh(region, sortMode);     // restores the region filter and empty state
+    }
+    window.scrollTo(0, 0);
+  }
+
+  histBtn.hidden = false;            // script is running, so the control works
+  histBtn.addEventListener("click", function () { setHistory(!histOpen); });
+  histMore.addEventListener("click", fetchHistoryPage);
 })();
 </script>
