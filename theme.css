@@ -161,9 +161,14 @@ body {
   padding: 10px max(16px, env(safe-area-inset-left)) 0;
 }
 .titlebar { display: flex; align-items: center; gap: 12px; }
+/* This, not the h1, is what pushes .top-actions to the trailing edge. `flex: 1` sat
+   on .titlebar h1 for a long time doing NOTHING: h1's parent is this wrapper, a plain
+   block, so the growth never applied to a flex child and both controls stayed bunched
+   against the title. min-width:0 lets the h1 wrap instead of forcing the row wider. */
+.titlebar-id { flex: 1; min-width: 0; }
 .titlebar h1 {
   font-size: 30px; font-weight: 700; letter-spacing: -0.022em;
-  margin: 0; flex: 1; text-wrap: balance;
+  margin: 0; text-wrap: balance;
 }
 .sub {
   margin: 1px 0 0; font-size: 13px; color: var(--label-2);
@@ -174,12 +179,21 @@ body {
    the trailing edge regardless of how the title wraps. */
 .top-actions { display: flex; align-items: center; gap: 8px; flex: none; }
 
+/* Shared: same height, same fill, same accent, so they read as one pair. They differ
+   only in shape, because they differ in kind — the themer is a glyph whose meaning is
+   universal, while "History" has no icon a reader would reliably guess. A bare ↺ was
+   ambiguous with "reload the page", which is the one thing it must not suggest. */
 .themer, .histbtn {
   appearance: none; border: 0; background: var(--fill);
-  color: var(--accent); border-radius: 50%;
-  width: 34px; height: 34px; flex: none;
-  font-size: 15px; line-height: 1; cursor: pointer;
+  color: var(--accent); height: 34px; flex: none;
+  line-height: 1; cursor: pointer;
   display: grid; place-items: center;
+}
+.themer { width: 34px; border-radius: 50%; font-size: 15px; }
+.histbtn {
+  border-radius: 999px; padding: 0 14px;
+  font-family: var(--ui); font-size: 14px; font-weight: 600;
+  letter-spacing: -0.008em; white-space: nowrap;
 }
 .themer:active, .histbtn:active { background: var(--fill-press); }
 .themer:focus-visible, .histbtn:focus-visible {
