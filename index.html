@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="2 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="1 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -470,7 +470,7 @@ body {
       <div>
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">2 sales from 2 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">1 sales from 1 alerts &middot; last 24 h</p>
       </div>
       <button class="themer" type="button" id="themer" aria-label="Switch between light and dark">&#9788;</button>
     </div>
@@ -480,8 +480,7 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">2</span></button>
-      <button class="tab" type="button" role="tab" data-region="mideast" aria-selected="false">Middle East<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">1</span></button>
       <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">1</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
@@ -523,29 +522,13 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMDktMjZqBRIDTUlBcgUSA0JPR3IFEgNDVEdyBRIDTURFGigSCjIwMjYtMTAtMDNqBRIDQk9HagUSA0NUR2oFEgNNREVyBRIDTUlBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to CTG on Google Flights">MIA&nbsp;&rarr;&nbsp;CTG</a><span class="when" title="20 Aug, 07:11 UTC">22h ago</span>
         </div>
       </article>
-      <article class="card tier-t1" data-region="mideast" data-sent="2026-08-20T05:24:51.934379+00:00" data-price="619" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Egypt</h2>
-            <p class="cities">Cairo <span class="codes">CAI</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$619</span>
-          </div>
-        </header>
-        <p class="dates">Fri 18 Sep &rarr; Mon 28 Sep<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">AT</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMThqBRIDTEFYcgUSA0NBSRoaEgoyMDI2LTA5LTI4agUSA0NBSXIFEgNMQVhAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open LAX to CAI on Google Flights">LAX&nbsp;&rarr;&nbsp;CAI</a><span class="when" title="20 Aug, 05:24 UTC">23h ago</span>
-        </div>
-      </article>
 
   </div>
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
 
   <footer class="foot">
     <p>Newest alert <b id="newest">20 Aug, 07:11 UTC</b> &middot; <span id="built">built
-      <b>21 Aug, 05:20 UTC</b></span></p>
+      <b>21 Aug, 05:40 UTC</b></span></p>
     <p>One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
