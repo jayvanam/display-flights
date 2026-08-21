@@ -170,15 +170,27 @@ body {
   font-variant-numeric: tabular-nums; letter-spacing: -0.004em;
 }
 
-.themer {
+/* Both top-right controls. Grouped in one flex box so they stay pinned together at
+   the trailing edge regardless of how the title wraps. */
+.top-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+
+.themer, .histbtn {
   appearance: none; border: 0; background: var(--fill);
   color: var(--accent); border-radius: 50%;
   width: 34px; height: 34px; flex: none;
   font-size: 15px; line-height: 1; cursor: pointer;
   display: grid; place-items: center;
 }
-.themer:active { background: var(--fill-press); }
-.themer:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.themer:active, .histbtn:active { background: var(--fill-press); }
+.themer:focus-visible, .histbtn:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+/* Selected state is a FILL, not an underline: unlike the region tabs this is a
+   mode switch, and the thing it switches is which list you are looking at. */
+.histbtn[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+/* Ships hidden and is unhidden by script, like .more — the archive is a live
+   Supabase read, so with JS off the button would be a control that does nothing. */
+.histbtn[hidden] { display: none; }
 
 /* Navigation, not filters. Every tab used to be a filled pill with the selected one
    a solid accent pill, which read as a row of buttons — the thing to avoid. Now:
@@ -190,6 +202,10 @@ body {
   margin: 12px -16px 0; padding-inline: 16px;
   border-bottom: 0.5px solid var(--hairline);
 }
+/* Needed because the rule above sets `display`, which outranks the UA sheet's
+   [hidden] { display: none } — without this the archive would open with the region
+   tabs still sitting above it. Same reason .card[hidden] and .empty[hidden] exist. */
+.tab-bar[hidden] { display: none; }
 .tabs {
   display: flex; gap: 18px; list-style: none; flex: 1 1 auto; min-width: 0;
   overflow-x: auto; scrollbar-width: none;
@@ -247,6 +263,9 @@ body {
 /* ---------------------------------------------------------------- cards ---
    Inset grouped-list panels: rounded, filled, hairline-free, no shadow. */
 .list { display: flex; flex-direction: column; gap: var(--gap-card); padding-top: 16px; }
+/* As with .tab-bar: `display` above would defeat the `hidden` attribute the archive
+   sets, leaving the snapshot cards stacked underneath the archive rows. */
+.list[hidden] { display: none; }
 
 .card {
   background: var(--surface);
@@ -257,6 +276,11 @@ body {
 .tier-t2 { --tier: var(--t2); --tier-tint: var(--t2-tint); }
 .tier-t3 { --tier: var(--t3); --tier-tint: var(--t3-tint); }
 .tier-t4 { --tier: var(--t4); --tier-tint: var(--t4-tint); }
+/* No tier claimed. Used by archive rows whose `tier` is NULL and by rows sent
+   before the deal gate was fixed (2026-08-12 18:00 UTC) — those were scored against
+   the old inflated baseline, so painting them with a tier colour would assert a
+   ranking that never held. Grey is the absence of a claim, not a fifth tier. */
+.tier-none { --tier: var(--separator); --tier-tint: var(--fill); }
 /* Region-hunter card: an ABSOLUTE-price hit, not a percentile against this route's
    history, and error fares are routinely pulled. The badge carries the wording; the
    ring is here because this page is public and a caption alone is easy to skim past. */
@@ -362,29 +386,44 @@ body {
 .more:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 /* -------------------------------------------------------------- history ---
-   Snapshot / History switch, and the dense live log. The log is intentionally a
-   different shape from the snapshot cards: one line per alert, newest first, so
-   the whole archive is scannable and no grouping logic is duplicated in JS. */
-#justin[hidden] { display: none; }
-#justin { padding-top: 16px; }
-.justin-head {
+   The archive. Deliberately a different SHAPE from the snapshot cards: one line per
+   alert, newest first, so the whole archive is scannable and the sale-grouping logic
+   is not duplicated here. A card answers "what should I book"; a row answers "what
+   has fired", and at ~150 alerts a day only the second one survives the volume.
+
+   Rows are grouped under day headings rather than collapsed into sales, because in
+   an archive the date IS the organising fact. */
+.hist[hidden] { display: none; }
+.hist { padding-top: 4px; }
+
+/* Deliberately NOT sticky. `.top` is already sticky at z-index 10, so a day heading
+   stuck at top:0 would sit silently behind it — an effect that looks broken rather
+   than helpful, and pinning it below a header whose height varies with the title
+   wrap would need a magic number that goes stale. */
+.day-head {
   display: flex; align-items: baseline; gap: 8px;
-  margin: 0 0 8px; padding-inline-start: 2px;
-}
-.justin-head h2 {
-  margin: 0; font-size: 13px; font-weight: 600;
+  margin: 18px 0 8px; padding: 4px 2px;
+  font-size: 13px; font-weight: 600;
   letter-spacing: -0.005em; color: var(--label);
 }
-.justin-note {
-  font-size: 12px; color: var(--label-3);
+.day-head:first-child { margin-top: 4px; }
+.day-n {
+  font-size: 12px; font-weight: 500; color: var(--label-3);
   font-variant-numeric: tabular-nums;
 }
-/* Steady, not blinking: a pulsing dot on a page you read at a glance is noise. */
-.live-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--t4); flex: none;
-  align-self: center;
+
+/* Full-width, unlike the in-card .more it borrows its type from. */
+.load-more {
+  display: block; width: 100%; margin-top: 14px;
+  padding: 12px 0; min-height: 44px;
+  border-radius: var(--radius-card); background: var(--surface);
 }
+.load-more:active { background: var(--fill); }
+.hist-note {
+  margin: 14px 0 0; font-size: 12px; color: var(--label-3);
+  text-align: center; line-height: 1.5;
+}
+.hist-note[hidden] { display: none; }
 
 .rows {
   list-style: none; margin: 0; padding: 0;

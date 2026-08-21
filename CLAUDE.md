@@ -39,12 +39,23 @@ renderer, change the other.
 
 **3. The Supabase publishable key ships in `index.html`, on a public repo.** That is
 intentional and unavoidable for a static page: whatever the page displays is obtainable
-by anyone who opens devtools. Everything beyond the current view is closed off — RLS
-limits `anon` to the last 24h, and table-level `SELECT` is revoked in favour of a
-column-level grant on the display columns (15 as of 2026-08-13 — `kind` needed its own
-`grant select`, since a new column is invisible to the page without one). The bigger exposure is the repo itself: every
-fare price is committed in plaintext with a snapshot per publish in git history. Don't
-"fix" the key by moving it; genuinely private would mean a private repo.
+by anyone who opens devtools. What is closed off is the COLUMNS, not the time range:
+table-level `SELECT` is revoked in favour of a column-level grant on the display columns
+(15 as of 2026-08-13 — `kind` needed its own `grant select`, since a new column is
+invisible to the page without one), so `deal_score` and `source_id` stay unreachable.
+
+RLS no longer bounds the window. Policy `"anon reads all history"` on `fare_alerts` is
+`USING (true)` as of 2026-08-21 — it was `"anon reads last 24h"`, and the History view
+needs the whole mirror. It exposed nothing the repo itself did not already expose (see
+below). Writes are still refused — anon `DELETE` returns 401, verified, not assumed.
+
+⚠️ A column-revoked request returns `42501 permission denied for table fare_alerts`,
+whose hint reads *"GRANT SELECT ON public.fare_alerts TO anon"*. Following that hint
+would undo the column-level grant this design is built on. The hint is wrong here.
+
+The bigger exposure was always the repo itself, which is why widening RLS changed little:
+every fare price is committed in plaintext, one snapshot per publish, in git history.
+Don't "fix" the key by moving it; genuinely private would mean a private repo.
 
 ## Don't import from `flights`
 
@@ -70,7 +81,7 @@ After changing destinations upstream:
 | Path | Role |
 |---|---|
 | `generate.py` | Builds the FALLBACK page. Reads `deal_alerts` + `mistake_alerts` read-only, writes `index.html`. |
-| `template.html` | The shell **and** the live client renderer (`buildSales`/`cardHtml`/`loadFeed`). |
+| `template.html` | The shell, the live card renderer (`buildSales`/`cardHtml`/`loadFeed`), **and** the History view (`rowHtml`/`renderHistory`/`fetchHistoryPage`). |
 | `sync_supabase.py` | Pi-side: pushes newly alerted deals **and region-hunter hits** into Supabase `fare_alerts`. |
 | `catalog.py` | **Generated.** Vendored destination / region / airport tables. |
 | `sync_catalog.py` | Regenerates `catalog.py` from the `flights` repo. |
@@ -129,3 +140,15 @@ of incomparable rows sit before that, and a date-only `--since` won't exclude th
 (the anchor-rotation flood was the same calendar day as the fix). `deal_alerts` on the Pi
 is the system of record. `source_id` is chronological and the high-water mark is
 `max(source_id)`, so deleting old rows does not cause a re-pull.
+
+The mirror was backfilled cleanly and holds **zero** pre-gate rows: verified 2026-08-21,
+its oldest row is `2026-08-12T18:47:32`, which is exactly the first comparable run. So
+every tier badge the History view renders is earned. `GATE_MS` in `template.html` greys
+out pre-gate rows anyway — dormant insurance, and the one thing that must not rot if an
+older backfill is ever run, because it is what stops the old inflated percentiles from
+rendering behind an earned-looking badge.
+
+Do NOT size the archive from `tests/sample_alerts.txt`. That 144-alert day is the Morocco
+fan-out worst case; the real rate is ~4/day (43 rows over the 10 days to 2026-08-21), so
+`HIST_PAGE = 500` means one fetch and no visible "Load more" for months. The paging is
+verified to 1,200 rows regardless.
