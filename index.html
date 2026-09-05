@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="66 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="37 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">35 sales from 66 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">20 sales from 37 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,15 +540,13 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">35</span></button>
-      <button class="tab" type="button" role="tab" data-region="caribbean" aria-selected="false">Caribbean &amp; Mexico<span class="n">2</span></button>
-      <button class="tab" type="button" role="tab" data-region="canada" aria-selected="false">Canada<span class="n">3</span></button>
-      <button class="tab" type="button" role="tab" data-region="europe" aria-selected="false">Europe<span class="n">8</span></button>
-      <button class="tab" type="button" role="tab" data-region="asia" aria-selected="false">Asia<span class="n">2</span></button>
-      <button class="tab" type="button" role="tab" data-region="mideast" aria-selected="false">Middle East<span class="n">5</span></button>
-      <button class="tab" type="button" role="tab" data-region="africa" aria-selected="false">Africa<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">20</span></button>
+      <button class="tab" type="button" role="tab" data-region="canada" aria-selected="false">Canada<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="europe" aria-selected="false">Europe<span class="n">3</span></button>
+      <button class="tab" type="button" role="tab" data-region="asia" aria-selected="false">Asia<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="mideast" aria-selected="false">Middle East<span class="n">3</span></button>
       <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">8</span></button>
-      <button class="tab" type="button" role="tab" data-region="hawaii" aria-selected="false">Hawaii<span class="n">6</span></button>
+      <button class="tab" type="button" role="tab" data-region="hawaii" aria-selected="false">Hawaii<span class="n">4</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -573,22 +571,6 @@ body {
        If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
        stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
-      <article class="card tier-t1" data-region="caribbean" data-sent="2026-09-04T17:12:20.523255+00:00" data-price="216" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Puerto Rico</h2>
-            <p class="cities">San Juan <span class="codes">SJU</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$216</span>
-          </div>
-        </header>
-        <p class="dates">Sat 26 Sep &rarr; Wed 30 Sep<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">UA</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMDktMjZqBRIDT1JEcgUSA1NKVRoaEgoyMDI2LTA5LTMwagUSA1NKVXIFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to SJU on Google Flights">ORD&nbsp;&rarr;&nbsp;SJU</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-      </article>
       <article class="card tier-t1" data-region="hawaii" data-sent="2026-09-05T05:42:52.713155+00:00" data-price="241" data-tier="t1">
         <header class="card-head">
           <div class="card-id">
@@ -603,44 +585,6 @@ body {
         <div class="card-foot">
           <span class="badge">Exceptional</span>
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjctMDEtMTdqBRIDU0VBcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI3LTAxLTI0agUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNTRUFAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open SEA to OGG on Google Flights">SEA&nbsp;&rarr;&nbsp;OGG</a><span class="when" title="5 Sep, 05:42 UTC">11h ago</span>
-        </div>
-      </article>
-      <article class="card tier-t1" data-region="hawaii" data-sent="2026-09-04T17:12:21.071576+00:00" data-price="241" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Hawaii</h2>
-            <p class="cities">Kauai · Kona <span class="codes">KOA LIH</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$241</span><span class="spread">to $396</span>
-          </div>
-        </header>
-        <p class="dates">Thu 3 Dec &rarr; Thu 10 Dec<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">DL</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <span class="origin-note">4 origins</span><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMTItMDNqBRIDU0VBcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTEyLTEwagUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNTRUFAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="DL" aria-label="Open SEA to LIH, $241, DL, on Google Flights"><span class="chip-route">SEA&nbsp;&rarr;&nbsp;LIH</span><span class="chip-price">$241</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMTItMDNqBRIDU0ZPcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTEyLTEwagUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNTRk9AAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="DL" aria-label="Open SFO to KOA, $346, DL, on Google Flights"><span class="chip-route">SFO&nbsp;&rarr;&nbsp;KOA</span><span class="chip-price">$346</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMTItMDNqBRIDREFMcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTEyLTEwagUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNEQUxAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="WN" aria-label="Open DAL to KOA, $386, WN, on Google Flights"><span class="chip-route">DAL&nbsp;&rarr;&nbsp;KOA</span><span class="chip-price">$386</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMTItMDNqBRIDREZXcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTEyLTEwagUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="DL" aria-label="Open DFW to KOA, $396, DL, on Google Flights"><span class="chip-route">DFW&nbsp;&rarr;&nbsp;KOA</span><span class="chip-price">$396</span></a></li>
-        </ul>
-      </article>
-      <article class="card tier-t1" data-region="hawaii" data-sent="2026-09-04T17:12:21.082055+00:00" data-price="250" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Hawaii</h2>
-            <p class="cities">Kauai <span class="codes">LIH</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$250</span>
-          </div>
-        </header>
-        <p class="dates">Tue 3 Nov &rarr; Tue 10 Nov<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">DL</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMTEtMDNqBRIDU0VBcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTExLTEwagUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNTRUFAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open SEA to LIH on Google Flights">SEA&nbsp;&rarr;&nbsp;LIH</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
         </div>
       </article>
       <article class="card tier-t1" data-region="southamerica" data-sent="2026-09-05T12:31:30.184349+00:00" data-price="332" data-tier="t1">
@@ -771,22 +715,6 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMTdqBRIDSkZLcgUSA0RYQnIFEgNBVUgaIRIKMjAyNy0wMS0yN2oFEgNEWEJqBRIDQVVIcgUSA0pGS0ABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open JFK to DXB on Google Flights">JFK&nbsp;&rarr;&nbsp;DXB</a><span class="when" title="5 Sep, 05:42 UTC">11h ago</span>
         </div>
       </article>
-      <article class="card tier-t2" data-region="caribbean" data-sent="2026-09-04T17:12:20.534448+00:00" data-price="222" data-tier="t2">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Puerto Rico</h2>
-            <p class="cities">San Juan <span class="codes">SJU</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$222</span>
-          </div>
-        </header>
-        <p class="dates">Tue 3 Nov &rarr; Sat 7 Nov<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">UA</span></p>
-        <div class="card-foot">
-          <span class="badge">Excellent</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTEtMDNqBRIDT1JEcgUSA1NKVRoaEgoyMDI2LTExLTA3agUSA1NKVXIFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to SJU on Google Flights">ORD&nbsp;&rarr;&nbsp;SJU</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-      </article>
       <article class="card tier-t2" data-region="hawaii" data-sent="2026-09-05T05:42:52.724159+00:00" data-price="241" data-tier="t2">
         <header class="card-head">
           <div class="card-id">
@@ -802,72 +730,6 @@ body {
           <span class="badge">Excellent</span>
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMTEtMTdqBRIDU0VBcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTExLTI0agUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNTRUFAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open SEA to OGG on Google Flights">SEA&nbsp;&rarr;&nbsp;OGG</a><span class="when" title="5 Sep, 05:42 UTC">11h ago</span>
         </div>
-      </article>
-      <article class="card tier-t2" data-region="europe" data-sent="2026-09-04T17:12:19.507578+00:00" data-price="349" data-tier="t2">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Iceland</h2>
-            <p class="cities">Reykjavik <span class="codes">KEF</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$349</span><span class="spread">to $399</span>
-          </div>
-        </header>
-        <p class="dates">Sun 4 Oct &rarr; Fri 9 Oct<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Excellent</span>
-          <span class="origin-note">4 origins</span><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMDRqBRIDQk9TcgUSA0tFRhoaEgoyMDI2LTEwLTA5agUSA0tFRnIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open BOS to KEF, $349, FI, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$349</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMDRqBRIDSUFEcgUSA0tFRhoaEgoyMDI2LTEwLTA5agUSA0tFRnIFEgNJQURAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open IAD to KEF, $349, FI, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$349</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMDRqBRIDSkZLcgUSA0tFRhoaEgoyMDI2LTEwLTA5agUSA0tFRnIFEgNKRktAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open JFK to KEF, $379, FI, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$379</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMDRqBRIDTVNQcgUSA0tFRhoaEgoyMDI2LTEwLTA5agUSA0tFRnIFEgNNU1BAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open MSP to KEF, $399, FI, on Google Flights"><span class="chip-route">MSP&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$399</span></a></li>
-        </ul>
-      </article>
-      <article class="card tier-t2" data-region="europe" data-sent="2026-09-04T17:12:19.495380+00:00" data-price="349" data-tier="t2">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Iceland</h2>
-            <p class="cities">Reykjavik <span class="codes">KEF</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$349</span><span class="spread">to $399</span>
-          </div>
-        </header>
-        <p class="dates">Thu 3 Dec &rarr; Tue 8 Dec<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Excellent</span>
-          <span class="origin-note">5 origins</span><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDNqBRIDQk9TcgUSA0tFRhoaEgoyMDI2LTEyLTA4agUSA0tFRnIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open BOS to KEF, $349, FI, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$349</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDNqBRIDSUFEcgUSA0tFRhoaEgoyMDI2LTEyLTA4agUSA0tFRnIFEgNJQURAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open IAD to KEF, $349, FI, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$349</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDNqBRIDRVdScgUSA0tFRhoaEgoyMDI2LTEyLTA4agUSA0tFRnIFEgNFV1JAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open EWR to KEF, $379, FI, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$379</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDNqBRIDSkZLcgUSA0tFRhoaEgoyMDI2LTEyLTA4agUSA0tFRnIFEgNKRktAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open JFK to KEF, $379, FI, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$379</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDNqBRIDT1JEcgUSA0tFRhoaEgoyMDI2LTEyLTA4agUSA0tFRnIFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open ORD to KEF, $399, FI, on Google Flights"><span class="chip-route">ORD&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$399</span></a></li>
-        </ul>
-      </article>
-      <article class="card tier-t2" data-region="europe" data-sent="2026-09-04T17:12:17.993384+00:00" data-price="384" data-tier="t2">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Scandinavia</h2>
-            <p class="cities">Stockholm <span class="codes">ARN</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$384</span>
-          </div>
-        </header>
-        <p class="dates">Thu 3 Dec &rarr; Thu 10 Dec<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Excellent</span>
-          <span class="origin-note">3 origins</span><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDNqBRIDRVdScgUSA0NQSHIFEgNBUk5yBRIDSEVMGigSCjIwMjYtMTItMTBqBRIDQ1BIagUSA0FSTmoFEgNIRUxyBRIDRVdSQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open EWR to ARN, $384, FI, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;ARN</span><span class="chip-price">$384</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDNqBRIDSkZLcgUSA0NQSHIFEgNBUk5yBRIDSEVMGigSCjIwMjYtMTItMTBqBRIDQ1BIagUSA0FSTmoFEgNIRUxyBRIDSkZLQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open JFK to ARN, $384, FI, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;ARN</span><span class="chip-price">$384</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDNqBRIDU0VBcgUSA0NQSHIFEgNBUk5yBRIDSEVMGigSCjIwMjYtMTItMTBqBRIDQ1BIagUSA0FSTmoFEgNIRUxyBRIDU0VBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open SEA to ARN, $384, FI, on Google Flights"><span class="chip-route">SEA&nbsp;&rarr;&nbsp;ARN</span><span class="chip-price">$384</span></a></li>
-        </ul>
       </article>
       <article class="card tier-t2" data-region="southamerica" data-sent="2026-09-05T12:31:30.557632+00:00" data-price="388" data-tier="t2">
         <header class="card-head">
@@ -885,22 +747,6 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDItMjRqBRIDTUlBcgUSA0NVWnIFEgNMSU0aIRIKMjAyNy0wMy0wM2oFEgNDVVpqBRIDTElNcgUSA01JQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to LIM on Google Flights">MIA&nbsp;&rarr;&nbsp;LIM</a><span class="when" title="5 Sep, 12:31 UTC">4h ago</span>
         </div>
       </article>
-      <article class="card tier-t2" data-region="mideast" data-sent="2026-09-04T17:12:16.116049+00:00" data-price="676" data-tier="t2">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Egypt</h2>
-            <p class="cities">Cairo <span class="codes">CAI</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$676</span>
-          </div>
-        </header>
-        <p class="dates">Sun 4 Oct &rarr; Wed 14 Oct<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">GF</span></p>
-        <div class="card-foot">
-          <span class="badge">Excellent</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMDRqBRIDSkZLcgUSA0NBSRoaEgoyMDI2LTEwLTE0agUSA0NBSXIFEgNKRktAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open JFK to CAI on Google Flights">JFK&nbsp;&rarr;&nbsp;CAI</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-      </article>
       <article class="card tier-t2" data-region="mideast" data-sent="2026-09-04T18:23:31.795613+00:00" data-price="694" data-tier="t2">
         <header class="card-head">
           <div class="card-id">
@@ -915,38 +761,6 @@ body {
         <div class="card-foot">
           <span class="badge">Excellent</span>
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTEtMTFqBRIDSkZLcgUSA0RYQnIFEgNBVUgaIRIKMjAyNi0xMS0xOGoFEgNEWEJqBRIDQVVIcgUSA0pGS0ABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open JFK to AUH on Google Flights">JFK&nbsp;&rarr;&nbsp;AUH</a><span class="when" title="4 Sep, 18:23 UTC">22h ago</span>
-        </div>
-      </article>
-      <article class="card tier-t3" data-region="canada" data-sent="2026-09-04T17:12:20.099905+00:00" data-price="222" data-tier="t3">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Toronto</h2>
-            <p class="cities"><span class="codes">YTZ</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$222</span>
-          </div>
-        </header>
-        <p class="dates">Tue 3 Nov &rarr; Sat 7 Nov<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">PD</span></p>
-        <div class="card-foot">
-          <span class="badge">Great</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTEtMDNqBRIDT1JEcgUSA1lZWnIFEgNZVFoaIRIKMjAyNi0xMS0wN2oFEgNZWVpqBRIDWVRacgUSA09SREABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to YTZ on Google Flights">ORD&nbsp;&rarr;&nbsp;YTZ</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-      </article>
-      <article class="card tier-t3" data-region="canada" data-sent="2026-09-04T17:12:20.089134+00:00" data-price="230" data-tier="t3">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Toronto</h2>
-            <p class="cities"><span class="codes">YYZ</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$230</span>
-          </div>
-        </header>
-        <p class="dates">Thu 3 Dec &rarr; Mon 7 Dec<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AA</span></p>
-        <div class="card-foot">
-          <span class="badge">Great</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTItMDNqBRIDT1JEcgUSA1lZWnIFEgNZVFoaIRIKMjAyNi0xMi0wN2oFEgNZWVpqBRIDWVRacgUSA09SREABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to YYZ on Google Flights">ORD&nbsp;&rarr;&nbsp;YYZ</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
         </div>
       </article>
       <article class="card tier-t3" data-region="hawaii" data-sent="2026-09-05T12:31:31.488082+00:00" data-price="281" data-tier="t3">
@@ -1025,46 +839,6 @@ body {
           <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMTdqBRIDT1JEcgUSA0tFRhoaEgoyMDI3LTAxLTIyagUSA0tFRnIFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open ORD to KEF, $399, FI, on Google Flights"><span class="chip-route">ORD&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$399</span></a></li>
         </ul>
       </article>
-      <article class="card tier-t3" data-region="europe" data-sent="2026-09-04T17:12:19.485020+00:00" data-price="349" data-tier="t3">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Iceland</h2>
-            <p class="cities">Reykjavik <span class="codes">KEF</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$349</span>
-          </div>
-        </header>
-        <p class="dates">Tue 3 Nov &rarr; Sun 8 Nov<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Great</span>
-          <span class="origin-note">2 origins</span><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTEtMDNqBRIDQk9TcgUSA0tFRhoaEgoyMDI2LTExLTA4agUSA0tFRnIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open BOS to KEF, $349, FI, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$349</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTEtMDNqBRIDSUFEcgUSA0tFRhoaEgoyMDI2LTExLTA4agUSA0tFRnIFEgNJQURAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open IAD to KEF, $349, FI, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$349</span></a></li>
-        </ul>
-      </article>
-      <article class="card tier-t3" data-region="europe" data-sent="2026-09-04T17:12:18.488490+00:00" data-price="385" data-tier="t3">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Ireland</h2>
-            <p class="cities">Dublin <span class="codes">DUB</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$385</span>
-          </div>
-        </header>
-        <p class="dates">Thu 3 Dec &rarr; Tue 8 Dec<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Great</span>
-          <span class="origin-note">2 origins</span><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTItMDNqBRIDRVdScgUSA0RVQnIFEgNTTk4aIRIKMjAyNi0xMi0wOGoFEgNEVUJqBRIDU05OcgUSA0VXUkABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open EWR to DUB, $385, FI, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;DUB</span><span class="chip-price">$385</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTItMDNqBRIDSkZLcgUSA0RVQnIFEgNTTk4aIRIKMjAyNi0xMi0wOGoFEgNEVUJqBRIDU05OcgUSA0pGS0ABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open JFK to DUB, $385, FI, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;DUB</span><span class="chip-price">$385</span></a></li>
-        </ul>
-      </article>
       <article class="card tier-t4" data-region="canada" data-sent="2026-09-05T05:42:51.828076+00:00" data-price="235" data-tier="t4">
         <header class="card-head">
           <div class="card-id">
@@ -1136,54 +910,6 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTAtMThqBRIDSkZLcgUSA0RYQnIFEgNBVUgaIRIKMjAyNi0xMC0yOGoFEgNEWEJqBRIDQVVIcgUSA0pGS0ABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open JFK to DXB on Google Flights">JFK&nbsp;&rarr;&nbsp;DXB</a><span class="when" title="5 Sep, 05:42 UTC">11h ago</span>
         </div>
       </article>
-      <article class="card tier-t4" data-region="mideast" data-sent="2026-09-04T17:12:17.558468+00:00" data-price="628" data-tier="t4">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Dubai</h2>
-            <p class="cities"><span class="codes">DXB</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$628</span>
-          </div>
-        </header>
-        <p class="dates">Sun 4 Oct &rarr; Wed 14 Oct<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">GF</span></p>
-        <div class="card-foot">
-          <span class="badge">Good</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTAtMDRqBRIDSkZLcgUSA0RYQnIFEgNBVUgaIRIKMjAyNi0xMC0xNGoFEgNEWEJqBRIDQVVIcgUSA0pGS0ABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open JFK to DXB on Google Flights">JFK&nbsp;&rarr;&nbsp;DXB</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-      </article>
-      <article class="card tier-t4" data-region="africa" data-sent="2026-09-04T17:12:15.675173+00:00" data-price="650" data-tier="t4">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Morocco</h2>
-            <p class="cities">Casablanca <span class="codes">CMN</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$650</span>
-          </div>
-        </header>
-        <p class="dates">Tue 3 Nov &rarr; Fri 13 Nov<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">AC</span></p>
-        <div class="card-foot">
-          <span class="badge">Good</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTEtMDNqBRIDQk9TcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTEtMTNqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQk9TQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open BOS to CMN on Google Flights">BOS&nbsp;&rarr;&nbsp;CMN</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-      </article>
-      <article class="card tier-t4" data-region="asia" data-sent="2026-09-04T17:12:19.016686+00:00" data-price="656" data-tier="t4">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Southeast Asia</h2>
-            <p class="cities">Singapore <span class="codes">SIN</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$656</span>
-          </div>
-        </header>
-        <p class="dates">Tue 3 Nov &rarr; Tue 17 Nov<span class="dot">·</span>14 nights<span class="dot">·</span><span class="airline">AC</span></p>
-        <div class="card-foot">
-          <span class="badge">Good</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GlISCjIwMjYtMTEtMDNqBRIDTEFYcgUSA0JLS3IFEgNETUtyBRIDU0dOcgUSA0hBTnIFEgNLVUxyBRIDU0lOcgUSA0NHS3IFEgNNTkxyBRIDUkdOGlISCjIwMjYtMTEtMTdqBRIDQktLagUSA0RNS2oFEgNTR05qBRIDSEFOagUSA0tVTGoFEgNTSU5qBRIDQ0dLagUSA01OTGoFEgNSR05yBRIDTEFYQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open LAX to SIN on Google Flights">LAX&nbsp;&rarr;&nbsp;SIN</a><span class="when" title="4 Sep, 17:12 UTC">23h ago</span>
-        </div>
-      </article>
       <article class="card tier-t4" data-region="asia" data-sent="2026-09-05T05:42:50.158853+00:00" data-price="680" data-tier="t4">
         <header class="card-head">
           <div class="card-id">
@@ -1216,7 +942,7 @@ body {
 
   <footer class="foot">
     <p>Newest alert <b id="newest">5 Sep, 12:31 UTC</b> &middot; <span id="built">built
-      <b>5 Sep, 17:00 UTC</b></span></p>
+      <b>5 Sep, 17:20 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
