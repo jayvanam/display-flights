@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="6 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="40 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">5 sales from 6 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">12 sales from 40 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,8 +540,11 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">5</span></button>
-      <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">3</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">12</span></button>
+      <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">4</span></button>
+      <button class="tab" type="button" role="tab" data-region="europe" aria-selected="false">Europe<span class="n">2</span></button>
+      <button class="tab" type="button" role="tab" data-region="mideast" aria-selected="false">Middle East<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="africa" aria-selected="false">Africa<span class="n">3</span></button>
       <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">1</span></button>
       <button class="tab" type="button" role="tab" data-region="oceania" aria-selected="false">Oceania<span class="n">1</span></button>
       </div>
@@ -583,6 +586,70 @@ body {
           <span class="badge">Exceptional</span>
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMzFqBRIDREZXcgUSA0xBUxoaEgoyMDI2LTExLTAzagUSA0xBU3IFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to LAS on Google Flights">DFW&nbsp;&rarr;&nbsp;LAS</a><span class="when" title="15 Sep, 11:33 UTC">17h ago</span>
         </div>
+      </article>
+      <article class="card tier-t1" data-region="africa" data-sent="2026-09-16T04:53:12.207816+00:00" data-price="505" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca · Marrakesh <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$505</span><span class="spread">to $648</span>
+          </div>
+        </header>
+        <p class="dates">Tue 2 Feb &rarr; Fri 12 Feb<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">AC</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">15 origins</span><span class="when" title="16 Sep, 04:53 UTC">6m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDRVdScgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDRVdSQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="AC" aria-label="Open EWR to CMN, $505, AC, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$505</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDQ0xUcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQ0xUQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open CLT to RAK, $572, UA, on Google Flights"><span class="chip-route">CLT&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$572</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDRFRXcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDRFRXQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open DTW to RAK, $572, UA, on Google Flights"><span class="chip-route">DTW&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$572</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDREVOcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDREVOQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open DEN to RAK, $576, UA, on Google Flights"><span class="chip-route">DEN&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$576</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDTVNQcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTVNQQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open MSP to RAK, $576, UA, on Google Flights"><span class="chip-route">MSP&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$576</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDUEhMcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDUEhMQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open PHL to RAK, $576, UA, on Google Flights"><span class="chip-route">PHL&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$576</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDUEhYcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDUEhYQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open PHX to RAK, $596, UA, on Google Flights"><span class="chip-route">PHX&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$596</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDSUFEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDSUFEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open IAD to RAK, $606, UA, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$606</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDU0VBcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDU0VBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open SEA to RAK, $606, UA, on Google Flights"><span class="chip-route">SEA&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$606</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDQk9TcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQk9TQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open BOS to RAK, $626, UA, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$626</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDQVVTcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQVVTQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open AUS to RAK, $644, UA, on Google Flights"><span class="chip-route">AUS&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$644</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDREZXcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDREZXQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open DFW to RAK, $644, UA, on Google Flights"><span class="chip-route">DFW&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$644</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDTEFTcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTEFTQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open LAS to RAK, $648, UA, on Google Flights"><span class="chip-route">LAS&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$648</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDTEFYcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTEFYQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open LAX to RAK, $648, UA, on Google Flights"><span class="chip-route">LAX&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$648</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDJqBRIDU0ZPcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTJqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDU0ZPQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open SFO to RAK, $648, UA, on Google Flights"><span class="chip-route">SFO&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$648</span></a></li>
+        </ul>
+        <button class="more" type="button" hidden aria-expanded="true">Show all 15</button>
+      </article>
+      <article class="card tier-t1" data-region="africa" data-sent="2026-09-16T04:53:12.174125+00:00" data-price="565" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca · Marrakesh <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$565</span><span class="spread">to $686</span>
+          </div>
+        </header>
+        <p class="dates">Fri 4 Dec &rarr; Mon 14 Dec<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">United, Air Canada</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">11 origins</span><span class="when" title="16 Sep, 04:53 UTC">6m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDQk9TcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQk9TQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="United, Air Canada" aria-label="Open BOS to CMN, $565, United, Air Canada, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$565</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDREVOcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDREVOQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="BA" aria-label="Open DEN to RAK, $618, BA, on Google Flights"><span class="chip-route">DEN&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$618</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDUEhMcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDUEhMQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="BA" aria-label="Open PHL to RAK, $618, BA, on Google Flights"><span class="chip-route">PHL&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$618</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDQ0xUcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQ0xUQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open CLT to RAK, $632, UA, on Google Flights"><span class="chip-route">CLT&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$632</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDRFRXcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDRFRXQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open DTW to RAK, $632, UA, on Google Flights"><span class="chip-route">DTW&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$632</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDTVNQcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTVNQQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open MSP to RAK, $632, UA, on Google Flights"><span class="chip-route">MSP&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$632</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDSUFEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDSUFEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="BA" aria-label="Open IAD to RAK, $650, BA, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$650</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDTUlBcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTUlBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open MIA to RAK, $652, UA, on Google Flights"><span class="chip-route">MIA&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$652</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDUEhYcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDUEhYQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open PHX to RAK, $656, UA, on Google Flights"><span class="chip-route">PHX&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$656</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDU0VBcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDU0VBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open SEA to RAK, $666, UA, on Google Flights"><span class="chip-route">SEA&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$666</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDRqBRIDTEFYcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTEFYQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="BA" aria-label="Open LAX to RAK, $686, BA, on Google Flights"><span class="chip-route">LAX&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$686</span></a></li>
+        </ul>
+        <button class="more" type="button" hidden aria-expanded="true">Show all 11</button>
       </article>
       <article class="card tier-t1" data-region="oceania" data-sent="2026-09-15T18:27:18.760595+00:00" data-price="614" data-tier="t1">
         <header class="card-head">
@@ -636,6 +703,43 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDEtMzBqBRIDRVdScgUSA0JPR3IFEgNDVEdyBRIDTURFGigSCjIwMjctMDItMDlqBRIDQk9HagUSA0NUR2oFEgNNREVyBRIDRVdSQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open EWR to BOG on Google Flights">EWR&nbsp;&rarr;&nbsp;BOG</a><span class="when" title="15 Sep, 18:27 UTC">10h ago</span>
         </div>
       </article>
+      <article class="card tier-t2" data-region="africa" data-sent="2026-09-16T04:53:12.071536+00:00" data-price="505" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca · Marrakesh <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$505</span><span class="spread">to $575</span>
+          </div>
+        </header>
+        <p class="dates">Sun 3 Jan &rarr; Wed 13 Jan<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">AC</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <span class="origin-note">3 origins</span><span class="when" title="16 Sep, 04:53 UTC">6m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDEtMDNqBRIDQk9TcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDEtMTNqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQk9TQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="AC" aria-label="Open BOS to CMN, $505, AC, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$505</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDEtMDNqBRIDRVdScgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDEtMTNqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDRVdSQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="AC" aria-label="Open EWR to CMN, $505, AC, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$505</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDEtMDNqBRIDREVOcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDEtMTNqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDREVOQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="BA" aria-label="Open DEN to RAK, $575, BA, on Google Flights"><span class="chip-route">DEN&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$575</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t2" data-region="mideast" data-sent="2026-09-16T04:53:12.581490+00:00" data-price="618" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Egypt</h2>
+            <p class="cities">Cairo <span class="codes">CAI</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$618</span>
+          </div>
+        </header>
+        <p class="dates">Fri 4 Dec &rarr; Mon 14 Dec<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">AT</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDRqBRIDTEFYcgUSA0NBSRoaEgoyMDI2LTEyLTE0agUSA0NBSXIFEgNMQVhAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open LAX to CAI on Google Flights">LAX&nbsp;&rarr;&nbsp;CAI</a><span class="when" title="16 Sep, 04:53 UTC">6m ago</span>
+        </div>
+      </article>
       <article class="card tier-t3" data-region="domestic" data-sent="2026-09-15T11:33:43.848502+00:00" data-price="245" data-tier="t3">
         <header class="card-head">
           <div class="card-id">
@@ -650,6 +754,58 @@ body {
         <div class="card-foot">
           <span class="badge">Great</span>
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMzBqBRIDTURXcgUSA0JaThoaEgoyMDI3LTAyLTAzagUSA0JaTnIFEgNNRFdAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MDW to BZN on Google Flights">MDW&nbsp;&rarr;&nbsp;BZN</a><span class="when" title="15 Sep, 11:33 UTC">17h ago</span>
+        </div>
+      </article>
+      <article class="card tier-t3" data-region="europe" data-sent="2026-09-16T04:53:12.901035+00:00" data-price="371" data-tier="t3">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Spain</h2>
+            <p class="cities">Madrid <span class="codes">MAD</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$371</span>
+          </div>
+        </header>
+        <p class="dates">Tue 2 Feb &rarr; Fri 12 Feb<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">IB</span></p>
+        <div class="card-foot">
+          <span class="badge">Great</span>
+          <span class="origin-note">2 origins</span><span class="when" title="16 Sep, 04:53 UTC">6m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GkQSCjIwMjctMDItMDJqBRIDQk9TcgUSA0JDTnIFEgNNQURyBRIDQUdQcgUSA1BNSXIFEgNJQlpyBRIDVkxDcgUSA1NWURpEEgoyMDI3LTAyLTEyagUSA0JDTmoFEgNNQURqBRIDQUdQagUSA1BNSWoFEgNJQlpqBRIDVkxDagUSA1NWUXIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="IB" aria-label="Open BOS to MAD, $371, IB, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;MAD</span><span class="chip-price">$371</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GkQSCjIwMjctMDItMDJqBRIDSUFEcgUSA0JDTnIFEgNNQURyBRIDQUdQcgUSA1BNSXIFEgNJQlpyBRIDVkxDcgUSA1NWURpEEgoyMDI3LTAyLTEyagUSA0JDTmoFEgNNQURqBRIDQUdQagUSA1BNSWoFEgNJQlpqBRIDVkxDagUSA1NWUXIFEgNJQURAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="IB" aria-label="Open IAD to MAD, $371, IB, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;MAD</span><span class="chip-price">$371</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t4" data-region="domestic" data-sent="2026-09-16T04:53:13.191555+00:00" data-price="141" data-tier="t4">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Miami</h2>
+            <p class="cities">Fort Lauderdale <span class="codes">FLL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$141</span>
+          </div>
+        </header>
+        <p class="dates">Wed 3 Feb &rarr; Sat 6 Feb<span class="dot">·</span>3 nights<span class="dot">·</span><span class="airline">UA</span></p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDItMDNqBRIDT1JEcgUSA01JQXIFEgNGTEwaIRIKMjAyNy0wMi0wNmoFEgNNSUFqBRIDRkxMcgUSA09SREABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to FLL on Google Flights">ORD&nbsp;&rarr;&nbsp;FLL</a><span class="when" title="16 Sep, 04:53 UTC">6m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="europe" data-sent="2026-09-16T04:53:12.889422+00:00" data-price="376" data-tier="t4">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Spain</h2>
+            <p class="cities">Madrid <span class="codes">MAD</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$376</span>
+          </div>
+        </header>
+        <p class="dates">Tue 6 Oct &rarr; Fri 16 Oct<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">IB</span></p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GkQSCjIwMjYtMTAtMDZqBRIDQk9TcgUSA0JDTnIFEgNNQURyBRIDQUdQcgUSA1BNSXIFEgNJQlpyBRIDVkxDcgUSA1NWURpEEgoyMDI2LTEwLTE2agUSA0JDTmoFEgNNQURqBRIDQUdQagUSA1BNSWoFEgNJQlpqBRIDVkxDagUSA1NWUXIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open BOS to MAD on Google Flights">BOS&nbsp;&rarr;&nbsp;MAD</a><span class="when" title="16 Sep, 04:53 UTC">6m ago</span>
         </div>
       </article>
 
@@ -667,8 +823,8 @@ body {
   </section>
 
   <footer class="foot">
-    <p>Newest alert <b id="newest">15 Sep, 18:27 UTC</b> &middot; <span id="built">built
-      <b>16 Sep, 04:40 UTC</b></span></p>
+    <p>Newest alert <b id="newest">16 Sep, 04:53 UTC</b> &middot; <span id="built">built
+      <b>16 Sep, 05:00 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
