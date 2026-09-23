@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="10 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="0 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">5 sales from 10 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">0 sales from 0 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,9 +540,7 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">5</span></button>
-      <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">1</span></button>
-      <button class="tab" type="button" role="tab" data-region="europe" aria-selected="false">Europe<span class="n">4</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">0</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -567,100 +565,6 @@ body {
        If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
        stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
-      <article class="card tier-t1" data-region="europe" data-sent="2026-09-22T05:41:46.440519+00:00" data-price="348" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Iceland</h2>
-            <p class="cities">Reykjavik <span class="codes">KEF</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$348</span><span class="spread">to $398</span>
-          </div>
-        </header>
-        <p class="dates">Sun 25 Oct &rarr; Fri 30 Oct<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <span class="origin-note">2 origins</span><span class="when" title="22 Sep, 05:41 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMjVqBRIDQk9TcgUSA0tFRhoaEgoyMDI2LTEwLTMwagUSA0tFRnIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open BOS to KEF, $348, FI, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$348</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMjVqBRIDTVNQcgUSA0tFRhoaEgoyMDI2LTEwLTMwagUSA0tFRnIFEgNNU1BAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open MSP to KEF, $398, FI, on Google Flights"><span class="chip-route">MSP&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$398</span></a></li>
-        </ul>
-      </article>
-      <article class="card tier-t1" data-region="europe" data-sent="2026-09-22T05:41:46.348356+00:00" data-price="348" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Iceland</h2>
-            <p class="cities">Reykjavik <span class="codes">KEF</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$348</span>
-          </div>
-        </header>
-        <p class="dates">Thu 29 Oct &rarr; Tue 3 Nov<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMjlqBRIDQk9TcgUSA0tFRhoaEgoyMDI2LTExLTAzagUSA0tFRnIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open BOS to KEF on Google Flights">BOS&nbsp;&rarr;&nbsp;KEF</a><span class="when" title="22 Sep, 05:41 UTC">23h ago</span>
-        </div>
-      </article>
-      <article class="card tier-t3" data-region="domestic" data-sent="2026-09-22T05:41:46.710304+00:00" data-price="80" data-tier="t3">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Miami</h2>
-            <p class="cities">Fort Lauderdale <span class="codes">FLL</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$80</span>
-          </div>
-        </header>
-        <p class="dates">Mon 22 Feb &rarr; Fri 26 Feb<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">F9</span></p>
-        <div class="card-foot">
-          <span class="badge">Great</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDItMjJqBRIDT1JEcgUSA01JQXIFEgNGTEwaIRIKMjAyNy0wMi0yNmoFEgNNSUFqBRIDRkxMcgUSA09SREABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to FLL on Google Flights">ORD&nbsp;&rarr;&nbsp;FLL</a><span class="when" title="22 Sep, 05:41 UTC">23h ago</span>
-        </div>
-      </article>
-      <article class="card tier-t3" data-region="europe" data-sent="2026-09-22T05:41:46.428075+00:00" data-price="348" data-tier="t3">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Iceland</h2>
-            <p class="cities">Reykjavik <span class="codes">KEF</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$348</span><span class="spread">to $398</span>
-          </div>
-        </header>
-        <p class="dates">Sat 23 Jan &rarr; Thu 28 Jan<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Great</span>
-          <span class="origin-note">3 origins</span><span class="when" title="22 Sep, 05:41 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMjNqBRIDQk9TcgUSA0tFRhoaEgoyMDI3LTAxLTI4agUSA0tFRnIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open BOS to KEF, $348, FI, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$348</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMjNqBRIDSUFEcgUSA0tFRhoaEgoyMDI3LTAxLTI4agUSA0tFRnIFEgNJQURAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open IAD to KEF, $348, FI, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$348</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMjNqBRIDT1JEcgUSA0tFRhoaEgoyMDI3LTAxLTI4agUSA0tFRnIFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open ORD to KEF, $398, FI, on Google Flights"><span class="chip-route">ORD&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$398</span></a></li>
-        </ul>
-      </article>
-      <article class="card tier-t4" data-region="europe" data-sent="2026-09-22T05:41:46.417823+00:00" data-price="348" data-tier="t4">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Iceland</h2>
-            <p class="cities">Reykjavik <span class="codes">KEF</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$348</span><span class="spread">to $398</span>
-          </div>
-        </header>
-        <p class="dates">Mon 22 Feb &rarr; Sat 27 Feb<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">FI</span></p>
-        <div class="card-foot">
-          <span class="badge">Good</span>
-          <span class="origin-note">3 origins</span><span class="when" title="22 Sep, 05:41 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDItMjJqBRIDQk9TcgUSA0tFRhoaEgoyMDI3LTAyLTI3agUSA0tFRnIFEgNCT1NAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open BOS to KEF, $348, FI, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$348</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDItMjJqBRIDSkZLcgUSA0tFRhoaEgoyMDI3LTAyLTI3agUSA0tFRnIFEgNKRktAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open JFK to KEF, $378, FI, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$378</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDItMjJqBRIDT1JEcgUSA0tFRhoaEgoyMDI3LTAyLTI3agUSA0tFRnIFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="FI" aria-label="Open ORD to KEF, $398, FI, on Google Flights"><span class="chip-route">ORD&nbsp;&rarr;&nbsp;KEF</span><span class="chip-price">$398</span></a></li>
-        </ul>
-      </article>
 
   </div>
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
@@ -676,8 +580,8 @@ body {
   </section>
 
   <footer class="foot">
-    <p>Newest alert <b id="newest">22 Sep, 05:41 UTC</b> &middot; <span id="built">built
-      <b>23 Sep, 05:40 UTC</b></span></p>
+    <p>Newest alert <b id="newest">n/a</b> &middot; <span id="built">built
+      <b>23 Sep, 06:00 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
