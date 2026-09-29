@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="3 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="1 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">3 sales from 3 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">1 sales from 1 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,10 +540,8 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">3</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">1</span></button>
       <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">1</span></button>
-      <button class="tab" type="button" role="tab" data-region="caribbean" aria-selected="false">Caribbean &amp; Mexico<span class="n">1</span></button>
-      <button class="tab" type="button" role="tab" data-region="oceania" aria-selected="false">Oceania<span class="n">1</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -568,22 +566,6 @@ body {
        If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
        stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
-      <article class="card tier-t1" data-region="oceania" data-sent="2026-09-28T23:07:02.271373+00:00" data-price="686" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>New Zealand</h2>
-            <p class="cities">Auckland <span class="codes">AKL</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$686</span>
-          </div>
-        </header>
-        <p class="dates">Mon 30 Nov &rarr; Mon 14 Dec<span class="dot">·</span>14 nights<span class="dot">·</span><span class="airline">Air Canada, Air New Zealand</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTEtMzBqBRIDTEFYcgUSA0FLTHIFEgNDSENyBRIDV0xHGigSCjIwMjYtMTItMTRqBRIDQUtMagUSA0NIQ2oFEgNXTEdyBRIDTEFYQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open LAX to AKL on Google Flights">LAX&nbsp;&rarr;&nbsp;AKL</a><span class="when" title="28 Sep, 23:07 UTC">23h ago</span>
-        </div>
-      </article>
       <article class="card tier-t3" data-region="domestic" data-sent="2026-09-29T11:23:21.179397+00:00" data-price="139" data-tier="t3">
         <header class="card-head">
           <div class="card-id">
@@ -598,22 +580,6 @@ body {
         <div class="card-foot">
           <span class="badge">Great</span>
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDItMjBqBRIDT1JEcgUSA01JQXIFEgNGTEwaIRIKMjAyNy0wMi0yNGoFEgNNSUFqBRIDRkxMcgUSA09SREABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to FLL on Google Flights">ORD&nbsp;&rarr;&nbsp;FLL</a><span class="when" title="29 Sep, 11:23 UTC">11h ago</span>
-        </div>
-      </article>
-      <article class="card tier-t4" data-region="caribbean" data-sent="2026-09-28T23:07:02.551240+00:00" data-price="239" data-tier="t4">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Puerto Rico</h2>
-            <p class="cities">San Juan <span class="codes">SJU</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$239</span>
-          </div>
-        </header>
-        <p class="dates">Wed 18 Nov &rarr; Sat 21 Nov<span class="dot">·</span>3 nights<span class="dot">·</span><span class="airline">WN</span></p>
-        <div class="card-foot">
-          <span class="badge">Good</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTEtMThqBRIDTURXcgUSA1NKVRoaEgoyMDI2LTExLTIxagUSA1NKVXIFEgNNRFdAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MDW to SJU on Google Flights">MDW&nbsp;&rarr;&nbsp;SJU</a><span class="when" title="28 Sep, 23:07 UTC">23h ago</span>
         </div>
       </article>
 
@@ -632,7 +598,7 @@ body {
 
   <footer class="foot">
     <p>Newest alert <b id="newest">29 Sep, 11:23 UTC</b> &middot; <span id="built">built
-      <b>29 Sep, 23:00 UTC</b></span></p>
+      <b>29 Sep, 23:20 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
