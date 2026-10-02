@@ -1,12 +1,12 @@
 """Vendored destination / region / airport tables. GENERATED — do not edit.
 
-Regenerate with:  ./sync_catalog.py    (source: flights@7109026)
+Regenerate with:  ./sync_catalog.py    (source: flights@c09cd89)
 
 Hand edits are overwritten and will fail tests/test_catalog.py. To change how
 a destination is filed, edit _LONGHAUL_REGIONS in sync_catalog.py and re-run.
 """
 
-GENERATED_FROM = "flights@7109026"
+GENERATED_FROM = "flights@c09cd89"
 
 # Tab order on the page. Leading four are the high-volume regions.
 REGIONS = (
@@ -107,7 +107,7 @@ DESTINATIONS = (
     ("South Africa", "africa", ("CPT", "JNB")),
     ("Kenya Safari", "africa", ("NBO",)),
     ("Tanzania", "africa", ("JRO", "ZNZ")),
-    ("India", "asia", ("DEL", "BOM", "AGR")),
+    ("India", "asia", ("DEL", "BOM", "BLR", "HYD", "MAA", "CCU", "COK", "AMD", "GOI", "PNQ")),
     ("Nepal", "asia", ("KTM",)),
     ("Bali", "asia", ("DPS",)),
     ("Maldives", "asia", ("MLE",)),
@@ -131,8 +131,8 @@ DESTINATIONS = (
 AIRPORTS = {
     "AEP": "Buenos Aires, Argentina",
     "AGP": "Malaga, Spain",
-    "AGR": "Agra, India",
     "AKL": "Auckland, New Zealand",
+    "AMD": "Ahmedabad, India",
     "AMS": "Amsterdam, Netherlands",
     "ARN": "Stockholm, Sweden",
     "ATH": "Athens, Greece",
@@ -146,6 +146,7 @@ AIRPORTS = {
     "BGO": "Bergen, Norway",
     "BGY": "Milan, Italy",
     "BKK": "Bangkok, Thailand",
+    "BLR": "Bengaluru, India",
     "BNA": "Nashville, TN",
     "BNE": "Brisbane, Australia",
     "BOG": "Bogota, Colombia",
@@ -159,6 +160,7 @@ AIRPORTS = {
     "BZE": "Belize City, Belize",
     "BZN": "Bozeman, MT",
     "CAI": "Cairo, Egypt",
+    "CCU": "Kolkata, India",
     "CDG": "Paris, France",
     "CGK": "Jakarta, Indonesia",
     "CHC": "Christchurch, New Zealand",
@@ -166,6 +168,7 @@ AIRPORTS = {
     "CLT": "Charlotte, NC",
     "CMB": "Colombo, Sri Lanka",
     "CMN": "Casablanca, Morocco",
+    "COK": "Kochi, India",
     "CPH": "Copenhagen, Denmark",
     "CPT": "Cape Town, South Africa",
     "CTG": "Cartagena, Colombia",
@@ -195,6 +198,7 @@ AIRPORTS = {
     "FUK": "Fukuoka, Japan",
     "GIG": "Rio de Janeiro, Brazil",
     "GMP": "Seoul, South Korea",
+    "GOI": "Goa, India",
     "GPS": "Galapagos, Ecuador",
     "GRU": "Sao Paulo, Brazil",
     "GUA": "Guatemala City, Guatemala",
@@ -206,6 +210,7 @@ AIRPORTS = {
     "HKG": "Hong Kong",
     "HND": "Tokyo, Japan",
     "HNL": "Honolulu, HI",
+    "HYD": "Hyderabad, India",
     "IAD": "Washington, DC",
     "IBZ": "Ibiza, Spain",
     "ICN": "Seoul, South Korea",
@@ -233,6 +238,7 @@ AIRPORTS = {
     "LIR": "Liberia, Costa Rica",
     "LIS": "Lisbon, Portugal",
     "LPB": "La Paz, Bolivia",
+    "MAA": "Chennai, India",
     "MAD": "Madrid, Spain",
     "MBJ": "Montego Bay, Jamaica",
     "MCO": "Orlando, FL",
@@ -266,6 +272,7 @@ AIRPORTS = {
     "PKX": "Beijing, China",
     "PLS": "Turks & Caicos",
     "PMI": "Mallorca, Spain",
+    "PNQ": "Pune, India",
     "POS": "Port of Spain, Trinidad",
     "PPT": "Papeete, French Polynesia",
     "PRG": "Prague, Czechia",
