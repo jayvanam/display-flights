@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="6 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="2 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">4 sales from 6 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">2 sales from 2 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,9 +540,8 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">4</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">2</span></button>
       <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">2</span></button>
-      <button class="tab" type="button" role="tab" data-region="hawaii" aria-selected="false">Hawaii<span class="n">2</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -599,43 +598,6 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTAtMjdqBRIDREZXcgUSA01DTxoaEgoyMDI2LTEwLTMxagUSA01DT3IFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to MCO on Google Flights">DFW&nbsp;&rarr;&nbsp;MCO</a><span class="when" title="6 Oct, 23:45 UTC">11h ago</span>
         </div>
       </article>
-      <article class="card tier-t1" data-region="hawaii" data-sent="2026-10-06T11:21:42.436754+00:00" data-price="293" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Hawaii</h2>
-            <p class="cities">Maui · Kauai <span class="codes">LIH OGG</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$293</span><span class="spread">to $350</span>
-          </div>
-        </header>
-        <p class="dates">Wed 20 Jan &rarr; Wed 27 Jan<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">WN</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <span class="origin-note">3 origins</span><span class="when" title="6 Oct, 11:21 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjctMDEtMjBqBRIDTEFYcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI3LTAxLTI3agUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNMQVhAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="WN" aria-label="Open LAX to OGG, $293, WN, on Google Flights"><span class="chip-route">LAX&nbsp;&rarr;&nbsp;OGG</span><span class="chip-price">$293</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjctMDEtMjBqBRIDREFMcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI3LTAxLTI3agUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNEQUxAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="WN" aria-label="Open DAL to LIH, $344, WN, on Google Flights"><span class="chip-route">DAL&nbsp;&rarr;&nbsp;LIH</span><span class="chip-price">$344</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjctMDEtMjBqBRIDREZXcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI3LTAxLTI3agUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="DL" aria-label="Open DFW to LIH, $350, DL, on Google Flights"><span class="chip-route">DFW&nbsp;&rarr;&nbsp;LIH</span><span class="chip-price">$350</span></a></li>
-        </ul>
-      </article>
-      <article class="card tier-t2" data-region="hawaii" data-sent="2026-10-06T11:21:42.424292+00:00" data-price="366" data-tier="t2">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Hawaii</h2>
-            <p class="cities">Kauai <span class="codes">LIH</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$366</span>
-          </div>
-        </header>
-        <p class="dates">Fri 29 Jan &rarr; Fri 5 Feb<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">WN</span></p>
-        <div class="card-foot">
-          <span class="badge">Excellent</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjctMDEtMjlqBRIDREFMcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI3LTAyLTA1agUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNEQUxAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DAL to LIH on Google Flights">DAL&nbsp;&rarr;&nbsp;LIH</a><span class="when" title="6 Oct, 11:21 UTC">23h ago</span>
-        </div>
-      </article>
 
   </div>
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
@@ -652,7 +614,7 @@ body {
 
   <footer class="foot">
     <p>Newest alert <b id="newest">6 Oct, 23:45 UTC</b> &middot; <span id="built">built
-      <b>7 Oct, 11:20 UTC</b></span></p>
+      <b>7 Oct, 11:40 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
