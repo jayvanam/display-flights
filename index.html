@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="3 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="2 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">2 sales from 3 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">2 sales from 2 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -589,18 +589,14 @@ body {
             <p class="cities"><span class="codes">DEN</span></p>
           </div>
           <div class="card-price">
-            <span class="price">$112</span><span class="spread">to $134</span>
+            <span class="price">$112</span>
           </div>
         </header>
         <p class="dates">Thu 24 Dec &rarr; Tue 29 Dec<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">UA</span></p>
         <div class="card-foot">
           <span class="badge">Great</span>
-          <span class="origin-note">2 origins</span><span class="when" title="16 Oct, 18:31 UTC">22h ago</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMjRqBRIDREZXcgUSA0RFThoaEgoyMDI2LTEyLTI5agUSA0RFTnIFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to DEN on Google Flights">DFW&nbsp;&rarr;&nbsp;DEN</a><span class="when" title="16 Oct, 18:31 UTC">22h ago</span>
         </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMjRqBRIDREZXcgUSA0RFThoaEgoyMDI2LTEyLTI5agUSA0RFTnIFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open DFW to DEN, $112, UA, on Google Flights"><span class="chip-route">DFW&nbsp;&rarr;&nbsp;DEN</span><span class="chip-price">$112</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMjRqBRIDREZXcgUSA0RFThoaEgoyMDI2LTEyLTI5agUSA0RFTnIFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open DFW to DEN, $134, UA, on Google Flights"><span class="chip-route">DFW&nbsp;&rarr;&nbsp;DEN</span><span class="chip-price">$134</span></a></li>
-        </ul>
       </article>
 
   </div>
@@ -618,7 +614,7 @@ body {
 
   <footer class="foot">
     <p>Newest alert <b id="newest">17 Oct, 05:23 UTC</b> &middot; <span id="built">built
-      <b>17 Oct, 17:00 UTC</b></span></p>
+      <b>17 Oct, 17:20 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
