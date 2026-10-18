@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="7 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="4 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">5 sales from 7 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">3 sales from 4 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,10 +540,8 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">5</span></button>
-      <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">3</span></button>
       <button class="tab" type="button" role="tab" data-region="europe" aria-selected="false">Europe<span class="n">3</span></button>
-      <button class="tab" type="button" role="tab" data-region="africa" aria-selected="false">Africa<span class="n">1</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -568,26 +566,6 @@ body {
        If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
        stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
-      <article class="card tier-t1" data-region="domestic" data-sent="2026-10-17T17:39:24.613060+00:00" data-price="237" data-tier="t1">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Bozeman</h2>
-            <p class="cities"><span class="codes">BZN</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$237</span>
-          </div>
-        </header>
-        <p class="dates">Wed 2 Dec &rarr; Sun 6 Dec<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">DL</span></p>
-        <div class="card-foot">
-          <span class="badge">Exceptional</span>
-          <span class="origin-note">2 origins</span><span class="when" title="17 Oct, 17:39 UTC">23h ago</span>
-        </div>
-        <ul class="chips">
-          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDJqBRIDSkZLcgUSA0JaThoaEgoyMDI2LTEyLTA2agUSA0JaTnIFEgNKRktAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="DL" aria-label="Open JFK to BZN, $237, DL, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;BZN</span><span class="chip-price">$237</span></a></li>
-          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDJqBRIDTEdBcgUSA0JaThoaEgoyMDI2LTEyLTA2agUSA0JaTnIFEgNMR0FAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open LGA to BZN, $237, UA, on Google Flights"><span class="chip-route">LGA&nbsp;&rarr;&nbsp;BZN</span><span class="chip-price">$237</span></a></li>
-        </ul>
-      </article>
       <article class="card tier-t1" data-region="europe" data-sent="2026-10-18T13:03:25.939516+00:00" data-price="365" data-tier="t1">
         <header class="card-head">
           <div class="card-id">
@@ -624,22 +602,6 @@ body {
           <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GkQSCjIwMjYtMTEtMDhqBRIDSUFEcgUSA0JDTnIFEgNNQURyBRIDQUdQcgUSA1BNSXIFEgNJQlpyBRIDVkxDcgUSA1NWURpEEgoyMDI2LTExLTE4agUSA0JDTmoFEgNNQURqBRIDQUdQagUSA1BNSWoFEgNJQlpqBRIDVkxDagUSA1NWUXIFEgNJQURAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="AA" aria-label="Open IAD to MAD, $370, AA, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;MAD</span><span class="chip-price">$370</span></a></li>
         </ul>
       </article>
-      <article class="card tier-t2" data-region="africa" data-sent="2026-10-17T17:39:24.002778+00:00" data-price="680" data-tier="t2">
-        <header class="card-head">
-          <div class="card-id">
-            <h2>Morocco</h2>
-            <p class="cities">Marrakesh <span class="codes">RAK</span></p>
-          </div>
-          <div class="card-price">
-            <span class="price">$680</span>
-          </div>
-        </header>
-        <p class="dates">Wed 2 Dec &rarr; Wed 9 Dec<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">American, British Airways</span></p>
-        <div class="card-foot">
-          <span class="badge">Excellent</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTItMDJqBRIDT1JEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjYtMTItMDlqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDT1JEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to RAK on Google Flights">ORD&nbsp;&rarr;&nbsp;RAK</a><span class="when" title="17 Oct, 17:39 UTC">23h ago</span>
-        </div>
-      </article>
       <article class="card tier-t3" data-region="europe" data-sent="2026-10-18T13:03:25.962717+00:00" data-price="370" data-tier="t3">
         <header class="card-head">
           <div class="card-id">
@@ -672,7 +634,7 @@ body {
 
   <footer class="foot">
     <p>Newest alert <b id="newest">18 Oct, 13:03 UTC</b> &middot; <span id="built">built
-      <b>18 Oct, 17:20 UTC</b></span></p>
+      <b>18 Oct, 17:40 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
