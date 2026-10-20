@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="20 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="21 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">16 sales from 20 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">17 sales from 21 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,11 +540,12 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">16</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">17</span></button>
       <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">11</span></button>
       <button class="tab" type="button" role="tab" data-region="canada" aria-selected="false">Canada<span class="n">2</span></button>
       <button class="tab" type="button" role="tab" data-region="europe" aria-selected="false">Europe<span class="n">1</span></button>
       <button class="tab" type="button" role="tab" data-region="asia" aria-selected="false">Asia<span class="n">2</span></button>
+      <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">1</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -582,7 +583,7 @@ body {
         <p class="dates">Sat 31 Oct &rarr; Thu 5 Nov<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">SK</span></p>
         <div class="card-foot">
           <span class="badge">Exceptional</span>
-          <span class="origin-note">2 origins</span><span class="when" title="19 Oct, 10:51 UTC">13h ago</span>
+          <span class="origin-note">2 origins</span><span class="when" title="19 Oct, 10:51 UTC">14h ago</span>
         </div>
         <ul class="chips">
           <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjYtMTAtMzFqBRIDSkZLcgUSA0JFUnIFEgNNVUNyBRIDRlJBGigSCjIwMjYtMTEtMDVqBRIDQkVSagUSA01VQ2oFEgNGUkFyBRIDSkZLQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="SK" aria-label="Open JFK to BER, $4, SK, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;BER</span><span class="chip-price">$4</span></a></li>
@@ -777,6 +778,22 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMjFqBRIDTEdBcgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMS0yNmoFEgNZWVpqBRIDWVRacgUSA0xHQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open LGA to YYZ on Google Flights">LGA&nbsp;&rarr;&nbsp;YYZ</a><span class="when" title="19 Oct, 23:00 UTC">1h ago</span>
         </div>
       </article>
+      <article class="card tier-t1" data-region="southamerica" data-sent="2026-10-20T00:56:47.527589+00:00" data-price="290" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Colombia</h2>
+            <p class="cities">Medellin <span class="codes">MDE</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$290</span>
+          </div>
+        </header>
+        <p class="dates">Thu 21 Jan &rarr; Thu 28 Jan<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">CM</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDEtMjFqBRIDTUlBcgUSA0JPR3IFEgNDVEdyBRIDTURFGigSCjIwMjctMDEtMjhqBRIDQk9HagUSA0NUR2oFEgNNREVyBRIDTUlBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to MDE on Google Flights">MIA&nbsp;&rarr;&nbsp;MDE</a><span class="when" title="20 Oct, 00:56 UTC">3m ago</span>
+        </div>
+      </article>
       <article class="card tier-t1" data-region="asia" data-sent="2026-10-19T23:00:22.688848+00:00" data-price="653" data-tier="t1">
         <header class="card-head">
           <div class="card-id">
@@ -822,7 +839,7 @@ body {
         <p class="dates">Sun 17 Jan &rarr; Thu 21 Jan<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">WN</span></p>
         <div class="card-foot">
           <span class="badge">Excellent</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMTdqBRIDREFMcgUSA01JQXIFEgNGTEwaIRIKMjAyNy0wMS0yMWoFEgNNSUFqBRIDRkxMcgUSA0RBTEABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DAL to MIA on Google Flights">DAL&nbsp;&rarr;&nbsp;MIA</a><span class="when" title="19 Oct, 10:51 UTC">13h ago</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMTdqBRIDREFMcgUSA01JQXIFEgNGTEwaIRIKMjAyNy0wMS0yMWoFEgNNSUFqBRIDRkxMcgUSA0RBTEABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DAL to MIA on Google Flights">DAL&nbsp;&rarr;&nbsp;MIA</a><span class="when" title="19 Oct, 10:51 UTC">14h ago</span>
         </div>
       </article>
       <article class="card tier-t4" data-region="domestic" data-sent="2026-10-19T10:51:56.238426+00:00" data-price="145" data-tier="t4">
@@ -838,7 +855,7 @@ body {
         <p class="dates">Tue 16 Feb &rarr; Sat 20 Feb<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">WN</span></p>
         <div class="card-foot">
           <span class="badge">Good</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDItMTZqBRIDTURXcgUSA01JQXIFEgNGTEwaIRIKMjAyNy0wMi0yMGoFEgNNSUFqBRIDRkxMcgUSA01EV0ABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MDW to FLL on Google Flights">MDW&nbsp;&rarr;&nbsp;FLL</a><span class="when" title="19 Oct, 10:51 UTC">13h ago</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDItMTZqBRIDTURXcgUSA01JQXIFEgNGTEwaIRIKMjAyNy0wMi0yMGoFEgNNSUFqBRIDRkxMcgUSA01EV0ABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MDW to FLL on Google Flights">MDW&nbsp;&rarr;&nbsp;FLL</a><span class="when" title="19 Oct, 10:51 UTC">14h ago</span>
         </div>
       </article>
 
@@ -856,8 +873,8 @@ body {
   </section>
 
   <footer class="foot">
-    <p>Newest alert <b id="newest">19 Oct, 23:00 UTC</b> &middot; <span id="built">built
-      <b>20 Oct, 00:40 UTC</b></span></p>
+    <p>Newest alert <b id="newest">20 Oct, 00:56 UTC</b> &middot; <span id="built">built
+      <b>20 Oct, 01:00 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
