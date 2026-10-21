@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="9 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="34 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">4 sales from 9 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">22 sales from 34 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,9 +540,12 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">4</span></button>
-      <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">2</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">22</span></button>
+      <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">5</span></button>
+      <button class="tab" type="button" role="tab" data-region="canada" aria-selected="false">Canada<span class="n">11</span></button>
       <button class="tab" type="button" role="tab" data-region="asia" aria-selected="false">Asia<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="mideast" aria-selected="false">Middle East<span class="n">3</span></button>
+      <button class="tab" type="button" role="tab" data-region="africa" aria-selected="false">Africa<span class="n">1</span></button>
       <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">1</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
@@ -581,7 +584,7 @@ body {
         <p class="dates">Wed 27 Jan &rarr; Sat 30 Jan<span class="dot">·</span>3 nights<span class="dot">·</span><span class="airline">F9</span></p>
         <div class="card-foot">
           <span class="badge">Exceptional</span>
-          <span class="origin-note">6 origins</span><span class="when" title="20 Oct, 12:45 UTC">10h ago</span>
+          <span class="origin-note">6 origins</span><span class="when" title="20 Oct, 12:45 UTC">11h ago</span>
         </div>
         <ul class="chips">
           <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMjdqBRIDREZXcgUSA01JQXIFEgNGTEwaIRIKMjAyNy0wMS0zMGoFEgNNSUFqBRIDRkxMcgUSA0RGV0ABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="F9" aria-label="Open DFW to FLL, $76, F9, on Google Flights"><span class="chip-route">DFW&nbsp;&rarr;&nbsp;FLL</span><span class="chip-price">$76</span></a></li>
@@ -605,7 +608,171 @@ body {
         <p class="dates">Wed 27 Jan &rarr; Sat 30 Jan<span class="dot">·</span>3 nights<span class="dot">·</span><span class="airline">WN</span></p>
         <div class="card-foot">
           <span class="badge">Exceptional</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMjdqBRIDREFMcgUSA0xBUxoaEgoyMDI3LTAxLTMwagUSA0xBU3IFEgNEQUxAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DAL to LAS on Google Flights">DAL&nbsp;&rarr;&nbsp;LAS</a><span class="when" title="20 Oct, 12:45 UTC">10h ago</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMjdqBRIDREFMcgUSA0xBUxoaEgoyMDI3LTAxLTMwagUSA0xBU3IFEgNEQUxAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DAL to LAS on Google Flights">DAL&nbsp;&rarr;&nbsp;LAS</a><span class="when" title="20 Oct, 12:45 UTC">11h ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="domestic" data-sent="2026-10-20T23:41:21.985397+00:00" data-price="100" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Salt Lake City</h2>
+            <p class="cities"><span class="codes">SLC</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$100</span>
+          </div>
+        </header>
+        <p class="dates">Tue 1 Dec &rarr; Sat 5 Dec<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">F9</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDFqBRIDREZXcgUSA1NMQxoaEgoyMDI2LTEyLTA1agUSA1NMQ3IFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to SLC on Google Flights">DFW&nbsp;&rarr;&nbsp;SLC</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="canada" data-sent="2026-10-20T23:41:20.641604+00:00" data-price="218" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Toronto</h2>
+            <p class="cities"><span class="codes">YTZ YYZ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$218</span><span class="spread">to $221</span>
+          </div>
+        </header>
+        <p class="dates">Wed 31 Mar &rarr; Sun 4 Apr<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">PD</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins</span><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDMtMzFqBRIDRVdScgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wNC0wNGoFEgNZWVpqBRIDWVRacgUSA0VXUkABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open EWR to YTZ, $218, PD, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;YTZ</span><span class="chip-price">$218</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDMtMzFqBRIDTEdBcgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wNC0wNGoFEgNZWVpqBRIDWVRacgUSA0xHQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open LGA to YYZ, $221, PD, on Google Flights"><span class="chip-route">LGA&nbsp;&rarr;&nbsp;YYZ</span><span class="chip-price">$221</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="canada" data-sent="2026-10-20T23:41:20.629991+00:00" data-price="218" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Toronto</h2>
+            <p class="cities"><span class="codes">YTZ YYZ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$218</span><span class="spread">to $221</span>
+          </div>
+        </header>
+        <p class="dates">Tue 2 Mar &rarr; Sat 6 Mar<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">PD</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins</span><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDMtMDJqBRIDRVdScgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMy0wNmoFEgNZWVpqBRIDWVRacgUSA0VXUkABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open EWR to YTZ, $218, PD, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;YTZ</span><span class="chip-price">$218</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDMtMDJqBRIDTEdBcgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMy0wNmoFEgNZWVpqBRIDWVRacgUSA0xHQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open LGA to YYZ, $221, PD, on Google Flights"><span class="chip-route">LGA&nbsp;&rarr;&nbsp;YYZ</span><span class="chip-price">$221</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="canada" data-sent="2026-10-20T23:41:20.609372+00:00" data-price="218" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Toronto</h2>
+            <p class="cities"><span class="codes">YTZ YYZ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$218</span><span class="spread">to $231</span>
+          </div>
+        </header>
+        <p class="dates">Thu 31 Dec &rarr; Mon 4 Jan<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">PD</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins</span><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTItMzFqBRIDRVdScgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMS0wNGoFEgNZWVpqBRIDWVRacgUSA0VXUkABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open EWR to YTZ, $218, PD, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;YTZ</span><span class="chip-price">$218</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTItMzFqBRIDTEdBcgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMS0wNGoFEgNZWVpqBRIDWVRacgUSA0xHQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open LGA to YYZ, $231, PD, on Google Flights"><span class="chip-route">LGA&nbsp;&rarr;&nbsp;YYZ</span><span class="chip-price">$231</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="canada" data-sent="2026-10-20T23:41:20.583428+00:00" data-price="218" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Toronto</h2>
+            <p class="cities"><span class="codes">YTZ YYZ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$218</span><span class="spread">to $221</span>
+          </div>
+        </header>
+        <p class="dates">Mon 18 Jan &rarr; Fri 22 Jan<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">PD</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins</span><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMThqBRIDRVdScgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMS0yMmoFEgNZWVpqBRIDWVRacgUSA0VXUkABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open EWR to YTZ, $218, PD, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;YTZ</span><span class="chip-price">$218</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMThqBRIDTEdBcgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMS0yMmoFEgNZWVpqBRIDWVRacgUSA0xHQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="AA" aria-label="Open LGA to YYZ, $221, AA, on Google Flights"><span class="chip-route">LGA&nbsp;&rarr;&nbsp;YYZ</span><span class="chip-price">$221</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="canada" data-sent="2026-10-20T23:41:20.593403+00:00" data-price="221" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Toronto</h2>
+            <p class="cities"><span class="codes">YTZ YYZ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$221</span><span class="spread">to $233</span>
+          </div>
+        </header>
+        <p class="dates">Tue 1 Dec &rarr; Sat 5 Dec<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AA</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins</span><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTItMDFqBRIDTEdBcgUSA1lZWnIFEgNZVFoaIRIKMjAyNi0xMi0wNWoFEgNZWVpqBRIDWVRacgUSA0xHQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="AA" aria-label="Open LGA to YYZ, $221, AA, on Google Flights"><span class="chip-route">LGA&nbsp;&rarr;&nbsp;YYZ</span><span class="chip-price">$221</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjYtMTItMDFqBRIDRVdScgUSA1lZWnIFEgNZVFoaIRIKMjAyNi0xMi0wNWoFEgNZWVpqBRIDWVRacgUSA0VXUkABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open EWR to YTZ, $233, PD, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;YTZ</span><span class="chip-price">$233</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="canada" data-sent="2026-10-20T23:41:19.954544+00:00" data-price="228" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Montreal</h2>
+            <p class="cities"><span class="codes">YUL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$228</span>
+          </div>
+        </header>
+        <p class="dates">Wed 31 Mar &rarr; Sun 4 Apr<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AC</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDMtMzFqBRIDRVdScgUSA1lVTBoaEgoyMDI3LTA0LTA0agUSA1lVTHIFEgNFV1JAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open EWR to YUL on Google Flights">EWR&nbsp;&rarr;&nbsp;YUL</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="canada" data-sent="2026-10-20T23:41:19.920380+00:00" data-price="228" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Montreal</h2>
+            <p class="cities"><span class="codes">YUL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$228</span>
+          </div>
+        </header>
+        <p class="dates">Mon 18 Jan &rarr; Fri 22 Jan<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AC</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMThqBRIDRVdScgUSA1lVTBoaEgoyMDI3LTAxLTIyagUSA1lVTHIFEgNFV1JAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open EWR to YUL on Google Flights">EWR&nbsp;&rarr;&nbsp;YUL</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="canada" data-sent="2026-10-20T23:41:19.909529+00:00" data-price="228" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Montreal</h2>
+            <p class="cities"><span class="codes">YUL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$228</span>
+          </div>
+        </header>
+        <p class="dates">Tue 2 Mar &rarr; Sat 6 Mar<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AC</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDMtMDJqBRIDRVdScgUSA1lVTBoaEgoyMDI3LTAzLTA2agUSA1lVTHIFEgNFV1JAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open EWR to YUL on Google Flights">EWR&nbsp;&rarr;&nbsp;YUL</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
         </div>
       </article>
       <article class="card tier-t1" data-region="southamerica" data-sent="2026-10-20T00:56:47.527589+00:00" data-price="290" data-tier="t1">
@@ -621,7 +788,159 @@ body {
         <p class="dates">Thu 21 Jan &rarr; Thu 28 Jan<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">CM</span></p>
         <div class="card-foot">
           <span class="badge">Exceptional</span>
-          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDEtMjFqBRIDTUlBcgUSA0JPR3IFEgNDVEdyBRIDTURFGigSCjIwMjctMDEtMjhqBRIDQk9HagUSA0NUR2oFEgNNREVyBRIDTUlBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to MDE on Google Flights">MIA&nbsp;&rarr;&nbsp;MDE</a><span class="when" title="20 Oct, 00:56 UTC">22h ago</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDEtMjFqBRIDTUlBcgUSA0JPR3IFEgNDVEdyBRIDTURFGigSCjIwMjctMDEtMjhqBRIDQk9HagUSA0NUR2oFEgNNREVyBRIDTUlBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to MDE on Google Flights">MIA&nbsp;&rarr;&nbsp;MDE</a><span class="when" title="20 Oct, 00:56 UTC">23h ago</span>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="canada" data-sent="2026-10-20T23:41:20.619657+00:00" data-price="218" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Toronto</h2>
+            <p class="cities"><span class="codes">YTZ YYZ</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$218</span><span class="spread">to $221</span>
+          </div>
+        </header>
+        <p class="dates">Sun 31 Jan &rarr; Thu 4 Feb<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">PD</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <span class="origin-note">2 origins</span><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMzFqBRIDRVdScgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMi0wNGoFEgNZWVpqBRIDWVRacgUSA0VXUkABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open EWR to YTZ, $218, PD, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;YTZ</span><span class="chip-price">$218</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDEtMzFqBRIDTEdBcgUSA1lZWnIFEgNZVFoaIRIKMjAyNy0wMi0wNGoFEgNZWVpqBRIDWVRacgUSA0xHQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="PD" aria-label="Open LGA to YYZ, $221, PD, on Google Flights"><span class="chip-route">LGA&nbsp;&rarr;&nbsp;YYZ</span><span class="chip-price">$221</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t2" data-region="canada" data-sent="2026-10-20T23:41:19.942770+00:00" data-price="228" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Montreal</h2>
+            <p class="cities"><span class="codes">YUL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$228</span>
+          </div>
+        </header>
+        <p class="dates">Sun 31 Jan &rarr; Thu 4 Feb<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AC</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMzFqBRIDRVdScgUSA1lVTBoaEgoyMDI3LTAyLTA0agUSA1lVTHIFEgNFV1JAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open EWR to YUL on Google Flights">EWR&nbsp;&rarr;&nbsp;YUL</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="africa" data-sent="2026-10-20T23:41:18.914991+00:00" data-price="612" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Marrakesh <span class="codes">RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$612</span>
+          </div>
+        </header>
+        <p class="dates">Sun 31 Jan &rarr; Thu 4 Feb<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">American, British Airways</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDEtMzFqBRIDT1JEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMDRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDT1JEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to RAK on Google Flights">ORD&nbsp;&rarr;&nbsp;RAK</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="mideast" data-sent="2026-10-20T23:41:19.460671+00:00" data-price="678" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Egypt</h2>
+            <p class="cities">Cairo <span class="codes">CAI</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$678</span>
+          </div>
+        </header>
+        <p class="dates">Tue 2 Mar &rarr; Sat 6 Mar<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AT</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDMtMDJqBRIDSkZLcgUSA0NBSRoaEgoyMDI3LTAzLTA2agUSA0NBSXIFEgNKRktAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open JFK to CAI on Google Flights">JFK&nbsp;&rarr;&nbsp;CAI</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="mideast" data-sent="2026-10-20T23:41:19.449274+00:00" data-price="700" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Egypt</h2>
+            <p class="cities">Cairo <span class="codes">CAI</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$700</span>
+          </div>
+        </header>
+        <p class="dates">Tue 1 Dec &rarr; Sat 5 Dec<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">TK</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <span class="origin-note">2 origins</span><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDFqBRIDRVdScgUSA0NBSRoaEgoyMDI2LTEyLTA1agUSA0NBSXIFEgNFV1JAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="TK" aria-label="Open EWR to CAI, $700, TK, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;CAI</span><span class="chip-price">$700</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDFqBRIDSkZLcgUSA0NBSRoaEgoyMDI2LTEyLTA1agUSA0NBSXIFEgNKRktAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="TK" aria-label="Open JFK to CAI, $700, TK, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;CAI</span><span class="chip-price">$700</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t4" data-region="domestic" data-sent="2026-10-20T23:41:21.588480+00:00" data-price="100" data-tier="t4">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Orlando</h2>
+            <p class="cities"><span class="codes">MCO</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$100</span>
+          </div>
+        </header>
+        <p class="dates">Mon 18 Jan &rarr; Fri 22 Jan<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">F9</span></p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDEtMThqBRIDREZXcgUSA01DTxoaEgoyMDI3LTAxLTIyagUSA01DT3IFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to MCO on Google Flights">DFW&nbsp;&rarr;&nbsp;MCO</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="domestic" data-sent="2026-10-20T23:41:21.251260+00:00" data-price="147" data-tier="t4">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Austin</h2>
+            <p class="cities"><span class="codes">AUS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$147</span>
+          </div>
+        </header>
+        <p class="dates">Tue 1 Dec &rarr; Fri 4 Dec<span class="dot">·</span>3 nights<span class="dot">·</span><span class="airline">WN</span></p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDFqBRIDREFMcgUSA0FVUxoaEgoyMDI2LTEyLTA0agUSA0FVU3IFEgNEQUxAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DAL to AUS on Google Flights">DAL&nbsp;&rarr;&nbsp;AUS</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="canada" data-sent="2026-10-20T23:41:19.932216+00:00" data-price="228" data-tier="t4">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Montreal</h2>
+            <p class="cities"><span class="codes">YUL</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$228</span>
+          </div>
+        </header>
+        <p class="dates">Tue 1 Dec &rarr; Sat 5 Dec<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">AC</span></p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDFqBRIDRVdScgUSA1lVTBoaEgoyMDI2LTEyLTA1agUSA1lVTHIFEgNFV1JAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open EWR to YUL on Google Flights">EWR&nbsp;&rarr;&nbsp;YUL</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="mideast" data-sent="2026-10-20T23:41:19.437272+00:00" data-price="689" data-tier="t4">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Egypt</h2>
+            <p class="cities">Cairo <span class="codes">CAI</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$689</span>
+          </div>
+        </header>
+        <p class="dates">Sun 1 Nov &rarr; Thu 5 Nov<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">GF</span></p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTEtMDFqBRIDSkZLcgUSA0NBSRoaEgoyMDI2LTExLTA1agUSA0NBSXIFEgNKRktAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open JFK to CAI on Google Flights">JFK&nbsp;&rarr;&nbsp;CAI</a><span class="when" title="20 Oct, 23:41 UTC">18m ago</span>
         </div>
       </article>
       <article class="card tier-t4" data-region="asia" data-sent="2026-10-20T11:22:04.814941+00:00" data-price="715" data-tier="t4">
@@ -655,8 +974,8 @@ body {
   </section>
 
   <footer class="foot">
-    <p>Newest alert <b id="newest">20 Oct, 12:45 UTC</b> &middot; <span id="built">built
-      <b>20 Oct, 23:40 UTC</b></span></p>
+    <p>Newest alert <b id="newest">20 Oct, 23:41 UTC</b> &middot; <span id="built">built
+      <b>21 Oct, 00:00 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
