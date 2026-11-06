@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="3 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="5 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">3 sales from 3 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">5 sales from 5 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,9 +540,11 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">3</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">5</span></button>
       <button class="tab" type="button" role="tab" data-region="caribbean" aria-selected="false">Caribbean &amp; Mexico<span class="n">2</span></button>
       <button class="tab" type="button" role="tab" data-region="mideast" aria-selected="false">Middle East<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="hawaii" aria-selected="false">Hawaii<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="oceania" aria-selected="false">Oceania<span class="n">1</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -599,6 +601,22 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDItMDNqBRIDT1JEcgUSA0NBSRoaEgoyMDI3LTAyLTA4agUSA0NBSXIFEgNPUkRAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to CAI on Google Flights">ORD&nbsp;&rarr;&nbsp;CAI</a><span class="when" title="5 Nov, 13:48 UTC">10h ago</span>
         </div>
       </article>
+      <article class="card tier-t3" data-region="oceania" data-sent="2026-11-06T00:19:39.848325+00:00" data-price="613" data-tier="t3">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Tahiti</h2>
+            <p class="cities">Papeete <span class="codes">PPT</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$613</span>
+          </div>
+        </header>
+        <p class="dates">Sun 13 Dec &rarr; Wed 23 Dec<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">Delta, Air France</span></p>
+        <div class="card-foot">
+          <span class="badge">Great</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMTNqBRIDU0ZPcgUSA1BQVBoaEgoyMDI2LTEyLTIzagUSA1BQVHIFEgNTRk9AAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open SFO to PPT on Google Flights">SFO&nbsp;&rarr;&nbsp;PPT</a><span class="when" title="6 Nov, 00:19 UTC">just now</span>
+        </div>
+      </article>
       <article class="card tier-t4" data-region="caribbean" data-sent="2026-11-05T06:31:03.542895+00:00" data-price="210" data-tier="t4">
         <header class="card-head">
           <div class="card-id">
@@ -613,6 +631,22 @@ body {
         <div class="card-foot">
           <span class="badge">Good</span>
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjYtMTItMDVqBRIDRVdScgUSA1NKVRoaEgoyMDI2LTEyLTEwagUSA1NKVXIFEgNFV1JAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open EWR to SJU on Google Flights">EWR&nbsp;&rarr;&nbsp;SJU</a><span class="when" title="5 Nov, 06:31 UTC">17h ago</span>
+        </div>
+      </article>
+      <article class="card tier-t4" data-region="hawaii" data-sent="2026-11-06T00:19:39.411493+00:00" data-price="376" data-tier="t4">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Hawaii</h2>
+            <p class="cities">Kauai <span class="codes">LIH</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$376</span>
+          </div>
+        </header>
+        <p class="dates">Sun 13 Dec &rarr; Fri 18 Dec<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">AA</span></p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=Gi8SCjIwMjYtMTItMTNqBRIDREZXcgUSA0hOTHIFEgNPR0dyBRIDS09BcgUSA0xJSBovEgoyMDI2LTEyLTE4agUSA0hOTGoFEgNPR0dqBRIDS09BagUSA0xJSHIFEgNERldAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open DFW to LIH on Google Flights">DFW&nbsp;&rarr;&nbsp;LIH</a><span class="when" title="6 Nov, 00:19 UTC">just now</span>
         </div>
       </article>
 
@@ -630,8 +664,8 @@ body {
   </section>
 
   <footer class="foot">
-    <p>Newest alert <b id="newest">5 Nov, 13:48 UTC</b> &middot; <span id="built">built
-      <b>6 Nov, 00:00 UTC</b></span></p>
+    <p>Newest alert <b id="newest">6 Nov, 00:19 UTC</b> &middot; <span id="built">built
+      <b>6 Nov, 00:20 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
