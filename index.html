@@ -1,7 +1,7 @@
 <title>Bucket List Fares</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="description" content="2 fare alerts from the last 24 hours, grouped by sale.">
+<meta name="description" content="32 fare alerts from the last 24 hours, grouped by sale.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fares">
@@ -523,7 +523,7 @@ body {
       <div class="titlebar-id">
         <h1>Fares</h1>
         <!-- Rewritten by the live render; the baked values describe the fallback. -->
-        <p class="sub" id="sub">2 sales from 2 alerts &middot; last 24 h</p>
+        <p class="sub" id="sub">14 sales from 32 alerts &middot; last 24 h</p>
       </div>
       <!-- Both controls pinned to the top-right corner. History ships HIDDEN and is
            unhidden by script: the archive is a live Supabase read, so with JS off it
@@ -540,9 +540,11 @@ body {
          a segmented pill here would put the button language straight back. -->
     <div class="tab-bar">
       <div class="tabs" role="tablist" aria-label="Region">
-      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">2</span></button>
+      <button class="tab" type="button" role="tab" data-region="all" aria-selected="true">All<span class="n">14</span></button>
       <button class="tab" type="button" role="tab" data-region="domestic" aria-selected="false">Domestic<span class="n">1</span></button>
-      <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">1</span></button>
+      <button class="tab" type="button" role="tab" data-region="africa" aria-selected="false">Africa<span class="n">6</span></button>
+      <button class="tab" type="button" role="tab" data-region="southamerica" aria-selected="false">South America<span class="n">6</span></button>
+      <button class="tab" type="button" role="tab" data-region="oceania" aria-selected="false">Oceania<span class="n">1</span></button>
       </div>
       <div class="sort" role="group" aria-label="Sort order">
         <button class="sort-opt" type="button" id="sort-best"
@@ -567,6 +569,213 @@ body {
        If Supabase is unreachable, the fetch fails, or JS is off, these cards simply
        stay — which is why they are still rendered rather than dropped. -->
   <div class="list" id="list">
+      <article class="card tier-t1" data-region="southamerica" data-sent="2026-11-25T19:52:31.118709+00:00" data-price="346" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Colombia</h2>
+            <p class="cities">Cartagena <span class="codes">CTG</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$346</span>
+          </div>
+        </header>
+        <p class="dates">Thu 11 Mar &rarr; Tue 16 Mar<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">UA</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDMtMTFqBRIDTUlBcgUSA0JPR3IFEgNDVEdyBRIDTURFGigSCjIwMjctMDMtMTZqBRIDQk9HagUSA0NUR2oFEgNNREVyBRIDTUlBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to CTG on Google Flights">MIA&nbsp;&rarr;&nbsp;CTG</a><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="southamerica" data-sent="2026-11-25T19:52:32.593058+00:00" data-price="391" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Peru</h2>
+            <p class="cities">Lima <span class="codes">LIM</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$391</span>
+          </div>
+        </header>
+        <p class="dates">Sun 11 Apr &rarr; Fri 16 Apr<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">DM</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDQtMTFqBRIDTUlBcgUSA0NVWnIFEgNMSU0aIRIKMjAyNy0wNC0xNmoFEgNDVVpqBRIDTElNcgUSA01JQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to LIM on Google Flights">MIA&nbsp;&rarr;&nbsp;LIM</a><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="southamerica" data-sent="2026-11-25T19:52:31.891284+00:00" data-price="400" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Galapagos</h2>
+            <p class="cities"><span class="codes">GPS</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$400</span>
+          </div>
+        </header>
+        <p class="dates">Sun 11 Apr &rarr; Wed 21 Apr<span class="dot">·</span>10 nights<span class="dot">·</span><span class="airline">AV</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDQtMTFqBRIDTUlBcgUSA0dQU3IFEgNVSU8aIRIKMjAyNy0wNC0yMWoFEgNHUFNqBRIDVUlPcgUSA01JQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to GPS on Google Flights">MIA&nbsp;&rarr;&nbsp;GPS</a><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="africa" data-sent="2026-11-25T19:52:33.759436+00:00" data-price="535" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca · Marrakesh <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$535</span><span class="spread">to $619</span>
+          </div>
+        </header>
+        <p class="dates">Tue 9 Feb &rarr; Tue 16 Feb<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">IB</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">14 origins</span><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDTUlBcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTUlBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="IB" aria-label="Open MIA to CMN, $535, IB, on Google Flights"><span class="chip-route">MIA&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$535</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDQ0xUcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQ0xUQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open CLT to RAK, $542, American, Iberia, on Google Flights"><span class="chip-route">CLT&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$542</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDSUFEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDSUFEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="IB" aria-label="Open IAD to RAK, $546, IB, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$546</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDTVNQcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTVNQQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open MSP to RAK, $556, American, Iberia, on Google Flights"><span class="chip-route">MSP&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$556</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDU0VBcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDU0VBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open SEA to RAK, $560, American, Iberia, on Google Flights"><span class="chip-route">SEA&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$560</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDREVOcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDREVOQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open DEN to RAK, $569, UA, on Google Flights"><span class="chip-route">DEN&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$569</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDREZXcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDREZXQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="IB" aria-label="Open DFW to RAK, $578, IB, on Google Flights"><span class="chip-route">DFW&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$578</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDTEFYcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTEFYQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open LAX to RAK, $580, American, Iberia, on Google Flights"><span class="chip-route">LAX&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$580</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDUEhYcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDUEhYQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="DL" aria-label="Open PHX to RAK, $588, DL, on Google Flights"><span class="chip-route">PHX&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$588</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDQVVTcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQVVTQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open AUS to CMN, $589, American, Iberia, on Google Flights"><span class="chip-route">AUS&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$589</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDU0ZPcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDU0ZPQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open SFO to CMN, $589, American, Iberia, on Google Flights"><span class="chip-route">SFO&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$589</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDTEFTcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTEFTQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open LAS to RAK, $590, American, Iberia, on Google Flights"><span class="chip-route">LAS&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$590</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDQVRMcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQVRMQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open ATL to CMN, $603, American, Iberia, on Google Flights"><span class="chip-route">ATL&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$603</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDRFRXcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDRFRXQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="Delta, Air France" aria-label="Open DTW to CMN, $619, Delta, Air France, on Google Flights"><span class="chip-route">DTW&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$619</span></a></li>
+        </ul>
+        <button class="more" type="button" hidden aria-expanded="true">Show all 14</button>
+      </article>
+      <article class="card tier-t1" data-region="africa" data-sent="2026-11-25T19:52:33.719975+00:00" data-price="549" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca · Marrakesh <span class="codes">CMN RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$549</span><span class="spread">to $603</span>
+          </div>
+        </header>
+        <p class="dates">Tue 9 Feb &rarr; Sun 14 Feb<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">American, Iberia</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">3 origins</span><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDQk9TcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQk9TQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open BOS to CMN, $549, American, Iberia, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$549</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDUEhMcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDUEhMQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open PHL to RAK, $575, UA, on Google Flights"><span class="chip-route">PHL&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$575</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDItMDlqBRIDT1JEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDItMTRqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDT1JEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="UA" aria-label="Open ORD to RAK, $603, UA, on Google Flights"><span class="chip-route">ORD&nbsp;&rarr;&nbsp;RAK</span><span class="chip-price">$603</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="africa" data-sent="2026-11-25T19:52:33.462562+00:00" data-price="570" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Marrakesh <span class="codes">RAK</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$570</span>
+          </div>
+        </header>
+        <p class="dates">Sun 11 Apr &rarr; Thu 15 Apr<span class="dot">·</span>4 nights<span class="dot">·</span><span class="airline">American, British Airways</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDQtMTFqBRIDT1JEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDQtMTVqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDT1JEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open ORD to RAK on Google Flights">ORD&nbsp;&rarr;&nbsp;RAK</a><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="africa" data-sent="2026-11-25T19:52:33.521791+00:00" data-price="595" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca <span class="codes">CMN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$595</span><span class="spread">to $609</span>
+          </div>
+        </header>
+        <p class="dates">Sun 11 Apr &rarr; Sun 18 Apr<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">IB</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">3 origins</span><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDQtMTFqBRIDSkZLcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDQtMThqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDSkZLQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="IB" aria-label="Open JFK to CMN, $595, IB, on Google Flights"><span class="chip-route">JFK&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$595</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDQtMTFqBRIDRVdScgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDQtMThqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDRVdSQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="IB" aria-label="Open EWR to CMN, $605, IB, on Google Flights"><span class="chip-route">EWR&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$605</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDQtMTFqBRIDQk9TcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDQtMThqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDQk9TQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open BOS to CMN, $609, American, Iberia, on Google Flights"><span class="chip-route">BOS&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$609</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="africa" data-sent="2026-11-25T19:52:33.632688+00:00" data-price="639" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca <span class="codes">CMN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$639</span><span class="spread">to $662</span>
+          </div>
+        </header>
+        <p class="dates">Thu 11 Mar &rarr; Tue 16 Mar<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">American, Iberia</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <span class="origin-note">2 origins</span><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+        <ul class="chips">
+          <li><a class="chip is-best" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDMtMTFqBRIDTUlBcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDMtMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDTUlBQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="American, Iberia" aria-label="Open MIA to CMN, $639, American, Iberia, on Google Flights"><span class="chip-route">MIA&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$639</span></a></li>
+          <li><a class="chip" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDMtMTFqBRIDSUFEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDMtMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDSUFEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" title="TP" aria-label="Open IAD to CMN, $662, TP, on Google Flights"><span class="chip-route">IAD&nbsp;&rarr;&nbsp;CMN</span><span class="chip-price">$662</span></a></li>
+        </ul>
+      </article>
+      <article class="card tier-t1" data-region="africa" data-sent="2026-11-25T19:52:33.565424+00:00" data-price="655" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Morocco</h2>
+            <p class="cities">Casablanca <span class="codes">CMN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$655</span>
+          </div>
+        </header>
+        <p class="dates">Sun 11 Apr &rarr; Fri 16 Apr<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">TP</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDQtMTFqBRIDSUFEcgUSA1JBS3IFEgNDTU5yBRIDRkVaGigSCjIwMjctMDQtMTZqBRIDUkFLagUSA0NNTmoFEgNGRVpyBRIDSUFEQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open IAD to CMN on Google Flights">IAD&nbsp;&rarr;&nbsp;CMN</a><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t1" data-region="oceania" data-sent="2026-11-25T19:52:30.581036+00:00" data-price="693" data-tier="t1">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Fiji</h2>
+            <p class="cities">Nadi <span class="codes">NAN</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$693</span>
+          </div>
+        </header>
+        <p class="dates">Tue 9 Feb &rarr; Tue 16 Feb<span class="dot">·</span>7 nights<span class="dot">·</span><span class="airline">FJ</span></p>
+        <div class="card-foot">
+          <span class="badge">Exceptional</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GhoSCjIwMjctMDItMDlqBRIDTEFYcgUSA05BThoaEgoyMDI3LTAyLTE2agUSA05BTnIFEgNMQVhAAUgBmAEB&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open LAX to NAN on Google Flights">LAX&nbsp;&rarr;&nbsp;NAN</a><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+      </article>
+      <article class="card tier-t2" data-region="southamerica" data-sent="2026-11-25T19:52:32.615875+00:00" data-price="391" data-tier="t2">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Peru</h2>
+            <p class="cities">Lima <span class="codes">LIM</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$391</span>
+          </div>
+        </header>
+        <p class="dates">Thu 11 Mar &rarr; Tue 16 Mar<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">DM</span></p>
+        <div class="card-foot">
+          <span class="badge">Excellent</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDMtMTFqBRIDTUlBcgUSA0NVWnIFEgNMSU0aIRIKMjAyNy0wMy0xNmoFEgNDVVpqBRIDTElNcgUSA01JQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to LIM on Google Flights">MIA&nbsp;&rarr;&nbsp;LIM</a><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+      </article>
       <article class="card tier-t4" data-region="domestic" data-sent="2026-11-25T12:32:25.640324+00:00" data-price="49" data-tier="t4">
         <header class="card-head">
           <div class="card-id">
@@ -599,6 +808,22 @@ body {
           <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GigSCjIwMjctMDMtMjBqBRIDQk9TcgUSA0JPR3IFEgNDVEdyBRIDTURFGigSCjIwMjctMDMtMjdqBRIDQk9HagUSA0NUR2oFEgNNREVyBRIDQk9TQAFIAZgBAQ&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open BOS to BOG on Google Flights">BOS&nbsp;&rarr;&nbsp;BOG</a><span class="when" title="25 Nov, 12:32 UTC">7h ago</span>
         </div>
       </article>
+      <article class="card tier-t4" data-region="southamerica" data-sent="2026-11-25T19:52:32.605492+00:00" data-price="391" data-tier="t4">
+        <header class="card-head">
+          <div class="card-id">
+            <h2>Peru</h2>
+            <p class="cities">Lima <span class="codes">LIM</span></p>
+          </div>
+          <div class="card-price">
+            <span class="price">$391</span>
+          </div>
+        </header>
+        <p class="dates">Tue 9 Feb &rarr; Sun 14 Feb<span class="dot">·</span>5 nights<span class="dot">·</span><span class="airline">DM</span></p>
+        <div class="card-foot">
+          <span class="badge">Good</span>
+          <a class="origin-note solo" href="https://www.google.com/travel/flights/search?tfs=GiESCjIwMjctMDItMDlqBRIDTUlBcgUSA0NVWnIFEgNMSU0aIRIKMjAyNy0wMi0xNGoFEgNDVVpqBRIDTElNcgUSA01JQUABSAGYAQE&amp;hl=en&amp;curr=USD" target="_blank" rel="noopener" aria-label="Open MIA to LIM on Google Flights">MIA&nbsp;&rarr;&nbsp;LIM</a><span class="when" title="25 Nov, 19:52 UTC">7m ago</span>
+        </div>
+      </article>
 
   </div>
   <p class="empty" hidden id="empty">Nothing here in the last 24 hours.</p>
@@ -614,8 +839,8 @@ body {
   </section>
 
   <footer class="foot">
-    <p>Newest alert <b id="newest">25 Nov, 12:32 UTC</b> &middot; <span id="built">built
-      <b>25 Nov, 19:40 UTC</b></span></p>
+    <p>Newest alert <b id="newest">25 Nov, 19:52 UTC</b> &middot; <span id="built">built
+      <b>25 Nov, 20:00 UTC</b></span></p>
     <p id="foot-note">One card per destination and date pair; each pill is one origin that
       alerted, cheapest first. Tap a pill to open it on Google Flights. Prices are
       round trip, as seen at scrape time.</p>
